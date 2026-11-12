@@ -147,7 +147,7 @@ describe('Milestone M4: Chunked Direct-to-S3 Upload, Range Download & Metadata S
   it('3. Upload Initiation & Quota Reservation: Atomically reserves expected bytes', async () => {
     fek = crypto.randomBytes(32);
     const wrappedFek = wrapKey(masterKey, fek, 'cloudvault-fek-wrap-v1');
-    const totalExpectedBytes = part1Size + 16 + part2Size + 16; // 2 chunks with 16B tag each
+    const totalExpectedBytes = part1Size + 28 + part2Size + 28; // 2 chunks with 28B framing overhead (12B IV + 16B tag)
 
     const initRes = await request(app)
       .post('/api/v1/files/uploads')
@@ -455,5 +455,63 @@ describe('Milestone M4: Chunked Direct-to-S3 Upload, Range Download & Metadata S
     // Verify storage_used_bytes decremented back to 0
     const user = await userRepo.findOne({ where: { id: userId } });
     expect(Number(user.storage_used_bytes)).toBe(0);
+  });
+
+  it('12. Complete Upload Quota Protection: Rejects upload if actual object size exceeds reserved size', async () => {
+    // Initiate upload claiming expected_bytes = 100 bytes (1 chunk)
+    const initRes = await request(app)
+      .post('/api/v1/files/uploads')
+      .set('Authorization', `Bearer ${authToken}`)
+      .send({
+        expected_bytes: 100,
+        total_chunks: 1,
+        encrypted_name: 'enc-oversize.bin',
+        name_nonce: 'nonce-oversize12',
+        encrypted_fek: 'enc-fek-oversize',
+        fek_nonce: 'nonce-fek-oversize'
+      });
+
+    expect(initRes.status).toBe(201);
+    const oversizeSessionId = initRes.body.session_id;
+    const oversizeFileId = initRes.body.file_id;
+
+    // Get presigned URL for part 1
+    const partsRes = await request(app)
+      .post(`/api/v1/files/uploads/${oversizeSessionId}/parts`)
+      .set('Authorization', `Bearer ${authToken}`)
+      .send({ chunk_indices: [0] });
+    expect(partsRes.status).toBe(200);
+
+    // Upload a 500-byte payload (which exceeds the 100 reserved bytes)
+    const oversizePayload = crypto.randomBytes(500);
+    const putRes = await request(partsRes.body.parts[0].presigned_url)
+      .put('')
+      .set('Content-Type', 'application/octet-stream')
+      .send(oversizePayload);
+    expect(putRes.status).toBe(200);
+    const etag = putRes.headers.etag;
+
+    // Call complete upload
+    const compRes = await request(app)
+      .post(`/api/v1/files/uploads/${oversizeSessionId}/complete`)
+      .set('Authorization', `Bearer ${authToken}`)
+      .send({
+        parts: [{ part_number: 1, etag }]
+      });
+
+    expect(compRes.status).toBe(400);
+    expect(compRes.body.error.message).toContain('exceeds reserved size');
+
+    // Verify file is marked FAILED in DB
+    const failedFile = await fileRepo.findOne({ where: { id: oversizeFileId } });
+    expect(failedFile.status).toBe('FAILED');
+
+    // Verify session is marked ABORTED
+    const abortedSession = await sessionRepo.findOne({ where: { id: oversizeSessionId } });
+    expect(abortedSession.status).toBe('ABORTED');
+
+    // Verify reserved quota was refunded/released back to 0
+    const user = await userRepo.findOne({ where: { id: userId } });
+    expect(Number(user.storage_reserved_bytes)).toBe(0);
   });
 });

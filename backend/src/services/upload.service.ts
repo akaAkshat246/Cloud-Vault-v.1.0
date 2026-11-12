@@ -314,6 +314,47 @@ export class UploadService {
     const actualBytes = metadata.size;
     const expectedBytes = Number(session.file.size_bytes);
 
+    // Enforce size limit against reservation: uploaded ciphertext must not exceed reserved size
+    if (actualBytes > expectedBytes) {
+      try {
+        await this.storage.deleteObject(session.file.s3_key);
+      } catch (delErr) {
+        logger.warn({ delErr, key: session.file.s3_key }, 'Failed to delete oversize S3 object');
+      }
+
+      const queryRunner = AppDataSource.createQueryRunner();
+      await queryRunner.connect();
+      await queryRunner.startTransaction();
+      try {
+        await queryRunner.query(
+          `UPDATE users
+           SET storage_reserved_bytes = GREATEST(0, CAST(storage_reserved_bytes AS BIGINT) - $1)
+           WHERE id = $2`,
+          [expectedBytes, userId]
+        );
+        await queryRunner.manager.update(FileEntity, session.file_id, {
+          status: FileStatus.FAILED
+        });
+        await queryRunner.manager.update(UploadSession, session.id, {
+          status: UploadStatus.ABORTED
+        });
+        await queryRunner.commitTransaction();
+      } catch (err) {
+        await queryRunner.rollbackTransaction();
+        throw err;
+      } finally {
+        await queryRunner.release();
+      }
+
+      logger.warn(
+        { userId, fileId: session.file_id, actualBytes, expectedBytes },
+        'Upload rejected: actual size exceeds reserved size'
+      );
+      throw new BadRequestError(
+        `Uploaded file size (${actualBytes} bytes) exceeds reserved size (${expectedBytes} bytes)`
+      );
+    }
+
     // 3. Atomic Database Update: Transfer reserved quota to used quota
     const queryRunner = AppDataSource.createQueryRunner();
     await queryRunner.connect();
