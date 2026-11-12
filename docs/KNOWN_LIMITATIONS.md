@@ -44,5 +44,5 @@
 | :--- | :--- | :--- |
 | **Lost Password + Lost Recovery Kit** | Permanent, mathematically irreversible data loss | Zero-Knowledge invariant dictates that no administrator or system process can decrypt files. | **Path B (Account Reset):** User can reset password, but all existing encrypted files are orphaned. A 30-day grace period is provided before permanent deletion in case the 24-word phrase is recovered. |
 | **CI / Environment Availability** | Remote CI not yet run | Workspace currently operates in a local environment without a configured remote Git repository. | `.github/workflows/backend-ci.yml` and `crypto-spec-ci.yml` prepared for immediate execution upon remote repository push. |
-| **Local Docker Daemon** | Host Docker daemon inactive | Docker daemon was not running during local M2 verification on host; storage and migration logic verified against unit and mock test harnesses. | Docker compose files and automated MinIO provisioning scripts fully ready in `/infra/docker/`. |
+| **Local Docker Daemon** | Verified Active (PostgreSQL 15 & MinIO) | Docker Desktop daemon is running healthy containers (`cloudvault-postgres` and `cloudvault-minio`). | All database migrations and S3 multipart integration tests pass against live services. |
 
