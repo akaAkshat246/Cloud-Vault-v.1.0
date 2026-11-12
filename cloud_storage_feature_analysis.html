@@ -1,0 +1,264 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans);color:var(--color-text-primary)}
+.wrap{padding:1.25rem 0}
+.top-bar{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:1.25rem}
+.title{font-size:17px;font-weight:500}
+.tabs{display:flex;gap:6px}
+.tab{padding:6px 16px;font-size:13px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);cursor:pointer;background:transparent;color:var(--color-text-secondary);transition:all .15s}
+.tab.active{background:var(--color-text-primary);color:var(--color-background-primary);border-color:transparent}
+.cat-bar{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:1rem}
+.cat-btn{padding:4px 12px;font-size:12px;border:0.5px solid var(--color-border-tertiary);border-radius:20px;cursor:pointer;background:transparent;color:var(--color-text-secondary);transition:all .15s}
+.cat-btn.active{border-color:var(--color-border-primary);color:var(--color-text-primary);background:var(--color-background-secondary)}
+.grid{display:grid;grid-template-columns:180px repeat(6,1fr);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden}
+.hdr{background:var(--color-background-secondary);padding:10px 8px;font-size:11px;font-weight:500;text-align:center;border-bottom:0.5px solid var(--color-border-tertiary);color:var(--color-text-secondary)}
+.hdr.feat{text-align:left;padding-left:12px}
+.logo{display:flex;flex-direction:column;align-items:center;gap:3px}
+.logo .name{font-size:11px;font-weight:500;color:var(--color-text-primary)}
+.logo .free{font-size:10px;color:var(--color-text-tertiary)}
+.cell{padding:9px 8px;font-size:12px;text-align:center;border-bottom:0.5px solid var(--color-border-tertiary);border-right:0.5px solid var(--color-border-tertiary);display:flex;align-items:center;justify-content:center;line-height:1.3;color:var(--color-text-secondary)}
+.cell.feat{text-align:left;justify-content:flex-start;padding-left:12px;font-size:12px;color:var(--color-text-secondary);background:var(--color-background-secondary)}
+.cell.cat-head{font-size:11px;font-weight:500;color:var(--color-text-tertiary);background:var(--color-background-tertiary);text-transform:uppercase;letter-spacing:.05em;grid-column:1/-1;padding:6px 12px;border-bottom:0.5px solid var(--color-border-tertiary)}
+.yes{color:#3B6D11;font-size:14px}
+.no{color:#A32D2D;font-size:14px}
+.partial{color:#854F0B;font-size:13px}
+.val{font-size:11px;font-weight:500;color:var(--color-text-primary)}
+.badge{font-size:10px;padding:2px 7px;border-radius:10px;font-weight:500}
+.b-green{background:#EAF3DE;color:#3B6D11}
+.b-amber{background:#FAEEDA;color:#854F0B}
+.b-red{background:#FCEBEB;color:#A32D2D}
+.b-blue{background:#E6F1FB;color:#185FA5}
+.b-purple{background:#EEEDFE;color:#534AB7}
+.highlight{background:var(--color-background-info)!important;opacity:.06}
+.sec-note{font-size:11px;color:var(--color-text-tertiary);margin-top:1rem;padding:0 2px}
+.legend{display:flex;gap:16px;margin-bottom:1rem;flex-wrap:wrap}
+.leg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--color-text-secondary)}
+</style>
+<div class="wrap">
+<h2 class="sr-only">Cloud storage feature comparison: Google Drive, OneDrive, Dropbox, Proton Drive, MEGA, and Tresorit across Android and Web platforms.</h2>
+
+<div class="top-bar">
+  <span class="title">Cloud storage feature analysis</span>
+  <div class="tabs">
+    <button class="tab active" onclick="switchTab('android',this)">Android</button>
+    <button class="tab" onclick="switchTab('web',this)">Web</button>
+    <button class="tab" onclick="switchTab('both',this)">Both</button>
+  </div>
+</div>
+
+<div class="cat-bar" id="catBar"></div>
+<div class="legend">
+  <span class="leg-item"><span class="yes">✓</span> Yes / Full</span>
+  <span class="leg-item"><span class="partial">◑</span> Partial / Limited</span>
+  <span class="leg-item"><span class="no">✗</span> No</span>
+  <span class="leg-item"><span class="badge b-amber">Paid</span> Paid plans only</span>
+</div>
+
+<div class="grid" id="mainGrid"></div>
+<p class="sec-note">* Free tier storage: Google Drive 15GB · OneDrive 5GB · Dropbox 2GB · Proton Drive 1GB · MEGA 20GB · Tresorit 5GB</p>
+</div>
+
+<script>
+const services = ['Google Drive','OneDrive','Dropbox','Proton Drive','MEGA','Tresorit'];
+const freeTier = ['15 GB','5 GB','2 GB','1 GB','20 GB','5 GB'];
+
+const Y='yes', N='no', P='partial';
+const PAID='paid';
+
+const cats = {
+  storage: 'Storage & Pricing',
+  sync: 'Sync & Backup',
+  sharing: 'Sharing & Collaboration',
+  security: 'Security & Privacy',
+  platform: 'Platform Features',
+  offline: 'Offline & Mobile',
+};
+
+const data = {
+  android: {
+    storage:[
+      {f:'Free storage',v:[{t:'15 GB',c:'val'},{t:'5 GB',c:'val'},{t:'2 GB',c:'val'},{t:'1 GB',c:'val'},{t:'20 GB',c:'val'},{t:'5 GB',c:'val'}]},
+      {f:'Paid plans from',v:[{t:'$2.99/mo',c:'val'},{t:'$1.99/mo',c:'val'},{t:'$9.99/mo',c:'val'},{t:'$3.99/mo',c:'val'},{t:'€4.99/mo',c:'val'},{t:'$10/mo',c:'val'}]},
+      {f:'Max storage available',v:[{t:'30 TB',c:'val'},{t:'6 TB',c:'val'},{t:'Unlimited*',c:'val'},{t:'500 GB',c:'val'},{t:'16 TB',c:'val'},{t:'1 TB',c:'val'}]},
+    ],
+    sync:[
+      {f:'Background file sync',v:[Y,Y,Y,P,Y,Y]},
+      {f:'Auto camera backup',v:[Y,Y,Y,Y,Y,Y]},
+      {f:'Selective sync',v:[Y,Y,Y,P,Y,Y]},
+      {f:'SD card backup',v:[Y,Y,P,N,P,N]},
+      {f:'Real-time sync',v:[Y,Y,Y,P,Y,P]},
+      {f:'Bandwidth throttling',v:[N,P,Y,N,Y,N]},
+      {f:'Delta sync (block-level)',v:[N,N,Y,N,N,N]},
+    ],
+    sharing:[
+      {f:'Share files/folders',v:[Y,Y,Y,Y,Y,Y]},
+      {f:'Link expiry dates',v:[P,P,PAID,Y,Y,Y]},
+      {f:'Password-protected links',v:[N,P,PAID,Y,Y,Y]},
+      {f:'View-only sharing',v:[Y,Y,Y,Y,Y,Y]},
+      {f:'Team/workspace',v:[Y,Y,Y,P,P,Y]},
+      {f:'Real-time collaboration',v:[Y,Y,P,N,N,P]},
+    ],
+    security:[
+      {f:'End-to-end encryption',v:[N,N,N,Y,Y,Y]},
+      {f:'Zero-knowledge encryption',v:[N,N,N,Y,Y,Y]},
+      {f:'Two-factor auth',v:[Y,Y,Y,Y,Y,Y]},
+      {f:'In-app biometric lock',v:[Y,Y,Y,Y,Y,Y]},
+      {f:'Encrypted vault/folder',v:[N,N,P,Y,Y,Y]},
+      {f:'Swiss/EU data centers',v:[N,N,N,Y,N,Y]},
+      {f:'Open source client',v:[N,N,N,Y,N,N]},
+    ],
+    platform:[
+      {f:'Material You design',v:[Y,P,N,N,N,N]},
+      {f:'Android widget',v:[Y,Y,P,N,N,N]},
+      {f:'Shortcuts/quick tiles',v:[Y,Y,N,N,N,N]},
+      {f:'App lock / PIN',v:[Y,Y,Y,Y,Y,Y]},
+      {f:'Split-screen support',v:[Y,Y,P,N,P,N]},
+      {f:'Google/Samsung integration',v:[Y,P,N,N,N,N]},
+      {f:'Files app integration',v:[Y,Y,Y,P,P,P]},
+    ],
+    offline:[
+      {f:'Offline access',v:[Y,Y,Y,Y,Y,Y]},
+      {f:'Offline editing (docs)',v:[Y,Y,P,N,N,N]},
+      {f:'Offline media playback',v:[Y,Y,Y,P,Y,N]},
+      {f:'In-app document viewer',v:[Y,Y,Y,Y,Y,Y]},
+      {f:'In-app PDF editor',v:[P,P,N,N,N,N]},
+      {f:'Scan documents',v:[Y,Y,N,N,N,N]},
+    ],
+  },
+  web:{
+    storage:[
+      {f:'Free storage',v:[{t:'15 GB',c:'val'},{t:'5 GB',c:'val'},{t:'2 GB',c:'val'},{t:'1 GB',c:'val'},{t:'20 GB',c:'val'},{t:'5 GB',c:'val'}]},
+      {f:'Paid plans from',v:[{t:'$2.99/mo',c:'val'},{t:'$1.99/mo',c:'val'},{t:'$9.99/mo',c:'val'},{t:'$3.99/mo',c:'val'},{t:'€4.99/mo',c:'val'},{t:'$10/mo',c:'val'}]},
+      {f:'Max storage available',v:[{t:'30 TB',c:'val'},{t:'6 TB',c:'val'},{t:'Unlimited*',c:'val'},{t:'500 GB',c:'val'},{t:'16 TB',c:'val'},{t:'1 TB',c:'val'}]},
+    ],
+    sync:[
+      {f:'Drag-and-drop upload',v:[Y,Y,Y,Y,Y,Y]},
+      {f:'Folder upload',v:[Y,Y,Y,Y,Y,Y]},
+      {f:'Bulk download',v:[Y,Y,Y,Y,Y,Y]},
+      {f:'Resume interrupted uploads',v:[Y,Y,Y,P,Y,P]},
+      {f:'Version history',v:[{t:'30 days',c:'val'},{t:'30 days',c:'val'},{t:'180 days',c:'val'},{t:'180 days',c:'val'},{t:'30 days',c:'val'},{t:'365 days',c:'val'}]},
+      {f:'Deleted file recovery',v:[{t:'30 days',c:'val'},{t:'30 days',c:'val'},{t:'180 days',c:'val'},{t:'30 days',c:'val'},{t:'30 days',c:'val'},{t:'365 days',c:'val'}]},
+    ],
+    sharing:[
+      {f:'Public link sharing',v:[Y,Y,Y,Y,Y,Y]},
+      {f:'Password-protected links',v:[N,P,PAID,Y,Y,Y]},
+      {f:'Link expiry dates',v:[P,P,PAID,Y,Y,Y]},
+      {f:'Download count limit',v:[N,N,PAID,N,N,Y]},
+      {f:'Real-time co-editing',v:[Y,Y,P,N,N,N]},
+      {f:'Comments on files',v:[Y,Y,Y,N,N,P]},
+      {f:'Team/org management',v:[Y,Y,Y,P,P,Y]},
+      {f:'Email invitations',v:[Y,Y,Y,Y,Y,Y]},
+    ],
+    security:[
+      {f:'End-to-end encryption',v:[N,N,N,Y,Y,Y]},
+      {f:'Zero-knowledge encryption',v:[N,N,N,Y,Y,Y]},
+      {f:'Two-factor auth',v:[Y,Y,Y,Y,Y,Y]},
+      {f:'Hardware key (FIDO2)',v:[Y,Y,Y,Y,N,Y]},
+      {f:'Audit logs',v:[P,P,PAID,N,N,Y]},
+      {f:'IP access restrictions',v:[N,N,N,N,N,Y]},
+      {f:'GDPR compliance',v:[Y,Y,Y,Y,Y,Y]},
+      {f:'HIPAA compliance',v:[P,P,N,N,N,Y]},
+    ],
+    platform:[
+      {f:'Built-in doc editor',v:[Y,Y,N,N,N,N]},
+      {f:'Office suite integration',v:[Y,Y,Y,N,N,N]},
+      {f:'Media preview (img/vid)',v:[Y,Y,Y,Y,Y,Y]},
+      {f:'PDF preview',v:[Y,Y,Y,Y,Y,Y]},
+      {f:'Full-text search',v:[Y,Y,Y,P,P,P]},
+      {f:'Developer API',v:[Y,Y,Y,Y,Y,Y]},
+      {f:'Zapier / automation',v:[Y,Y,Y,N,N,P]},
+      {f:'Third-party app integrations',v:[{t:'1000+',c:'val'},{t:'500+',c:'val'},{t:'300+',c:'val'},{t:'Few',c:'val'},{t:'Few',c:'val'},{t:'Few',c:'val'}]},
+    ],
+    offline:[
+      {f:'Offline mode (cached)',v:[P,P,P,N,P,N]},
+      {f:'Progressive web app (PWA)',v:[P,P,N,N,N,N]},
+      {f:'Desktop app available',v:[Y,Y,Y,Y,Y,Y]},
+      {f:'Linux client',v:[P,N,Y,Y,Y,Y]},
+    ],
+  }
+};
+
+let currentTab = 'android';
+let currentCat = 'all';
+
+function getTabData() {
+  if (currentTab === 'both') {
+    const merged = {};
+    for (const cat in cats) {
+      const aRows = (data.android[cat] || []).map(r => ({...r, _src:'android'}));
+      const wRows = (data.web[cat] || []).map(r => ({...r, _src:'web'}));
+      const all = [...aRows, ...wRows];
+      const seen = new Set();
+      merged[cat] = all.filter(r => {
+        if (seen.has(r.f)) return false;
+        seen.add(r.f); return true;
+      });
+    }
+    return merged;
+  }
+  return data[currentTab];
+}
+
+function renderCatBar() {
+  const d = getTabData();
+  const bar = document.getElementById('catBar');
+  const activeCats = ['all', ...Object.keys(d)];
+  bar.innerHTML = activeCats.map(k => {
+    const label = k === 'all' ? 'All categories' : cats[k];
+    return `<button class="cat-btn ${currentCat===k?'active':''}" onclick="switchCat('${k}',this)">${label}</button>`;
+  }).join('');
+}
+
+function renderGrid() {
+  const d = getTabData();
+  const grid = document.getElementById('mainGrid');
+  let html = '';
+  const shortNames = ['Drive','OneDrive','Dropbox','Proton','MEGA','Tresorit'];
+  const colors = ['#4285F4','#0078D4','#0061FF','#6D4AFF','#FF0000','#1B2C4A'];
+
+  html += `<div class="hdr feat">Feature</div>`;
+  shortNames.forEach((n,i) => {
+    html += `<div class="hdr"><div class="logo"><span style="font-size:16px;font-weight:500;color:${colors[i]}">${n[0]}</span><span class="name">${n}</span><span class="free">${freeTier[i]}</span></div></div>`;
+  });
+
+  const catsToShow = currentCat === 'all' ? Object.keys(d) : [currentCat];
+  catsToShow.forEach(cat => {
+    if (!d[cat]) return;
+    html += `<div class="cell cat-head">${cats[cat]}</div>`;
+    d[cat].forEach(row => {
+      html += `<div class="cell feat">${row.f}</div>`;
+      row.v.forEach(v => {
+        if (v === Y) html += `<div class="cell"><span class="yes">✓</span></div>`;
+        else if (v === N) html += `<div class="cell"><span class="no">✗</span></div>`;
+        else if (v === P) html += `<div class="cell"><span class="partial">◑</span></div>`;
+        else if (v === PAID) html += `<div class="cell"><span class="badge b-amber">Paid</span></div>`;
+        else if (v && v.c === 'val') html += `<div class="cell"><span class="val">${v.t}</span></div>`;
+        else html += `<div class="cell">—</div>`;
+      });
+    });
+  });
+
+  grid.innerHTML = html;
+  grid.style.gridTemplateColumns = '180px repeat(6,1fr)';
+}
+
+function switchTab(tab, btn) {
+  currentTab = tab;
+  currentCat = 'all';
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderCatBar();
+  renderGrid();
+}
+
+function switchCat(cat, btn) {
+  currentCat = cat;
+  document.querySelectorAll('.cat-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  renderGrid();
+}
+
+renderCatBar();
+renderGrid();
+</script>

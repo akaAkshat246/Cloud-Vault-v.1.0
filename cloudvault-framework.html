@@ -1,0 +1,1899 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CloudVault — Frontend Framework</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=SF+Pro+Display:wght@300;400;500;600;700&family=Mona+Sans:ital,wght@0,200..900;1,200..900&family=DM+Serif+Display:ital@0;1&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --pearl:        #f5f4f2;
+    --frost:        #fafaf9;
+    --ink:          #1a1917;
+    --ink-muted:    #6b6860;
+    --ink-faint:    #a8a49e;
+    --line:         rgba(26,25,23,0.08);
+    --teal:         #007aff;
+    --teal-soft:    rgba(0,122,255,0.10);
+    --teal-glow:    rgba(0,122,255,0.18);
+    --gold:         #c9a84c;
+    --gold-soft:    rgba(201,168,76,0.12);
+    --danger:       #d94f3d;
+    --success:      #2e8b57;
+    --card-bg:      rgba(255,255,255,0.72);
+    --card-border:  rgba(26,25,23,0.07);
+    --shadow-sm:    0 1px 3px rgba(0,0,0,0.04), 0 1px 2px rgba(0,0,0,0.06);
+    --shadow-md:    0 4px 20px rgba(0,0,0,0.07), 0 2px 8px rgba(0,0,0,0.05);
+    --shadow-lg:    0 20px 60px rgba(0,0,0,0.10), 0 8px 24px rgba(0,0,0,0.06);
+    --radius-sm:    8px;
+    --radius-md:    14px;
+    --radius-lg:    22px;
+    --radius-xl:    32px;
+    --font-display: 'DM Serif Display', Georgia, serif;
+    --font-sans:    'Mona Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+    --font-mono:    'JetBrains Mono', monospace;
+    --ease-out:     cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-spring:  cubic-bezier(0.34, 1.56, 0.64, 1);
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: var(--font-sans);
+    background: var(--pearl);
+    color: var(--ink);
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* ——— Animated noise grain ——— */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 0;
+    opacity: 0.5;
+  }
+
+  /* ——— Ambient gradient blobs ——— */
+  .ambient {
+    position: fixed;
+    inset: 0;
+    pointer-events: none;
+    z-index: 0;
+    overflow: hidden;
+  }
+  .ambient-blob {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(100px);
+    opacity: 0.18;
+    animation: drift 18s ease-in-out infinite alternate;
+  }
+  .blob-1 { width: 600px; height: 600px; background: #5ac8fa; top: -200px; left: -100px; animation-delay: 0s; }
+  .blob-2 { width: 500px; height: 500px; background: #007aff; bottom: 0; right: -150px; animation-delay: -6s; }
+  .blob-3 { width: 400px; height: 400px; background: #c9a84c; top: 50%; left: 40%; animation-delay: -12s; }
+
+  @keyframes drift {
+    from { transform: translate(0,0) scale(1); }
+    to   { transform: translate(30px, 40px) scale(1.08); }
+  }
+
+  /* ——— Layout ——— */
+  .container {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 32px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* ——— NAV ——— */
+  nav {
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    backdrop-filter: blur(28px) saturate(160%);
+    -webkit-backdrop-filter: blur(28px) saturate(160%);
+    background: rgba(245,244,242,0.78);
+    border-bottom: 1px solid var(--line);
+    transition: box-shadow 0.3s;
+  }
+  nav.scrolled { box-shadow: 0 2px 20px rgba(0,0,0,0.06); }
+
+  .nav-inner {
+    max-width: 1140px;
+    margin: 0 auto;
+    padding: 0 32px;
+    height: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+  .logo-mark {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    text-decoration: none;
+  }
+  .logo-icon {
+    width: 32px;
+    height: 32px;
+    background: linear-gradient(135deg, #5ac8fa 0%, #007aff 100%);
+    border-radius: 9px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 10px rgba(0,122,255,0.30);
+    transition: transform 0.3s var(--ease-spring), box-shadow 0.3s;
+  }
+  .logo-mark:hover .logo-icon {
+    transform: scale(1.08) rotate(-4deg);
+    box-shadow: 0 4px 18px rgba(0,122,255,0.40);
+  }
+  .logo-icon svg { width: 18px; height: 18px; fill: white; }
+
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    list-style: none;
+  }
+  .nav-links a {
+    font-size: 13.5px;
+    font-weight: 500;
+    color: var(--ink-muted);
+    text-decoration: none;
+    padding: 6px 12px;
+    border-radius: 8px;
+    transition: color 0.2s, background 0.2s;
+  }
+  .nav-links a:hover { color: var(--ink); background: rgba(26,25,23,0.05); }
+
+  .nav-cta {
+    background: var(--ink) !important;
+    color: white !important;
+    padding: 7px 16px !important;
+    border-radius: 20px !important;
+    font-size: 13px !important;
+    font-weight: 600 !important;
+    letter-spacing: -0.01em;
+    transition: transform 0.2s var(--ease-spring), box-shadow 0.2s !important;
+  }
+  .nav-cta:hover {
+    transform: translateY(-1px) !important;
+    background: #333 !important;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.20) !important;
+  }
+
+  /* ——— HERO ——— */
+  .hero {
+    padding: 130px 0 100px;
+    text-align: center;
+    position: relative;
+    z-index: 1;
+  }
+
+  .hero-eyebrow {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--teal);
+    background: var(--teal-soft);
+    border: 1px solid rgba(0,122,255,0.15);
+    padding: 6px 14px;
+    border-radius: 20px;
+    margin-bottom: 32px;
+    opacity: 0;
+    animation: fadeUp 0.7s var(--ease-out) 0.1s forwards;
+  }
+  .eyebrow-dot {
+    width: 6px; height: 6px;
+    background: var(--teal);
+    border-radius: 50%;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+  @keyframes pulse-dot {
+    0%,100% { opacity: 1; transform: scale(1); }
+    50% { opacity: 0.5; transform: scale(0.7); }
+  }
+
+  .hero h1 {
+    font-family: var(--font-display);
+    font-size: clamp(46px, 7vw, 82px);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 24px;
+    opacity: 0;
+    animation: fadeUp 0.8s var(--ease-out) 0.2s forwards;
+  }
+  .hero h1 em {
+    font-style: italic;
+    background: linear-gradient(135deg, #5ac8fa 0%, #007aff 60%, #5856d6 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-sub {
+    font-size: 18px;
+    font-weight: 400;
+    color: var(--ink-muted);
+    max-width: 600px;
+    margin: 0 auto 44px;
+    line-height: 1.7;
+    opacity: 0;
+    animation: fadeUp 0.8s var(--ease-out) 0.35s forwards;
+  }
+
+  .hero-actions {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    flex-wrap: wrap;
+    opacity: 0;
+    animation: fadeUp 0.8s var(--ease-out) 0.5s forwards;
+  }
+
+  .btn-primary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--ink);
+    color: white;
+    font-size: 15px;
+    font-weight: 600;
+    padding: 14px 28px;
+    border-radius: 50px;
+    text-decoration: none;
+    letter-spacing: -0.01em;
+    transition: transform 0.25s var(--ease-spring), box-shadow 0.25s;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.15);
+  }
+  .btn-primary:hover {
+    transform: translateY(-2px) scale(1.02);
+    box-shadow: 0 8px 32px rgba(0,0,0,0.20);
+  }
+  .btn-secondary {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: white;
+    color: var(--ink);
+    font-size: 15px;
+    font-weight: 500;
+    padding: 13px 24px;
+    border-radius: 50px;
+    text-decoration: none;
+    border: 1px solid var(--line);
+    letter-spacing: -0.01em;
+    transition: transform 0.25s var(--ease-spring), box-shadow 0.25s;
+    box-shadow: var(--shadow-sm);
+  }
+  .btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .hero-stats {
+    margin-top: 72px;
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 1px;
+    background: var(--line);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    opacity: 0;
+    animation: fadeUp 0.8s var(--ease-out) 0.65s forwards;
+    box-shadow: var(--shadow-sm);
+  }
+  .stat-cell {
+    background: var(--card-bg);
+    backdrop-filter: blur(20px);
+    padding: 24px 20px;
+    text-align: center;
+    transition: background 0.2s;
+  }
+  .stat-cell:hover { background: rgba(255,255,255,0.9); }
+  .stat-num {
+    font-family: var(--font-display);
+    font-size: 28px;
+    color: var(--ink);
+    line-height: 1;
+    margin-bottom: 6px;
+  }
+  .stat-label {
+    font-size: 11.5px;
+    font-weight: 500;
+    color: var(--ink-faint);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ——— SECTION TITLES ——— */
+  .section-label {
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 12px;
+  }
+  .section-title {
+    font-family: var(--font-display);
+    font-size: clamp(30px, 4vw, 46px);
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    color: var(--ink);
+    margin-bottom: 16px;
+  }
+  .section-sub {
+    font-size: 16.5px;
+    color: var(--ink-muted);
+    line-height: 1.7;
+    max-width: 540px;
+  }
+  .section-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 32px;
+    margin-bottom: 48px;
+    flex-wrap: wrap;
+  }
+
+  /* ——— SECTIONS ——— */
+  section { padding: 100px 0; position: relative; z-index: 1; }
+  section:nth-child(even) { background: rgba(255,255,255,0.4); }
+
+  /* ——— GLASS CARD ——— */
+  .glass-card {
+    background: var(--card-bg);
+    backdrop-filter: blur(24px) saturate(150%);
+    -webkit-backdrop-filter: blur(24px) saturate(150%);
+    border: 1px solid var(--card-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-md);
+    transition: transform 0.35s var(--ease-out), box-shadow 0.35s;
+  }
+  .glass-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+
+  /* ——— ARCHITECTURE ——— */
+  .arch-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .arch-card {
+    padding: 28px 30px;
+  }
+  .arch-card-wide { grid-column: 1 / -1; }
+  .arch-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    margin-bottom: 16px;
+  }
+  .arch-title {
+    font-size: 17px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .arch-desc {
+    font-size: 14px;
+    color: var(--ink-muted);
+    line-height: 1.7;
+    margin-bottom: 16px;
+  }
+  .chip-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+  .chip {
+    font-size: 11.5px;
+    font-weight: 500;
+    padding: 4px 10px;
+    border-radius: 6px;
+    letter-spacing: 0.01em;
+  }
+  .chip-blue   { background: rgba(0,122,255,0.10); color: #007aff; border: 1px solid rgba(0,122,255,0.18); }
+  .chip-teal   { background: rgba(90,200,250,0.12); color: #0891b2; border: 1px solid rgba(90,200,250,0.22); }
+  .chip-gold   { background: var(--gold-soft); color: #a07830; border: 1px solid rgba(201,168,76,0.22); }
+  .chip-green  { background: rgba(46,139,87,0.10); color: var(--success); border: 1px solid rgba(46,139,87,0.18); }
+  .chip-purple { background: rgba(88,86,214,0.10); color: #5856d6; border: 1px solid rgba(88,86,214,0.18); }
+  .chip-red    { background: rgba(217,79,61,0.10); color: var(--danger); border: 1px solid rgba(217,79,61,0.18); }
+
+  /* ——— TECH STACK LAYER ——— */
+  .stack-layer {
+    display: flex;
+    align-items: stretch;
+    gap: 14px;
+    margin-bottom: 10px;
+  }
+  .layer-label {
+    font-family: var(--font-mono);
+    font-size: 10px;
+    color: var(--ink-faint);
+    font-weight: 500;
+    width: 72px;
+    display: flex;
+    align-items: center;
+    flex-shrink: 0;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+  .layer-content {
+    flex: 1;
+    background: var(--frost);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 14px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    align-items: center;
+  }
+
+  /* ——— ROUTES TABLE ——— */
+  .routes-table { width: 100%; border-collapse: collapse; }
+  .routes-table thead th {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    padding: 0 12px 12px;
+    text-align: left;
+    border-bottom: 1px solid var(--line);
+  }
+  .routes-table tbody tr {
+    border-bottom: 1px solid var(--line);
+    transition: background 0.15s;
+  }
+  .routes-table tbody tr:hover { background: rgba(0,0,0,0.02); }
+  .routes-table tbody tr:last-child { border-bottom: none; }
+  .routes-table td { padding: 11px 12px; vertical-align: middle; }
+  .route-path {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    color: var(--teal);
+    font-weight: 500;
+  }
+  .route-desc { font-size: 13px; color: var(--ink-muted); }
+  .route-badge {
+    font-size: 10px;
+    font-weight: 600;
+    padding: 3px 8px;
+    border-radius: 5px;
+    white-space: nowrap;
+  }
+  .rb-auth   { background: rgba(0,122,255,0.10); color: #007aff; border: 1px solid rgba(0,122,255,0.18); }
+  .rb-pub    { background: rgba(46,139,87,0.10); color: #2e8b57; border: 1px solid rgba(46,139,87,0.18); }
+  .rb-lazy   { background: rgba(88,86,214,0.10); color: #5856d6; border: 1px solid rgba(88,86,214,0.18); }
+  .rb-ai     { background: rgba(201,168,76,0.12); color: #a07830; border: 1px solid rgba(201,168,76,0.22); }
+
+  /* ——— FEATURES GRID ——— */
+  .features-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+  }
+  .feat-card { padding: 26px; }
+  .feat-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 19px;
+    margin-bottom: 14px;
+    transition: transform 0.3s var(--ease-spring);
+  }
+  .feat-card:hover .feat-icon { transform: scale(1.12) rotate(-4deg); }
+  .feat-card-title {
+    font-size: 15px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    color: var(--ink);
+    margin-bottom: 8px;
+  }
+  .feat-card-desc {
+    font-size: 13.5px;
+    color: var(--ink-muted);
+    line-height: 1.65;
+  }
+  .feat-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 5px;
+    margin-top: 14px;
+  }
+
+  /* ——— AI SECTION ——— */
+  .ai-section {
+    background: linear-gradient(145deg, #0a0f1a 0%, #0d1a2e 50%, #091223 100%);
+    position: relative;
+    overflow: hidden;
+  }
+  .ai-section::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 60% 70% at 20% 50%, rgba(90,200,250,0.12) 0%, transparent 60%),
+      radial-gradient(ellipse 50% 60% at 80% 30%, rgba(0,122,255,0.15) 0%, transparent 55%),
+      radial-gradient(ellipse 40% 50% at 50% 80%, rgba(88,86,214,0.10) 0%, transparent 50%);
+    pointer-events: none;
+  }
+  .ai-section .section-label { color: #5ac8fa; }
+  .ai-section .section-title { color: white; }
+  .ai-section .section-sub { color: rgba(255,255,255,0.55); }
+
+  .ai-grid {
+    display: grid;
+    grid-template-columns: 1fr 1.3fr;
+    gap: 32px;
+    align-items: start;
+  }
+  .ai-feature-list { display: flex; flex-direction: column; gap: 14px; }
+  .ai-feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 18px 20px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: background 0.25s, border-color 0.25s, transform 0.3s var(--ease-out);
+  }
+  .ai-feature:hover, .ai-feature.active {
+    background: rgba(0,122,255,0.12);
+    border-color: rgba(0,122,255,0.30);
+    transform: translateX(6px);
+  }
+  .ai-feature-icon {
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: rgba(0,122,255,0.15);
+    border: 1px solid rgba(0,122,255,0.25);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    flex-shrink: 0;
+  }
+  .ai-feature-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: white;
+    margin-bottom: 4px;
+  }
+  .ai-feature-desc {
+    font-size: 12.5px;
+    color: rgba(255,255,255,0.50);
+    line-height: 1.6;
+  }
+
+  .ai-demo-panel {
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.10);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    position: relative;
+    overflow: hidden;
+  }
+  .ai-demo-panel::before {
+    content: '';
+    position: absolute;
+    top: -50px; right: -50px;
+    width: 200px; height: 200px;
+    background: radial-gradient(circle, rgba(0,122,255,0.25) 0%, transparent 70%);
+    border-radius: 50%;
+  }
+  .ai-demo-header {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: rgba(255,255,255,0.35);
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .ai-demo-header::before {
+    content: '';
+    display: block;
+    width: 8px; height: 8px;
+    background: #5ac8fa;
+    border-radius: 50%;
+    animation: pulse-dot 2s ease-in-out infinite;
+  }
+  .ai-code-block {
+    font-family: var(--font-mono);
+    font-size: 12px;
+    line-height: 1.8;
+    color: rgba(255,255,255,0.65);
+    background: rgba(0,0,0,0.25);
+    border: 1px solid rgba(255,255,255,0.06);
+    border-radius: 10px;
+    padding: 18px 20px;
+    overflow-x: auto;
+  }
+  .code-kw   { color: #ff7eb3; }
+  .code-str  { color: #a8ff78; }
+  .code-fn   { color: #5ac8fa; }
+  .code-cm   { color: rgba(255,255,255,0.25); font-style: italic; }
+  .code-num  { color: #ffd868; }
+
+  .ai-output-preview {
+    margin-top: 18px;
+    padding: 16px 18px;
+    background: rgba(0,122,255,0.08);
+    border: 1px solid rgba(0,122,255,0.20);
+    border-radius: 10px;
+  }
+  .ai-output-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: #5ac8fa;
+    margin-bottom: 8px;
+  }
+  .ai-output-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+  .ai-output-chip {
+    font-size: 11.5px;
+    padding: 4px 10px;
+    border-radius: 6px;
+    background: rgba(90,200,250,0.12);
+    border: 1px solid rgba(90,200,250,0.22);
+    color: #7dd3fc;
+    font-weight: 500;
+  }
+
+  /* ——— DESIGN SYSTEM ——— */
+  .ds-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+  .ds-card { padding: 26px 28px; }
+  .ds-card-title {
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--ink);
+    margin-bottom: 16px;
+    letter-spacing: -0.01em;
+  }
+  .color-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .color-row:last-child { border-bottom: none; }
+  .color-swatch {
+    width: 30px; height: 30px;
+    border-radius: 8px;
+    border: 1px solid rgba(0,0,0,0.06);
+    flex-shrink: 0;
+  }
+  .color-info { flex: 1; }
+  .color-name { font-size: 12px; font-weight: 500; color: var(--ink); }
+  .color-hex  { font-family: var(--font-mono); font-size: 10.5px; color: var(--ink-faint); }
+
+  .type-row {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .type-row:last-child { border-bottom: none; }
+  .type-label { font-size: 10.5px; font-weight: 500; color: var(--ink-faint); width: 56px; flex-shrink: 0; }
+
+  .motion-item {
+    padding: 8px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .motion-item:last-child { border-bottom: none; }
+  .motion-name { font-size: 12px; font-weight: 600; color: var(--ink); margin-bottom: 3px; }
+  .motion-val { font-family: var(--font-mono); font-size: 11px; color: var(--ink-muted); }
+
+  /* ——— COMPONENT PREVIEW ——— */
+  .preview-area {
+    padding: 36px;
+    background: white;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-lg);
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  .preview-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 0.10em;
+    text-transform: uppercase;
+    color: var(--ink-faint);
+    margin-bottom: 4px;
+  }
+  /* Mini file card component */
+  .mini-file-card {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    background: var(--frost);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.2s var(--ease-out);
+    position: relative;
+    overflow: hidden;
+  }
+  .mini-file-card::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(0,122,255,0.04) 0%, transparent 60%);
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+  .mini-file-card:hover {
+    background: white;
+    border-color: rgba(0,122,255,0.20);
+    transform: translateX(4px);
+    box-shadow: 0 4px 16px rgba(0,122,255,0.08);
+  }
+  .mini-file-card:hover::after { opacity: 1; }
+  .file-thumb {
+    width: 36px; height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .file-info { flex: 1; min-width: 0; }
+  .file-name { font-size: 13px; font-weight: 500; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .file-meta { font-size: 11px; color: var(--ink-faint); font-family: var(--font-mono); margin-top: 2px; }
+  .file-enc {
+    font-size: 10px; font-weight: 600;
+    padding: 3px 8px; border-radius: 5px;
+    background: rgba(46,139,87,0.10);
+    color: var(--success);
+    border: 1px solid rgba(46,139,87,0.18);
+    white-space: nowrap;
+  }
+
+  /* Mini button row */
+  .btn-row { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .mini-btn {
+    font-size: 12.5px;
+    font-weight: 600;
+    padding: 9px 18px;
+    border-radius: 50px;
+    border: none;
+    cursor: pointer;
+    transition: all 0.2s var(--ease-spring);
+    letter-spacing: -0.01em;
+  }
+  .mini-btn-primary { background: var(--ink); color: white; }
+  .mini-btn-primary:hover { transform: translateY(-1px) scale(1.03); box-shadow: 0 4px 14px rgba(0,0,0,0.18); }
+  .mini-btn-secondary { background: white; color: var(--ink); border: 1px solid var(--line); box-shadow: var(--shadow-sm); }
+  .mini-btn-secondary:hover { transform: translateY(-1px); box-shadow: var(--shadow-md); }
+  .mini-btn-teal { background: var(--teal); color: white; }
+  .mini-btn-teal:hover { transform: translateY(-1px) scale(1.03); box-shadow: 0 4px 14px rgba(0,122,255,0.30); }
+
+  /* Mini upload zone */
+  .mini-upload {
+    border: 2px dashed rgba(0,122,255,0.25);
+    border-radius: 12px;
+    padding: 22px;
+    text-align: center;
+    background: var(--teal-soft);
+    cursor: pointer;
+    transition: all 0.25s var(--ease-out);
+  }
+  .mini-upload:hover {
+    border-color: rgba(0,122,255,0.45);
+    background: rgba(0,122,255,0.08);
+    transform: scale(1.01);
+  }
+  .upload-icon { font-size: 24px; margin-bottom: 8px; }
+  .upload-text { font-size: 13px; color: var(--teal); font-weight: 500; }
+  .upload-sub  { font-size: 11px; color: var(--ink-faint); margin-top: 3px; }
+
+  /* Mini progress bar */
+  .progress-item { }
+  .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+  .progress-name { font-size: 12px; font-weight: 500; color: var(--ink); }
+  .progress-pct  { font-size: 11px; font-family: var(--font-mono); color: var(--ink-faint); }
+  .progress-bar-bg { height: 4px; background: var(--line); border-radius: 4px; overflow: hidden; }
+  .progress-bar-fill { height: 100%; border-radius: 4px; }
+  .fill-blue   { background: linear-gradient(90deg, #5ac8fa, #007aff); width: 68%; animation: growBar 1.2s var(--ease-out) 0.5s backwards; }
+  .fill-green  { background: linear-gradient(90deg, #52d68a, #2e8b57); width: 42%; animation: growBar 1.2s var(--ease-out) 0.7s backwards; }
+  .fill-gold   { background: linear-gradient(90deg, #ffd868, #c9a84c); width: 85%; animation: growBar 1.2s var(--ease-out) 0.9s backwards; }
+  @keyframes growBar {
+    from { width: 0; }
+  }
+
+  /* ——— PERFORMANCE ——— */
+  .perf-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
+  .perf-card { padding: 26px; }
+  .perf-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 16px;
+  }
+  .perf-icon {
+    width: 40px; height: 40px;
+    border-radius: 11px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 18px;
+  }
+  .perf-card-title { font-size: 15px; font-weight: 600; color: var(--ink); }
+  .perf-card-sub   { font-size: 12.5px; color: var(--ink-faint); margin-top: 2px; }
+  .perf-metric {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--line);
+    font-size: 13px;
+  }
+  .perf-metric:last-child { border-bottom: none; }
+  .perf-key { color: var(--ink-muted); }
+  .perf-val { font-family: var(--font-mono); font-size: 12px; color: var(--ink); font-weight: 500; }
+  .perf-good { color: var(--success); }
+  .perf-warn { color: #c9a84c; }
+
+  /* ——— SECURITY ——— */
+  .security-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  .sec-feature {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+    padding: 20px;
+  }
+  .sec-icon {
+    width: 40px; height: 40px;
+    border-radius: 11px;
+    background: rgba(46,139,87,0.10);
+    border: 1px solid rgba(46,139,87,0.18);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 17px;
+    flex-shrink: 0;
+  }
+  .sec-title { font-size: 14px; font-weight: 600; color: var(--ink); margin-bottom: 5px; }
+  .sec-desc  { font-size: 13px; color: var(--ink-muted); line-height: 1.65; }
+
+  /* ——— FOOTER ——— */
+  footer {
+    padding: 60px 0 40px;
+    border-top: 1px solid var(--line);
+    background: rgba(255,255,255,0.4);
+    position: relative;
+    z-index: 1;
+  }
+  .footer-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+    flex-wrap: wrap;
+  }
+  .footer-brand {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--ink);
+  }
+  .footer-copy {
+    font-size: 13px;
+    color: var(--ink-faint);
+    margin-top: 4px;
+  }
+  .footer-badges { display: flex; gap: 8px; flex-wrap: wrap; }
+  .footer-badge {
+    font-size: 11px;
+    font-weight: 600;
+    padding: 5px 12px;
+    border-radius: 20px;
+    border: 1px solid var(--line);
+    background: white;
+    color: var(--ink-muted);
+    letter-spacing: 0.02em;
+  }
+
+  /* ——— REVEAL ANIMATIONS ——— */
+  .reveal {
+    opacity: 0;
+    transform: translateY(24px);
+    transition: opacity 0.7s var(--ease-out), transform 0.7s var(--ease-out);
+  }
+  .reveal.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+  .reveal-delay-1 { transition-delay: 0.1s; }
+  .reveal-delay-2 { transition-delay: 0.2s; }
+  .reveal-delay-3 { transition-delay: 0.3s; }
+  .reveal-delay-4 { transition-delay: 0.4s; }
+
+  /* ——— SCROLLBAR ——— */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: rgba(0,0,0,0.12); border-radius: 3px; }
+
+  /* ——— RESPONSIVE ——— */
+  @media (max-width: 900px) {
+    .arch-grid, .features-grid, .ds-grid, .security-grid { grid-template-columns: 1fr; }
+    .arch-card-wide { grid-column: auto; }
+    .ai-grid { grid-template-columns: 1fr; }
+    .hero-stats { grid-template-columns: repeat(3, 1fr); }
+    .perf-grid { grid-template-columns: 1fr; }
+    nav .nav-links { display: none; }
+  }
+  @media (max-width: 640px) {
+    .container { padding: 0 20px; }
+    section { padding: 70px 0; }
+    .hero { padding: 90px 0 70px; }
+    .hero-stats { grid-template-columns: 1fr 1fr; }
+    .ds-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<!-- Ambient blobs -->
+<div class="ambient">
+  <div class="ambient-blob blob-1"></div>
+  <div class="ambient-blob blob-2"></div>
+  <div class="ambient-blob blob-3"></div>
+</div>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-inner">
+    <a href="#" class="logo-mark">
+      <div class="logo-icon">
+        <svg viewBox="0 0 24 24"><path d="M12 2C8.7 2 6 4.7 6 8c0 .5.1 1 .2 1.4C4.3 10.3 3 12 3 14c0 2.8 2.2 5 5 5h9c2.8 0 5-2.2 5-5 0-2.4-1.7-4.4-4-4.9C17.3 7.4 14.9 5 12 5c0-1.7-0-3 0-3z"/></svg>
+      </div>
+      CloudVault
+    </a>
+    <ul class="nav-links">
+      <li><a href="#architecture">Architecture</a></li>
+      <li><a href="#routes">Routes</a></li>
+      <li><a href="#features">Features</a></li>
+      <li><a href="#ai-powered">AI Layer</a></li>
+      <li><a href="#design-system">Design</a></li>
+      <li><a href="#components" class="nav-cta">Components</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="container">
+    <div class="hero-eyebrow">
+      <span class="eyebrow-dot"></span>
+      Frontend Framework v1.0 — April 2026
+    </div>
+    <h1>The cloud storage<br>built to <em>feel alive</em></h1>
+    <p class="hero-sub">
+      A complete, production-ready framework for CloudVault — beautifully crafted for web and Android, powered by Claude AI, with privacy and elegance at its core.
+    </p>
+    <div class="hero-actions">
+      <a href="#architecture" class="btn-primary">
+        <span>Explore Framework</span>
+        <span>→</span>
+      </a>
+      <a href="#ai-powered" class="btn-secondary">
+        <span>✦</span>
+        <span>See AI Integration</span>
+      </a>
+    </div>
+    <div class="hero-stats">
+      <div class="stat-cell">
+        <div class="stat-num">15</div>
+        <div class="stat-label">Feature Modules</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num">38</div>
+        <div class="stat-label">Route Endpoints</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num">React 18</div>
+        <div class="stat-label">Core Stack</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num">E2E</div>
+        <div class="stat-label">Encrypted</div>
+      </div>
+      <div class="stat-cell">
+        <div class="stat-num">Claude</div>
+        <div class="stat-label">AI Powered</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ARCHITECTURE -->
+<section id="architecture">
+  <div class="container">
+    <div class="section-header reveal">
+      <div>
+        <div class="section-label">01 — Architecture</div>
+        <h2 class="section-title">Built on a solid,<br>layered foundation</h2>
+        <p class="section-sub">React 18 + TypeScript + Vite, structured for scale — from individual users to enterprise teams.</p>
+      </div>
+    </div>
+
+    <!-- Stack Layers -->
+    <div class="glass-card reveal" style="padding: 28px 32px; margin-bottom: 20px;">
+      <div class="ds-card-title" style="margin-bottom: 20px; font-size: 15px;">Technology Stack</div>
+      <div class="stack-layer">
+        <span class="layer-label">Rendering</span>
+        <div class="layer-content">
+          <span class="chip chip-blue">React 18</span>
+          <span class="chip chip-blue">TypeScript 5</span>
+          <span class="chip chip-teal">Vite 5</span>
+          <span class="chip chip-purple">React Router 6</span>
+        </div>
+      </div>
+      <div class="stack-layer">
+        <span class="layer-label">UI / UX</span>
+        <div class="layer-content">
+          <span class="chip chip-purple">Framer Motion</span>
+          <span class="chip chip-teal">Tailwind CSS</span>
+          <span class="chip chip-blue">Lucide Icons</span>
+          <span class="chip chip-green">Radix UI</span>
+          <span class="chip chip-gold">Mona Sans</span>
+        </div>
+      </div>
+      <div class="stack-layer">
+        <span class="layer-label">State</span>
+        <div class="layer-content">
+          <span class="chip chip-blue">Zustand</span>
+          <span class="chip chip-teal">React Query</span>
+          <span class="chip chip-purple">Jotai (atoms)</span>
+        </div>
+      </div>
+      <div class="stack-layer">
+        <span class="layer-label">AI Layer</span>
+        <div class="layer-content">
+          <span class="chip chip-gold">Anthropic Claude API</span>
+          <span class="chip chip-gold">claude-sonnet-4</span>
+          <span class="chip chip-green">Streaming responses</span>
+          <span class="chip chip-teal">Tool use / function calls</span>
+        </div>
+      </div>
+      <div class="stack-layer">
+        <span class="layer-label">Mobile</span>
+        <div class="layer-content">
+          <span class="chip chip-green">Capacitor 6</span>
+          <span class="chip chip-green">Android SDK</span>
+          <span class="chip chip-blue">PWA-ready</span>
+          <span class="chip chip-teal">Biometric Auth</span>
+        </div>
+      </div>
+      <div class="stack-layer">
+        <span class="layer-label">Security</span>
+        <div class="layer-content">
+          <span class="chip chip-red">E2E Encryption</span>
+          <span class="chip chip-red">AES-256-GCM</span>
+          <span class="chip chip-red">Zero-Knowledge</span>
+          <span class="chip chip-gold">JWT + Refresh</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="arch-grid">
+      <div class="glass-card arch-card reveal reveal-delay-1">
+        <div class="arch-icon" style="background: rgba(0,122,255,0.10); border: 1px solid rgba(0,122,255,0.18);">🧩</div>
+        <div class="arch-title">Module System</div>
+        <div class="arch-desc">15 lazy-loaded feature modules with code-splitting. Each module owns its routes, state slice, and components — true separation of concerns.</div>
+        <div class="chip-row">
+          <span class="chip chip-blue">Lazy Imports</span>
+          <span class="chip chip-purple">Code Splitting</span>
+          <span class="chip chip-teal">Dynamic Routes</span>
+        </div>
+      </div>
+      <div class="glass-card arch-card reveal reveal-delay-2">
+        <div class="arch-icon" style="background: rgba(46,139,87,0.10); border: 1px solid rgba(46,139,87,0.18);">🔐</div>
+        <div class="arch-title">Auth Architecture</div>
+        <div class="arch-desc">JWT-based auth with silent refresh, protected route guards, and biometric unlock support on Android via Capacitor plugins.</div>
+        <div class="chip-row">
+          <span class="chip chip-green">JWT + Refresh</span>
+          <span class="chip chip-gold">Biometrics</span>
+          <span class="chip chip-blue">Route Guards</span>
+        </div>
+      </div>
+      <div class="glass-card arch-card reveal reveal-delay-3">
+        <div class="arch-icon" style="background: rgba(201,168,76,0.12); border: 1px solid rgba(201,168,76,0.22);">⚡</div>
+        <div class="arch-title">Performance Budget</div>
+        <div class="arch-desc">LCP &lt;2.5s, FID &lt;100ms, CLS &lt;0.1. Service workers for offline-first, virtual scrolling for large file lists, image lazy loading.</div>
+        <div class="chip-row">
+          <span class="chip chip-gold">LCP &lt;2.5s</span>
+          <span class="chip chip-teal">Virtual Scroll</span>
+          <span class="chip chip-blue">Offline First</span>
+        </div>
+      </div>
+      <div class="glass-card arch-card reveal reveal-delay-4">
+        <div class="arch-icon" style="background: rgba(88,86,214,0.10); border: 1px solid rgba(88,86,214,0.18);">📱</div>
+        <div class="arch-title">Android-Native Feel</div>
+        <div class="arch-desc">Capacitor bridges system-level features: file picker, camera, biometrics, push notifications, and deep links — all with a native feel.</div>
+        <div class="chip-row">
+          <span class="chip chip-purple">Capacitor 6</span>
+          <span class="chip chip-green">File Picker</span>
+          <span class="chip chip-blue">Push Notifs</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROUTES -->
+<section id="routes">
+  <div class="container">
+    <div class="section-header reveal">
+      <div>
+        <div class="section-label">02 — Routing</div>
+        <h2 class="section-title">38 thoughtfully<br>designed routes</h2>
+        <p class="section-sub">Every screen planned — from auth flows to AI-powered file intelligence.</p>
+      </div>
+    </div>
+
+    <div class="glass-card reveal" style="overflow: hidden;">
+      <table class="routes-table">
+        <thead>
+          <tr>
+            <th style="padding-left: 20px;">Path</th>
+            <th>Description</th>
+            <th>Access</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="route-path" style="padding-left: 20px;">/login</td>
+            <td class="route-desc">Sign in with email, Google OAuth, biometric</td>
+            <td><span class="route-badge rb-pub">Public</span></td>
+          </tr>
+          <tr>
+            <td class="route-path" style="padding-left: 20px;">/dashboard</td>
+            <td class="route-desc">Home — recent files, storage usage, quick actions</td>
+            <td><span class="route-badge rb-auth">Auth</span></td>
+          </tr>
+          <tr>
+            <td class="route-path" style="padding-left: 20px;">/files/:folderId?</td>
+            <td class="route-desc">File browser with grid / list toggle, drag & drop</td>
+            <td><span class="route-badge rb-auth">Auth</span></td>
+          </tr>
+          <tr>
+            <td class="route-path" style="padding-left: 20px;">/files/:id/preview</td>
+            <td class="route-desc">Full-screen file preview — PDF, image, video, doc</td>
+            <td><span class="route-badge rb-auth">Auth</span></td>
+          </tr>
+          <tr>
+            <td class="route-path" style="padding-left: 20px;">/ai/assistant</td>
+            <td class="route-desc">Claude AI chat — ask about files, search, summarise</td>
+            <td><span class="route-badge rb-ai">AI</span></td>
+          </tr>
+          <tr>
+            <td class="route-path" style="padding-left: 20px;">/ai/search</td>
+            <td class="route-desc">Semantic search across all vault contents</td>
+            <td><span class="route-badge rb-ai">AI</span></td>
+          </tr>
+          <tr>
+            <td class="route-path" style="padding-left: 20px;">/ai/insights</td>
+            <td class="route-desc">AI-generated usage patterns, smart tags, summaries</td>
+            <td><span class="route-badge rb-ai">AI</span></td>
+          </tr>
+          <tr>
+            <td class="route-path" style="padding-left: 20px;">/shared/:linkId</td>
+            <td class="route-desc">Public share recipient view — privacy report shown</td>
+            <td><span class="route-badge rb-pub">Public</span></td>
+          </tr>
+          <tr>
+            <td class="route-path" style="padding-left: 20px;">/shared/manage</td>
+            <td class="route-desc">Manage all outgoing shared links, expiry, revoke</td>
+            <td><span class="route-badge rb-auth">Auth</span></td>
+          </tr>
+          <tr>
+            <td class="route-path" style="padding-left: 20px;">/upload</td>
+            <td class="route-desc">Multi-file uploader with progress, chunked transfer</td>
+            <td><span class="route-badge rb-auth">Auth</span></td>
+          </tr>
+          <tr>
+            <td class="route-path" style="padding-left: 20px;">/trash</td>
+            <td class="route-desc">Soft-deleted files, restore or permanent delete</td>
+            <td><span class="route-badge rb-auth">Auth</span></td>
+          </tr>
+          <tr>
+            <td class="route-path" style="padding-left: 20px;">/settings/security</td>
+            <td class="route-desc">Encryption keys, 2FA, devices, audit log</td>
+            <td><span class="route-badge rb-auth">Auth</span></td>
+          </tr>
+          <tr>
+            <td class="route-path" style="padding-left: 20px;">/settings/billing</td>
+            <td class="route-desc">Plan management, storage top-up, invoices</td>
+            <td><span class="route-badge rb-auth">Auth</span></td>
+          </tr>
+          <tr>
+            <td class="route-path" style="padding-left: 20px;">/onboarding</td>
+            <td class="route-desc">First-run wizard — key generation, vault tour</td>
+            <td><span class="route-badge rb-lazy">Lazy</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<section id="features">
+  <div class="container">
+    <div class="section-header reveal">
+      <div>
+        <div class="section-label">03 — Features</div>
+        <h2 class="section-title">Everything users<br>expect, and more</h2>
+        <p class="section-sub">Designed to lead in privacy, match on collaboration, and own on AI.</p>
+      </div>
+    </div>
+    <div class="features-grid">
+      <div class="glass-card feat-card reveal reveal-delay-1">
+        <div class="feat-icon" style="background: rgba(0,122,255,0.10); border: 1px solid rgba(0,122,255,0.18);">🗂️</div>
+        <div class="feat-card-title">Smart File Browser</div>
+        <div class="feat-card-desc">Grid & list views, virtual scrolling for 10K+ files, drag & drop upload, multi-select with bulk actions, breadcrumb navigation.</div>
+        <div class="feat-tags">
+          <span class="chip chip-blue">P1</span>
+          <span class="chip chip-teal">Virtual List</span>
+          <span class="chip chip-purple">Drag & Drop</span>
+        </div>
+      </div>
+      <div class="glass-card feat-card reveal reveal-delay-2">
+        <div class="feat-icon" style="background: rgba(46,139,87,0.10); border: 1px solid rgba(46,139,87,0.18);">🔒</div>
+        <div class="feat-card-title">Visible Encryption</div>
+        <div class="feat-card-desc">Every file shows its encryption status inline — a feature no competitor has. Encryption indicator, zero-knowledge badge, and key proof on demand.</div>
+        <div class="feat-tags">
+          <span class="chip chip-green">Unique</span>
+          <span class="chip chip-green">E2E</span>
+          <span class="chip chip-red">P1 Lead</span>
+        </div>
+      </div>
+      <div class="glass-card feat-card reveal reveal-delay-3">
+        <div class="feat-icon" style="background: rgba(201,168,76,0.12); border: 1px solid rgba(201,168,76,0.22);">✦</div>
+        <div class="feat-card-title">Claude AI Assistant</div>
+        <div class="feat-card-desc">Ask anything about your vault. Find files by description, summarise documents, auto-tag, get smart suggestions — all via natural language.</div>
+        <div class="feat-tags">
+          <span class="chip chip-gold">AI</span>
+          <span class="chip chip-gold">Claude Sonnet</span>
+          <span class="chip chip-blue">Streaming</span>
+        </div>
+      </div>
+      <div class="glass-card feat-card reveal reveal-delay-1">
+        <div class="feat-icon" style="background: rgba(90,200,250,0.12); border: 1px solid rgba(90,200,250,0.22);">🔗</div>
+        <div class="feat-card-title">Privacy-First Sharing</div>
+        <div class="feat-card-desc">Share links with expiry, password, and download limits. Recipients see a "Privacy Report" confirming encryption state — unique in market.</div>
+        <div class="feat-tags">
+          <span class="chip chip-teal">Expiry Links</span>
+          <span class="chip chip-green">Privacy Report</span>
+        </div>
+      </div>
+      <div class="glass-card feat-card reveal reveal-delay-2">
+        <div class="feat-icon" style="background: rgba(88,86,214,0.10); border: 1px solid rgba(88,86,214,0.18);">📱</div>
+        <div class="feat-card-title">Android Native App</div>
+        <div class="feat-card-desc">Built with Capacitor — biometric unlock, system share sheet, background sync, deep links, camera upload, and offline vault access.</div>
+        <div class="feat-tags">
+          <span class="chip chip-purple">Capacitor 6</span>
+          <span class="chip chip-green">Biometrics</span>
+          <span class="chip chip-blue">Offline</span>
+        </div>
+      </div>
+      <div class="glass-card feat-card reveal reveal-delay-3">
+        <div class="feat-icon" style="background: rgba(217,79,61,0.10); border: 1px solid rgba(217,79,61,0.18);">📊</div>
+        <div class="feat-card-title">Cost-Per-File Display</div>
+        <div class="feat-card-desc">Show users exactly how much storage each file consumes and what it costs — another feature no competitor offers, helping users manage quotas.</div>
+        <div class="feat-tags">
+          <span class="chip chip-red">Unique</span>
+          <span class="chip chip-gold">Storage Intel</span>
+        </div>
+      </div>
+      <div class="glass-card feat-card reveal reveal-delay-1">
+        <div class="feat-icon" style="background: rgba(46,139,87,0.10); border: 1px solid rgba(46,139,87,0.18);">🖼️</div>
+        <div class="feat-card-title">Rich File Previews</div>
+        <div class="feat-card-desc">PDF, image, video, audio, code, Office docs — rendered in-browser. AI can summarise any preview on demand without downloading.</div>
+        <div class="feat-tags">
+          <span class="chip chip-green">PDF · Image · Video</span>
+          <span class="chip chip-gold">AI Summary</span>
+        </div>
+      </div>
+      <div class="glass-card feat-card reveal reveal-delay-2">
+        <div class="feat-icon" style="background: rgba(0,122,255,0.10); border: 1px solid rgba(0,122,255,0.18);">🔍</div>
+        <div class="feat-card-title">Semantic Search</div>
+        <div class="feat-card-desc">AI-powered full-text and semantic search across all vault content. Find files by describing what's inside — not just filename matching.</div>
+        <div class="feat-tags">
+          <span class="chip chip-blue">Vector Search</span>
+          <span class="chip chip-gold">AI</span>
+        </div>
+      </div>
+      <div class="glass-card feat-card reveal reveal-delay-3">
+        <div class="feat-icon" style="background: rgba(201,168,76,0.12); border: 1px solid rgba(201,168,76,0.22);">📅</div>
+        <div class="feat-card-title">File Versioning</div>
+        <div class="feat-card-desc">Automatic version history for every file. Visual diff for documents, restore any version, and AI-generated change summaries between versions.</div>
+        <div class="feat-tags">
+          <span class="chip chip-gold">Auto-Version</span>
+          <span class="chip chip-blue">Visual Diff</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- AI SECTION (dark) -->
+<section id="ai-powered" class="ai-section">
+  <div class="container">
+    <div class="section-header reveal" style="margin-bottom: 48px;">
+      <div>
+        <div class="section-label">04 — AI Integration</div>
+        <h2 class="section-title">Powered by Claude.<br>Built for intelligence.</h2>
+        <p class="section-sub" style="color: rgba(255,255,255,0.55);">Every file becomes smarter. CloudVault embeds Claude AI into the core product experience — not as a bolt-on, but as a first-class citizen.</p>
+      </div>
+    </div>
+
+    <div class="ai-grid">
+      <div class="ai-feature-list">
+        <div class="ai-feature active" onclick="setActiveAI(this, 0)">
+          <div class="ai-feature-icon">💬</div>
+          <div>
+            <div class="ai-feature-name">Conversational Vault Assistant</div>
+            <div class="ai-feature-desc">"Find the contract I signed last March" — Claude searches, previews, and surfaces the file instantly.</div>
+          </div>
+        </div>
+        <div class="ai-feature" onclick="setActiveAI(this, 1)">
+          <div class="ai-feature-icon">📝</div>
+          <div>
+            <div class="ai-feature-name">Document Summarisation</div>
+            <div class="ai-feature-desc">Instant TL;DR on any PDF, doc, or presentation — without downloading or leaving the preview.</div>
+          </div>
+        </div>
+        <div class="ai-feature" onclick="setActiveAI(this, 2)">
+          <div class="ai-feature-icon">🏷️</div>
+          <div>
+            <div class="ai-feature-name">Auto-Tagging & Organisation</div>
+            <div class="ai-feature-desc">Claude reads file content and automatically applies smart tags, categories, and suggested folder moves.</div>
+          </div>
+        </div>
+        <div class="ai-feature" onclick="setActiveAI(this, 3)">
+          <div class="ai-feature-icon">🔍</div>
+          <div>
+            <div class="ai-feature-name">Semantic Search Engine</div>
+            <div class="ai-feature-desc">Find files by what's inside them, not just the filename. Embeddings-powered search across all vault content.</div>
+          </div>
+        </div>
+        <div class="ai-feature" onclick="setActiveAI(this, 4)">
+          <div class="ai-feature-icon">📊</div>
+          <div>
+            <div class="ai-feature-name">Vault Insights Dashboard</div>
+            <div class="ai-feature-desc">AI surfaces patterns: which files take most storage, what's never opened, what should be archived.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="ai-demo-panel reveal reveal-delay-2">
+        <div class="ai-demo-header">Live AI Integration — Claude API</div>
+        <div class="ai-code-block" id="ai-code-display">
+<span class="code-cm">// CloudVault AI — Vault Assistant</span><br>
+<span class="code-kw">const</span> <span class="code-fn">askVaultAssistant</span> = <span class="code-kw">async</span> (query, vaultContext) => {<br>
+&nbsp;&nbsp;<span class="code-kw">const</span> response = <span class="code-kw">await</span> fetch(<span class="code-str">"https://api.anthropic.com/v1/messages"</span>, {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;method: <span class="code-str">"POST"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;headers: { <span class="code-str">"Content-Type"</span>: <span class="code-str">"application/json"</span> },<br>
+&nbsp;&nbsp;&nbsp;&nbsp;body: JSON.stringify({<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;model: <span class="code-str">"claude-sonnet-4-20250514"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;max_tokens: <span class="code-num">1000</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;system: <span class="code-str">"You are the CloudVault AI assistant.<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Help users find, summarise and organise their files."</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;messages: [{ role: <span class="code-str">"user"</span>, content: query }]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;})<br>
+&nbsp;&nbsp;});<br>
+&nbsp;&nbsp;<span class="code-kw">return</span> response.json();<br>
+};
+        </div>
+        <div class="ai-output-preview">
+          <div class="ai-output-label">AI-Detected File Tags (Example)</div>
+          <div class="ai-output-chips" id="ai-chips">
+            <span class="ai-output-chip">contract</span>
+            <span class="ai-output-chip">legal-2024</span>
+            <span class="ai-output-chip">signed</span>
+            <span class="ai-output-chip">financial</span>
+            <span class="ai-output-chip">Q1-review</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- DESIGN SYSTEM -->
+<section id="design-system">
+  <div class="container">
+    <div class="section-header reveal">
+      <div>
+        <div class="section-label">05 — Design System</div>
+        <h2 class="section-title">Apple-inspired,<br>CloudVault-owned</h2>
+        <p class="section-sub">Soft, elegant, precise. Every token, motion, and typeface chosen with intention.</p>
+      </div>
+    </div>
+    <div class="ds-grid">
+      <div class="glass-card ds-card reveal reveal-delay-1">
+        <div class="ds-card-title">Color Palette</div>
+        <div class="color-row">
+          <div class="color-swatch" style="background:#007aff;"></div>
+          <div class="color-info"><div class="color-name">Vault Blue</div><div class="color-hex">#007AFF — Primary</div></div>
+        </div>
+        <div class="color-row">
+          <div class="color-swatch" style="background:#5ac8fa;"></div>
+          <div class="color-info"><div class="color-name">Sky</div><div class="color-hex">#5AC8FA — Accent</div></div>
+        </div>
+        <div class="color-row">
+          <div class="color-swatch" style="background:#1a1917;"></div>
+          <div class="color-info"><div class="color-name">Ink</div><div class="color-hex">#1A1917 — Text</div></div>
+        </div>
+        <div class="color-row">
+          <div class="color-swatch" style="background:#f5f4f2;"></div>
+          <div class="color-info"><div class="color-name">Pearl</div><div class="color-hex">#F5F4F2 — Background</div></div>
+        </div>
+        <div class="color-row">
+          <div class="color-swatch" style="background:#c9a84c;"></div>
+          <div class="color-info"><div class="color-name">Gold</div><div class="color-hex">#C9A84C — AI Accent</div></div>
+        </div>
+        <div class="color-row">
+          <div class="color-swatch" style="background:#2e8b57;"></div>
+          <div class="color-info"><div class="color-name">Encrypted</div><div class="color-hex">#2E8B57 — Security</div></div>
+        </div>
+      </div>
+
+      <div class="glass-card ds-card reveal reveal-delay-2">
+        <div class="ds-card-title">Typography Scale</div>
+        <div class="type-row">
+          <span class="type-label">Display</span>
+          <span style="font-family: var(--font-display); font-size: 22px; color: var(--ink);">CloudVault</span>
+        </div>
+        <div class="type-row">
+          <span class="type-label">H1</span>
+          <span style="font-size: 20px; font-weight: 600; color: var(--ink); letter-spacing: -0.02em;">Your Vault</span>
+        </div>
+        <div class="type-row">
+          <span class="type-label">H2</span>
+          <span style="font-size: 16px; font-weight: 600; color: var(--ink);">All Files</span>
+        </div>
+        <div class="type-row">
+          <span class="type-label">Body</span>
+          <span style="font-size: 14px; color: var(--ink-muted);">Secure, elegant storage.</span>
+        </div>
+        <div class="type-row">
+          <span class="type-label">Small</span>
+          <span style="font-size: 12px; color: var(--ink-faint);">Last modified 2 hours ago</span>
+        </div>
+        <div class="type-row">
+          <span class="type-label">Mono</span>
+          <span style="font-family: var(--font-mono); font-size: 12px; color: var(--ink-muted);">4.2 GB · AES-256</span>
+        </div>
+      </div>
+
+      <div class="glass-card ds-card reveal reveal-delay-3">
+        <div class="ds-card-title">Motion & Interaction</div>
+        <div class="motion-item">
+          <div class="motion-name">Page Transition</div>
+          <div class="motion-val">fadeUp · 700ms · ease-out(0.16,1,0.3,1)</div>
+        </div>
+        <div class="motion-item">
+          <div class="motion-name">Card Hover</div>
+          <div class="motion-val">translateY(-4px) · 350ms · spring</div>
+        </div>
+        <div class="motion-item">
+          <div class="motion-name">File Expand</div>
+          <div class="motion-val">spring · stiffness 400 · damping 30</div>
+        </div>
+        <div class="motion-item">
+          <div class="motion-name">Button Press</div>
+          <div class="motion-val">scale(0.97) · 150ms · ease-in</div>
+        </div>
+        <div class="motion-item">
+          <div class="motion-name">Upload Progress</div>
+          <div class="motion-val">width · ease-out · real-time</div>
+        </div>
+        <div class="motion-item">
+          <div class="motion-name">Reduced Motion</div>
+          <div class="motion-val">useReducedMotion() → all durations 0ms</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- COMPONENT PREVIEW -->
+<section id="components">
+  <div class="container">
+    <div class="section-header reveal">
+      <div>
+        <div class="section-label">06 — Components</div>
+        <h2 class="section-title">Live component<br>showcase</h2>
+        <p class="section-sub">Every component is interactive, accessible (WCAG 2.1 AA), and ready to use.</p>
+      </div>
+    </div>
+
+    <div class="glass-card reveal" style="overflow: hidden;">
+      <div class="preview-area">
+        <div class="preview-label">File Cards — with inline encryption badges</div>
+        <div class="mini-file-card">
+          <div class="file-thumb" style="background: rgba(0,122,255,0.10); border: 1px solid rgba(0,122,255,0.18);">📄</div>
+          <div class="file-info">
+            <div class="file-name">Project_Brief_Q2_2026.pdf</div>
+            <div class="file-meta">2.4 MB · Modified 2h ago</div>
+          </div>
+          <span class="file-enc">🔒 E2E Encrypted</span>
+        </div>
+        <div class="mini-file-card">
+          <div class="file-thumb" style="background: rgba(46,139,87,0.10); border: 1px solid rgba(46,139,87,0.18);">🖼️</div>
+          <div class="file-info">
+            <div class="file-name">CloudVault_Brand_Assets.zip</div>
+            <div class="file-meta">84.1 MB · Modified yesterday</div>
+          </div>
+          <span class="file-enc">🔒 E2E Encrypted</span>
+        </div>
+        <div class="mini-file-card">
+          <div class="file-thumb" style="background: rgba(201,168,76,0.12); border: 1px solid rgba(201,168,76,0.22);">📊</div>
+          <div class="file-info">
+            <div class="file-name">Revenue_Model_2026.xlsx</div>
+            <div class="file-meta">1.1 MB · Modified 3 days ago</div>
+          </div>
+          <span class="file-enc">🔒 E2E Encrypted</span>
+        </div>
+
+        <div class="preview-label" style="margin-top: 8px;">Button System</div>
+        <div class="btn-row">
+          <button class="mini-btn mini-btn-primary">Upload Files</button>
+          <button class="mini-btn mini-btn-secondary">New Folder</button>
+          <button class="mini-btn mini-btn-teal">✦ Ask AI</button>
+        </div>
+
+        <div class="preview-label" style="margin-top: 8px;">Upload Zone</div>
+        <div class="mini-upload">
+          <div class="upload-icon">☁</div>
+          <div class="upload-text">Drop files here or tap to browse</div>
+          <div class="upload-sub">Encrypted before upload · Max 10GB per file</div>
+        </div>
+
+        <div class="preview-label" style="margin-top: 8px;">Storage Usage Bars</div>
+        <div class="progress-item">
+          <div class="progress-header"><span class="progress-name">Documents</span><span class="progress-pct">68%</span></div>
+          <div class="progress-bar-bg"><div class="progress-bar-fill fill-blue"></div></div>
+        </div>
+        <div class="progress-item" style="margin-top: 10px;">
+          <div class="progress-header"><span class="progress-name">Images</span><span class="progress-pct">42%</span></div>
+          <div class="progress-bar-bg"><div class="progress-bar-fill fill-green"></div></div>
+        </div>
+        <div class="progress-item" style="margin-top: 10px;">
+          <div class="progress-header"><span class="progress-name">Videos</span><span class="progress-pct">85%</span></div>
+          <div class="progress-bar-bg"><div class="progress-bar-fill fill-gold"></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SECURITY -->
+<section id="security">
+  <div class="container">
+    <div class="section-header reveal">
+      <div>
+        <div class="section-label">07 — Security</div>
+        <h2 class="section-title">Zero compromise.<br>Total control.</h2>
+        <p class="section-sub">Security isn't a feature — it's the default. Every file, every time, everywhere.</p>
+      </div>
+    </div>
+    <div class="security-grid">
+      <div class="glass-card sec-feature reveal reveal-delay-1">
+        <div class="sec-icon">🔐</div>
+        <div>
+          <div class="sec-title">End-to-End Encryption</div>
+          <div class="sec-desc">AES-256-GCM encryption applied client-side before any data leaves the device. Server never sees plaintext — zero-knowledge by design.</div>
+        </div>
+      </div>
+      <div class="glass-card sec-feature reveal reveal-delay-2">
+        <div class="sec-icon">🗝️</div>
+        <div>
+          <div class="sec-title">User-Owned Keys</div>
+          <div class="sec-desc">Encryption keys are derived from the user's passphrase using Argon2id. CloudVault holds no keys — only the user can decrypt.</div>
+        </div>
+      </div>
+      <div class="glass-card sec-feature reveal reveal-delay-1">
+        <div class="sec-icon">📋</div>
+        <div>
+          <div class="sec-title">Immutable Audit Log</div>
+          <div class="sec-desc">Every file access, share, and deletion is timestamped and logged. WORM-compliant audit trail — tamper-proof, exportable.</div>
+        </div>
+      </div>
+      <div class="glass-card sec-feature reveal reveal-delay-2">
+        <div class="sec-icon">👁️</div>
+        <div>
+          <div class="sec-title">Transparency Report</div>
+          <div class="sec-desc">Any shared link displays a "Privacy Report" — recipient sees encryption status, what data is exposed, and cannot bypass it.</div>
+        </div>
+      </div>
+      <div class="glass-card sec-feature reveal reveal-delay-1">
+        <div class="sec-icon">📱</div>
+        <div>
+          <div class="sec-title">Biometric Vault Lock</div>
+          <div class="sec-desc">Android fingerprint / face unlock via Capacitor Identity Vault plugin. Auto-locks after configurable inactivity timeout.</div>
+        </div>
+      </div>
+      <div class="glass-card sec-feature reveal reveal-delay-2">
+        <div class="sec-icon">🛡️</div>
+        <div>
+          <div class="sec-title">AI Privacy Guarantee</div>
+          <div class="sec-desc">Claude AI only processes file metadata for search and tagging — never raw encrypted content. On-device processing where possible.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PERFORMANCE -->
+<section id="performance">
+  <div class="container">
+    <div class="section-header reveal">
+      <div>
+        <div class="section-label">08 — Performance</div>
+        <h2 class="section-title">Fast by design,<br>not by chance</h2>
+      </div>
+    </div>
+    <div class="perf-grid">
+      <div class="glass-card perf-card reveal reveal-delay-1">
+        <div class="perf-header">
+          <div class="perf-icon" style="background: rgba(0,122,255,0.10); border: 1px solid rgba(0,122,255,0.18);">📊</div>
+          <div>
+            <div class="perf-card-title">Core Web Vitals</div>
+            <div class="perf-card-sub">Target budget — all pages</div>
+          </div>
+        </div>
+        <div class="perf-metric"><span class="perf-key">LCP (Largest Contentful Paint)</span><span class="perf-val perf-good">&lt; 2.5s</span></div>
+        <div class="perf-metric"><span class="perf-key">FID (First Input Delay)</span><span class="perf-val perf-good">&lt; 100ms</span></div>
+        <div class="perf-metric"><span class="perf-key">CLS (Layout Shift)</span><span class="perf-val perf-good">&lt; 0.1</span></div>
+        <div class="perf-metric"><span class="perf-key">FCP (First Contentful Paint)</span><span class="perf-val perf-good">&lt; 1.2s</span></div>
+        <div class="perf-metric"><span class="perf-key">TTI (Time to Interactive)</span><span class="perf-val perf-good">&lt; 3.5s</span></div>
+      </div>
+      <div class="glass-card perf-card reveal reveal-delay-2">
+        <div class="perf-header">
+          <div class="perf-icon" style="background: rgba(201,168,76,0.12); border: 1px solid rgba(201,168,76,0.22);">⚡</div>
+          <div>
+            <div class="perf-card-title">Bundle Strategy</div>
+            <div class="perf-card-sub">Vite + manual chunks</div>
+          </div>
+        </div>
+        <div class="perf-metric"><span class="perf-key">Initial JS bundle</span><span class="perf-val perf-good">&lt; 120 KB gzip</span></div>
+        <div class="perf-metric"><span class="perf-key">Per-route chunk (lazy)</span><span class="perf-val perf-good">&lt; 60 KB</span></div>
+        <div class="perf-metric"><span class="perf-key">Vendor chunk (React etc.)</span><span class="perf-val perf-warn">~180 KB cached</span></div>
+        <div class="perf-metric"><span class="perf-key">Total CSS</span><span class="perf-val perf-good">&lt; 40 KB</span></div>
+        <div class="perf-metric"><span class="perf-key">Upload chunk size</span><span class="perf-val perf-good">5 MB parallel</span></div>
+      </div>
+      <div class="glass-card perf-card reveal reveal-delay-3">
+        <div class="perf-header">
+          <div class="perf-icon" style="background: rgba(46,139,87,0.10); border: 1px solid rgba(46,139,87,0.18);">📱</div>
+          <div>
+            <div class="perf-card-title">Android Performance</div>
+            <div class="perf-card-sub">Capacitor targets</div>
+          </div>
+        </div>
+        <div class="perf-metric"><span class="perf-key">Cold start time</span><span class="perf-val perf-good">&lt; 1.5s</span></div>
+        <div class="perf-metric"><span class="perf-key">File list (1000 items)</span><span class="perf-val perf-good">60fps virtual scroll</span></div>
+        <div class="perf-metric"><span class="perf-key">Image thumbnail load</span><span class="perf-val perf-good">&lt; 200ms</span></div>
+        <div class="perf-metric"><span class="perf-key">Biometric unlock</span><span class="perf-val perf-good">&lt; 300ms</span></div>
+        <div class="perf-metric"><span class="perf-key">Offline file access</span><span class="perf-val perf-good">Instant (cached)</span></div>
+      </div>
+      <div class="glass-card perf-card reveal reveal-delay-4">
+        <div class="perf-header">
+          <div class="perf-icon" style="background: rgba(88,86,214,0.10); border: 1px solid rgba(88,86,214,0.18);">✦</div>
+          <div>
+            <div class="perf-card-title">AI Response Targets</div>
+            <div class="perf-card-sub">Claude API integration</div>
+          </div>
+        </div>
+        <div class="perf-metric"><span class="perf-key">First token (streaming)</span><span class="perf-val perf-good">&lt; 800ms</span></div>
+        <div class="perf-metric"><span class="perf-key">Auto-tag (per file)</span><span class="perf-val perf-good">&lt; 1.5s</span></div>
+        <div class="perf-metric"><span class="perf-key">Document summary</span><span class="perf-val perf-warn">2–5s streaming</span></div>
+        <div class="perf-metric"><span class="perf-key">Semantic search</span><span class="perf-val perf-good">&lt; 1.2s</span></div>
+        <div class="perf-metric"><span class="perf-key">Chat response</span><span class="perf-val perf-good">Streamed live</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <div>
+        <div class="footer-brand">
+          <div class="logo-icon" style="width:28px;height:28px;border-radius:8px;">
+            <svg viewBox="0 0 24 24" style="width:15px;height:15px;fill:white;"><path d="M12 2C8.7 2 6 4.7 6 8c0 .5.1 1 .2 1.4C4.3 10.3 3 12 3 14c0 2.8 2.2 5 5 5h9c2.8 0 5-2.2 5-5 0-2.4-1.7-4.4-4-4.9C17.3 7.4 14.9 5 12 5c0-1.7-0-3 0-3z"/></svg>
+          </div>
+          CloudVault
+        </div>
+        <div class="footer-copy">Frontend Framework v1.0 · April 2026 · Built with Claude AI</div>
+      </div>
+      <div class="footer-badges">
+        <span class="footer-badge">React 18</span>
+        <span class="footer-badge">TypeScript</span>
+        <span class="footer-badge">Capacitor 6</span>
+        <span class="footer-badge">E2E Encrypted</span>
+        <span class="footer-badge">✦ Claude AI</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // Nav scroll effect
+  window.addEventListener('scroll', () => {
+    document.getElementById('nav').classList.toggle('scrolled', window.scrollY > 10);
+  });
+
+  // Reveal on scroll
+  const reveals = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) { e.target.classList.add('visible'); }
+    });
+  }, { threshold: 0.08 });
+  reveals.forEach(el => observer.observe(el));
+
+  // AI panel switching
+  const aiCodes = [
+    `<span class="code-cm">// Vault Assistant — natural language file search</span><br>
+<span class="code-kw">const</span> <span class="code-fn">askVaultAssistant</span> = <span class="code-kw">async</span> (query, vaultContext) => {<br>
+&nbsp;&nbsp;<span class="code-kw">const</span> response = <span class="code-kw">await</span> fetch(<span class="code-str">"https://api.anthropic.com/v1/messages"</span>, {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;body: JSON.stringify({<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;model: <span class="code-str">"claude-sonnet-4-20250514"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;system: <span class="code-str">"You are the CloudVault assistant. Help find files."</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;messages: [{ role: <span class="code-str">"user"</span>, content: query }]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;})<br>
+&nbsp;&nbsp;});<br>
+&nbsp;&nbsp;<span class="code-kw">return</span> response.json();<br>
+};`,
+
+    `<span class="code-cm">// Document Summarisation — streaming response</span><br>
+<span class="code-kw">const</span> <span class="code-fn">summariseDocument</span> = <span class="code-kw">async</span> (fileText, onChunk) => {<br>
+&nbsp;&nbsp;<span class="code-kw">const</span> stream = <span class="code-kw">await</span> fetch(<span class="code-str">"/v1/messages"</span>, {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;body: JSON.stringify({<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;model: <span class="code-str">"claude-sonnet-4-20250514"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;stream: <span class="code-kw">true</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;messages: [{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;role: <span class="code-str">"user"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;content: <span class="code-str">\`Summarise this document:\n\${fileText}\`</span><br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;})<br>
+&nbsp;&nbsp;});<br>
+&nbsp;&nbsp;<span class="code-cm">// Stream chunks → onChunk(delta)</span><br>
+};`,
+
+    `<span class="code-cm">// Auto-Tagger — extract smart tags from content</span><br>
+<span class="code-kw">const</span> <span class="code-fn">autoTag</span> = <span class="code-kw">async</span> (fileContent) => {<br>
+&nbsp;&nbsp;<span class="code-kw">const</span> res = <span class="code-kw">await</span> fetch(<span class="code-str">"/v1/messages"</span>, {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;body: JSON.stringify({<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;model: <span class="code-str">"claude-sonnet-4-20250514"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;system: <span class="code-str">"Return ONLY a JSON array of 5 tags."</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;messages: [{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;role: <span class="code-str">"user"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;content: <span class="code-str">"Tag this file: "</span> + fileContent<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;})<br>
+&nbsp;&nbsp;});<br>
+&nbsp;&nbsp;<span class="code-kw">return</span> JSON.parse(<span class="code-kw">await</span> res.json().content[<span class="code-num">0</span>].text);<br>
+};`,
+
+    `<span class="code-cm">// Semantic Search — embeddings-based vault search</span><br>
+<span class="code-kw">const</span> <span class="code-fn">semanticSearch</span> = <span class="code-kw">async</span> (query) => {<br>
+&nbsp;&nbsp;<span class="code-cm">// 1. Get query embedding from Claude</span><br>
+&nbsp;&nbsp;<span class="code-kw">const</span> queryVec = <span class="code-kw">await</span> <span class="code-fn">getEmbedding</span>(query);<br>
+&nbsp;&nbsp;<span class="code-cm">// 2. Compare against indexed file embeddings</span><br>
+&nbsp;&nbsp;<span class="code-kw">const</span> results = fileIndex<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.map(file => ({<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;...file,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;score: <span class="code-fn">cosineSim</span>(queryVec, file.embedding)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}))<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.sort((a, b) => b.score - a.score)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;.slice(<span class="code-num">0</span>, <span class="code-num">10</span>);<br>
+&nbsp;&nbsp;<span class="code-kw">return</span> results;<br>
+};`,
+
+    `<span class="code-cm">// Vault Insights — AI-generated storage analysis</span><br>
+<span class="code-kw">const</span> <span class="code-fn">generateInsights</span> = <span class="code-kw">async</span> (vaultStats) => {<br>
+&nbsp;&nbsp;<span class="code-kw">return</span> fetch(<span class="code-str">"/v1/messages"</span>, {<br>
+&nbsp;&nbsp;&nbsp;&nbsp;body: JSON.stringify({<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;model: <span class="code-str">"claude-sonnet-4-20250514"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;system: <span class="code-str">"Analyse this vault and return JSON insights:<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{largeFiles, neverOpened, archiveCandidates}"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;messages: [{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;role: <span class="code-str">"user"</span>,<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;content: JSON.stringify(vaultStats)<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;}]<br>
+&nbsp;&nbsp;&nbsp;&nbsp;})<br>
+&nbsp;&nbsp;});<br>
+};`
+  ];
+
+  const aiChipSets = [
+    ['contract','legal-2024','signed','financial','Q1-review'],
+    ['summary','pdf','3-pages','executive-brief','action-items'],
+    ['invoice','Q2-2025','vendor','approved','finance'],
+    ['design','mockup','ui','figma','2026'],
+    ['large-file','18-months-old','archive-candidate','video','raw']
+  ];
+
+  function setActiveAI(el, index) {
+    document.querySelectorAll('.ai-feature').forEach(f => f.classList.remove('active'));
+    el.classList.add('active');
+    document.getElementById('ai-code-display').innerHTML = aiCodes[index];
+    const chips = document.getElementById('ai-chips');
+    chips.style.opacity = '0';
+    setTimeout(() => {
+      chips.innerHTML = aiChipSets[index].map(t => `<span class="ai-output-chip">${t}</span>`).join('');
+      chips.style.opacity = '1';
+      chips.style.transition = 'opacity 0.3s';
+    }, 200);
+  }
+</script>
+</body>
+</html>

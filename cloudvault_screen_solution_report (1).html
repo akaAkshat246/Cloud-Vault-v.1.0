@@ -1,0 +1,822 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:var(--color-background-tertiary);
+  --surface:var(--color-background-secondary);
+  --card:var(--color-background-primary);
+  --text:var(--color-text-primary);
+  --muted:var(--color-text-secondary);
+  --hint:var(--color-text-tertiary);
+  --border:var(--color-border-tertiary);
+  --border2:var(--color-border-secondary);
+  --r:var(--border-radius-md);
+  --rl:var(--border-radius-lg);
+  --blue:#185FA5;--blue-bg:#E6F1FB;--blue-text:#0C447C;
+  --teal:#0F6E56;--teal-bg:#E1F5EE;--teal-text:#085041;
+  --amber:#BA7517;--amber-bg:#FAEEDA;--amber-text:#633806;
+  --red:#A32D2D;--red-bg:#FCEBEB;--red-text:#791F1F;
+  --purple:#534AB7;--purple-bg:#EEEDFE;--purple-text:#3C3489;
+  --green:#3B6D11;--green-bg:#EAF3DE;--green-text:#27500A;
+  --coral:#993C1D;--coral-bg:#FAECE7;--coral-text:#712B13;
+}
+body{font-family:var(--font-sans);color:var(--text);background:transparent;padding:0}
+.wrap{max-width:680px;margin:0 auto}
+
+.header{padding:1.5rem 0 1rem}
+.header-badges{display:flex;gap:6px;flex-wrap:wrap;margin-bottom:1rem}
+.badge{font-size:11px;padding:3px 10px;border-radius:20px;font-weight:500}
+.badge-blue{background:var(--blue-bg);color:var(--blue-text)}
+.badge-teal{background:var(--teal-bg);color:var(--teal-text)}
+.badge-amber{background:var(--amber-bg);color:var(--amber-text)}
+.badge-red{background:var(--red-bg);color:var(--red-text)}
+.badge-purple{background:var(--purple-bg);color:var(--purple-text)}
+.badge-green{background:var(--green-bg);color:var(--green-text)}
+.badge-coral{background:var(--coral-bg);color:var(--coral-text)}
+
+.meta-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1.5rem}
+.meta-card{background:var(--surface);border-radius:var(--r);padding:.75rem;text-align:center}
+.meta-num{font-size:22px;font-weight:500;line-height:1}
+.meta-label{font-size:11px;color:var(--muted);margin-top:4px}
+.meta-num.blue{color:var(--blue)}
+.meta-num.teal{color:var(--teal)}
+.meta-num.amber{color:var(--amber)}
+.meta-num.red{color:var(--red)}
+
+.platform-tabs{display:flex;gap:6px;margin-bottom:1.5rem}
+.ptab{padding:6px 18px;border-radius:20px;border:0.5px solid var(--border2);background:transparent;color:var(--muted);font-size:13px;cursor:pointer;font-family:var(--font-sans)}
+.ptab.active{background:var(--blue-bg);color:var(--blue-text);border-color:var(--blue-bg)}
+
+.section-label{font-size:11px;font-weight:500;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin:1.5rem 0 .75rem;display:flex;align-items:center;gap:8px}
+.section-line{flex:1;height:0.5px;background:var(--border)}
+
+.screen-card{background:var(--card);border:0.5px solid var(--border);border-radius:var(--rl);padding:1rem 1.25rem;margin-bottom:10px;cursor:pointer;transition:border-color .15s}
+.screen-card:hover{border-color:var(--border2)}
+.screen-card.expanded{border-color:var(--color-border-info)}
+.sc-header{display:flex;align-items:center;gap:10px}
+.sc-icon{width:36px;height:36px;border-radius:var(--r);display:flex;align-items:center;justify-content:center;font-size:16px;flex-shrink:0}
+.sc-meta{flex:1}
+.sc-name{font-size:14px;font-weight:500}
+.sc-sub{font-size:12px;color:var(--muted);margin-top:2px}
+.sc-arrow{font-size:11px;color:var(--hint);transition:transform .2s;flex-shrink:0}
+.sc-card.expanded .sc-arrow{transform:rotate(180deg)}
+.sc-body{display:none;margin-top:1rem;padding-top:1rem;border-top:0.5px solid var(--border)}
+.sc-body.open{display:block}
+
+.feat-list{display:flex;flex-direction:column;gap:6px}
+.feat-item{display:flex;align-items:flex-start;gap:8px;font-size:13px;color:var(--muted);line-height:1.5}
+.feat-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.feat-dot.blue{background:var(--blue)}
+.feat-dot.teal{background:var(--teal)}
+.feat-dot.amber{background:var(--amber)}
+.feat-dot.red{background:var(--red)}
+.feat-dot.purple{background:var(--purple)}
+.feat-dot.green{background:var(--green)}
+.feat-dot.coral{background:var(--coral)}
+
+.feat-label{font-size:12px;font-weight:500;color:var(--text)}
+.feat-desc{font-size:12px;color:var(--muted)}
+
+.tags-row{display:flex;gap:5px;flex-wrap:wrap;margin-top:.75rem}
+.tag{font-size:10px;padding:2px 8px;border-radius:20px}
+
+.priority-row{display:flex;align-items:center;gap:6px;margin-top:.75rem;font-size:11px;color:var(--muted)}
+.p-dot{width:8px;height:8px;border-radius:50%}
+.p-dot.p1{background:var(--red)}
+.p-dot.p2{background:var(--amber)}
+.p-dot.p3{background:var(--blue)}
+
+.panel{display:none}
+.panel.active{display:block}
+
+.legend{display:flex;flex-wrap:wrap;gap:10px;margin-bottom:1rem;padding:.75rem 1rem;background:var(--surface);border-radius:var(--r)}
+.legend-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--muted)}
+.legend-dot{width:8px;height:8px;border-radius:50%}
+</style>
+
+<div class="wrap">
+<h2 class="sr-only">CloudVault Platform Screen-by-Screen Feature Assignment Report</h2>
+
+<div class="header">
+<div class="header-badges">
+  <span class="badge badge-blue">Web Platform</span>
+  <span class="badge badge-teal">Mobile App</span>
+  <span class="badge badge-purple">AI Features</span>
+  <span class="badge badge-red">Critical</span>
+  <span class="badge badge-amber">Moderate</span>
+  <span class="badge badge-green">Low Priority</span>
+</div>
+<div class="meta-grid">
+  <div class="meta-card"><div class="meta-num blue">16</div><div class="meta-label">Web screens</div></div>
+  <div class="meta-card"><div class="meta-num teal">14</div><div class="meta-label">Mobile screens</div></div>
+  <div class="meta-card"><div class="meta-num amber">8</div><div class="meta-label">AI features</div></div>
+  <div class="meta-card"><div class="meta-num red">32</div><div class="meta-label">Total screens</div></div>
+</div>
+
+<div class="platform-tabs">
+  <button class="ptab active" onclick="switchTab('web',this)">Web Platform</button>
+  <button class="ptab" onclick="switchTab('mobile',this)">Mobile App</button>
+</div>
+</div>
+
+<div id="panel-web" class="panel active">
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div> Critical feature</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div> Moderate feature</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div> Low / Enhancement</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--purple)"></div> AI exclusive</div>
+</div>
+
+<div class="section-label">Core screens <div class="section-line"></div></div>
+
+<!-- WEB 1: Dashboard -->
+<div class="screen-card" onclick="toggleCard(this)">
+  <div class="sc-header">
+    <div class="sc-icon" style="background:var(--blue-bg)">🏠</div>
+    <div class="sc-meta">
+      <div class="sc-name">Dashboard / Home</div>
+      <div class="sc-sub">First screen after login — activity overview and quick actions</div>
+    </div>
+    <div class="sc-arrow">▾</div>
+  </div>
+  <div class="sc-body">
+    <div class="feat-list">
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Recent files widget</div><div class="feat-desc">Last 10 accessed files with thumbnails, file type badges, and last modified time</div></div></div>
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Storage usage ring chart</div><div class="feat-desc">Visual breakdown by file type — docs, media, others — with upgrade CTA if >80%</div></div></div>
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Team Spaces quick access</div><div class="feat-desc">Pinned team vaults with member count and recent activity indicator</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Activity feed</div><div class="feat-desc">Who shared what, who commented, who uploaded — real-time notification stream</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Zapier / Automation status</div><div class="feat-desc">Last triggered workflow, pending automations badge</div></div></div>
+      <div class="feat-item"><div class="feat-dot purple"></div><div><div class="feat-label">AI Smart Summary card</div><div class="feat-desc">"You have 3 unreviewed contracts and 2 duplicate clusters" — proactive AI insight</div></div></div>
+    </div>
+    <div class="tags-row">
+      <span class="tag badge-blue">Real-time</span><span class="tag badge-purple">AI insights</span><span class="tag badge-red">Team spaces</span>
+    </div>
+  </div>
+</div>
+
+<!-- WEB 2: File Browser -->
+<div class="screen-card" onclick="toggleCard(this)">
+  <div class="sc-header">
+    <div class="sc-icon" style="background:var(--teal-bg)">📁</div>
+    <div class="sc-meta">
+      <div class="sc-name">File Browser / My Files</div>
+      <div class="sc-sub">Main file explorer — grid and list view with bulk operations</div>
+    </div>
+    <div class="sc-arrow">▾</div>
+  </div>
+  <div class="sc-body">
+    <div class="feat-list">
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Grid / List / Timeline view toggle</div><div class="feat-desc">Thumbnail grid for media, compact list for docs, chronological timeline for recent uploads</div></div></div>
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Drag-and-drop upload zone</div><div class="feat-desc">Full-screen drop overlay with multi-file progress bars and resumable upload indicator</div></div></div>
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Bulk select + actions toolbar</div><div class="feat-desc">Select multiple files → Share, Move, Delete, Download, Lock with one click</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Filter & sort panel</div><div class="feat-desc">Filter by type, date, size, shared status; sort by name, modified, size, relevance</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">File type tabs</div><div class="feat-desc">All, Documents, Images, Videos, Audio, Code — with count badges</div></div></div>
+      <div class="feat-item"><div class="feat-dot purple"></div><div><div class="feat-label">AI Smart Search bar</div><div class="feat-desc">Natural language search: "contracts from last month" or "photos from Goa trip"</div></div></div>
+      <div class="feat-item"><div class="feat-dot blue"></div><div><div class="feat-label">Delta sync status indicators</div><div class="feat-desc">Synced / syncing / conflict badge on each file row</div></div></div>
+    </div>
+    <div class="tags-row">
+      <span class="tag badge-blue">Block-level sync</span><span class="tag badge-purple">AI search</span><span class="tag badge-teal">Resumable uploads</span>
+    </div>
+  </div>
+</div>
+
+<!-- WEB 3: File Viewer / Editor -->
+<div class="screen-card" onclick="toggleCard(this)">
+  <div class="sc-header">
+    <div class="sc-icon" style="background:var(--purple-bg)">✏️</div>
+    <div class="sc-meta">
+      <div class="sc-name">File Viewer / Document Editor</div>
+      <div class="sc-sub">Full-screen editing experience with real-time collaboration</div>
+    </div>
+    <div class="sc-arrow">▾</div>
+  </div>
+  <div class="sc-body">
+    <div class="feat-list">
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Built-in rich text editor (Tiptap)</div><div class="feat-desc">Headings, bold, tables, lists, image embeds — no redirect to third-party tools</div></div></div>
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Real-time collaborative cursors</div><div class="feat-desc">Colored cursors per user, presence avatars in top bar, Y.js conflict-free sync</div></div></div>
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Comment threads sidebar</div><div class="feat-desc">Highlight text → add comment → @mention teammates → resolve threads</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Offline edit queue indicator</div><div class="feat-desc">Yellow "Offline — changes saved locally" banner + green sync confirmation on reconnect</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Version history drawer</div><div class="feat-desc">Timeline of all saved versions, who edited, diff viewer, restore to any version</div></div></div>
+      <div class="feat-item"><div class="feat-dot purple"></div><div><div class="feat-label">AI Annotations sidebar</div><div class="feat-desc">Highlight any section → "Ask Claude" → shared AI answer visible to all collaborators</div></div></div>
+      <div class="feat-item"><div class="feat-dot purple"></div><div><div class="feat-label">AI document summary panel</div><div class="feat-desc">One-click summary of the open document, key points, and action items</div></div></div>
+      <div class="feat-item"><div class="feat-dot blue"></div><div><div class="feat-label">Monaco editor mode for code files</div><div class="feat-desc">Auto-detects .js .py .ts etc and switches to VS Code-grade syntax highlighting</div></div></div>
+    </div>
+    <div class="tags-row">
+      <span class="tag badge-red">Tiptap + Y.js</span><span class="tag badge-purple">AI annotations</span><span class="tag badge-amber">Offline support</span>
+    </div>
+  </div>
+</div>
+
+<!-- WEB 4: Shared With Me -->
+<div class="screen-card" onclick="toggleCard(this)">
+  <div class="sc-header">
+    <div class="sc-icon" style="background:var(--amber-bg)">🤝</div>
+    <div class="sc-meta">
+      <div class="sc-name">Shared With Me</div>
+      <div class="sc-sub">All files and folders shared by others — with permission level display</div>
+    </div>
+    <div class="sc-arrow">▾</div>
+  </div>
+  <div class="sc-body">
+    <div class="feat-list">
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Shared file list with sharer info</div><div class="feat-desc">Who shared it, when, what permission (View / Edit / Comment)</div></div></div>
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">One-click access with encryption pass-through</div><div class="feat-desc">E2E decryption happens transparently — no password prompt for already-accepted shares</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Accept / Decline pending shares</div><div class="feat-desc">Incoming share requests inbox with preview before accepting</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">File Comments access</div><div class="feat-desc">View and add comments on shared files if permission allows</div></div></div>
+      <div class="feat-item"><div class="feat-dot purple"></div><div><div class="feat-label">AI collaborative annotations</div><div class="feat-desc">Both sharer and recipient can ask Claude about the shared document in a shared sidebar</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- WEB 5: Team Spaces -->
+<div class="screen-card" onclick="toggleCard(this)">
+  <div class="sc-header">
+    <div class="sc-icon" style="background:var(--red-bg)">🏢</div>
+    <div class="sc-meta">
+      <div class="sc-name">Team Spaces</div>
+      <div class="sc-sub">Shared workspaces with RBAC — Owner, Admin, Editor, Viewer, Guest</div>
+    </div>
+    <div class="sc-arrow">▾</div>
+  </div>
+  <div class="sc-body">
+    <div class="feat-list">
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Workspace list with role badges</div><div class="feat-desc">Each team space card shows: name, member count, your role, storage used</div></div></div>
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Create / Join workspace</div><div class="feat-desc">Create new org space or join via invite link — auto-assigns Guest role initially</div></div></div>
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Per-space file browser</div><div class="feat-desc">Separate file tree per team space — files are org-scoped, not personal</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Member list with role management</div><div class="feat-desc">Admins can promote / demote / remove members; view last active time</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Audit log viewer</div><div class="feat-desc">Who accessed what file, when, from which IP — filterable, exportable as CSV</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">IP Allowlist management</div><div class="feat-desc">Admins define CIDR ranges; access blocked from outside those ranges for the org</div></div></div>
+    </div>
+    <div class="tags-row">
+      <span class="tag badge-red">RBAC</span><span class="tag badge-amber">Audit logs</span><span class="tag badge-amber">IP allowlist</span>
+    </div>
+  </div>
+</div>
+
+<!-- WEB 6: Search Results -->
+<div class="screen-card" onclick="toggleCard(this)">
+  <div class="sc-header">
+    <div class="sc-icon" style="background:var(--purple-bg)">🔍</div>
+    <div class="sc-meta">
+      <div class="sc-name">AI Search Results</div>
+      <div class="sc-sub">Universal search with semantic understanding and OCR results</div>
+    </div>
+    <div class="sc-arrow">▾</div>
+  </div>
+  <div class="sc-body">
+    <div class="feat-list">
+      <div class="feat-item"><div class="feat-dot purple"></div><div><div class="feat-label">Natural language query interpretation</div><div class="feat-desc">Query rewritten in Claude — "invoices from Q3" → filters by file type + date automatically</div></div></div>
+      <div class="feat-item"><div class="feat-dot purple"></div><div><div class="feat-label">Full-text search with OCR</div><div class="feat-desc">Search inside scanned PDFs, images with text, presentations</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Faceted filters sidebar</div><div class="feat-desc">Narrow by file type, date range, size, shared status, team space</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Highlight snippets</div><div class="feat-desc">Show where in the document the match was found with surrounding context</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="section-label">Sharing & collaboration <div class="section-line"></div></div>
+
+<!-- WEB 7: Share Modal -->
+<div class="screen-card" onclick="toggleCard(this)">
+  <div class="sc-header">
+    <div class="sc-icon" style="background:var(--green-bg)">🔗</div>
+    <div class="sc-meta">
+      <div class="sc-name">Share & Permissions Modal</div>
+      <div class="sc-sub">Granular sharing controls — users, links, expiry, passwords</div>
+    </div>
+    <div class="sc-arrow">▾</div>
+  </div>
+  <div class="sc-body">
+    <div class="feat-list">
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Share with specific users</div><div class="feat-desc">Type email → set View / Edit / Comment → send encrypted invite</div></div></div>
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Public link with options</div><div class="feat-desc">Generate link → set expiry date → optional password → one-click copy</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Link analytics</div><div class="feat-desc">How many times link was accessed, by whom (if logged in), from which country</div></div></div>
+      <div class="feat-item"><div class="feat-dot blue"></div><div><div class="feat-label">Permission revocation</div><div class="feat-desc">One-click revoke access per user or globally invalidate the public link</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- WEB 8: Version History -->
+<div class="screen-card" onclick="toggleCard(this)">
+  <div class="sc-header">
+    <div class="sc-icon" style="background:var(--amber-bg)">🕐</div>
+    <div class="sc-meta">
+      <div class="sc-name">Version History</div>
+      <div class="sc-sub">Full revision timeline with diff viewer and restore</div>
+    </div>
+    <div class="sc-arrow">▾</div>
+  </div>
+  <div class="sc-body">
+    <div class="feat-list">
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Chronological version list</div><div class="feat-desc">Every save as a version entry: timestamp, user, file size delta, auto-label if major change</div></div></div>
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Side-by-side diff viewer</div><div class="feat-desc">Pick any two versions — text diff highlighted green/red, image pixel-diff overlay</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Named versions / Milestones</div><div class="feat-desc">Pin a version as "Final Draft v2" — prevents auto-cleanup by retention policy</div></div></div>
+      <div class="feat-item"><div class="feat-dot blue"></div><div><div class="feat-label">Retention policy display</div><div class="feat-desc">Show how many versions are kept per plan (e.g., 180 days for Pro)</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="section-label">Automation & integrations <div class="section-line"></div></div>
+
+<!-- WEB 9: Integration Hub -->
+<div class="screen-card" onclick="toggleCard(this)">
+  <div class="sc-header">
+    <div class="sc-icon" style="background:var(--blue-bg)">🔌</div>
+    <div class="sc-meta">
+      <div class="sc-name">Integration Hub</div>
+      <div class="sc-sub">Browse and connect 500+ apps — Slack, Notion, Gmail, Figma, Zapier</div>
+    </div>
+    <div class="sc-arrow">▾</div>
+  </div>
+  <div class="sc-body">
+    <div class="feat-list">
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">App marketplace grid</div><div class="feat-desc">Cards per integration: logo, name, description, "Connected" / "Connect" button</div></div></div>
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Category filters</div><div class="feat-desc">Productivity / Communication / Design / Dev / Automation — filter + search</div></div></div>
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">OAuth 2.0 connection flow</div><div class="feat-desc">Click Connect → OAuth popup → permissions screen → success confirmation</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Connected apps management</div><div class="feat-desc">List of active integrations with last-sync time, revoke button, re-auth prompt</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Zapier / Make connection entry</div><div class="feat-desc">One-click "Add to Zapier" button that opens Zapier with CloudVault pre-selected</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- WEB 10: Automation / Webhook Hub -->
+<div class="screen-card" onclick="toggleCard(this)">
+  <div class="sc-header">
+    <div class="sc-icon" style="background:var(--coral-bg)">⚡</div>
+    <div class="sc-meta">
+      <div class="sc-name">Automation / Webhook Hub</div>
+      <div class="sc-sub">Build triggers: on upload, share, delete → notify Slack, send email, call URL</div>
+    </div>
+    <div class="sc-arrow">▾</div>
+  </div>
+  <div class="sc-body">
+    <div class="feat-list">
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Rule builder UI</div><div class="feat-desc">IF [event] THEN [action] — visual builder with trigger and action dropdowns</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Trigger events</div><div class="feat-desc">File uploaded, file shared, file deleted, comment added, storage >80%</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Action types</div><div class="feat-desc">POST to webhook URL, send Slack message, email notification, move to folder</div></div></div>
+      <div class="feat-item"><div class="feat-dot blue"></div><div><div class="feat-label">Webhook delivery log</div><div class="feat-desc">Success / failure log per webhook call with request + response body, retry button</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="section-label">AI features <div class="section-line"></div></div>
+
+<!-- WEB 11: AI Assistant -->
+<div class="screen-card" onclick="toggleCard(this)">
+  <div class="sc-header">
+    <div class="sc-icon" style="background:var(--purple-bg)">🤖</div>
+    <div class="sc-meta">
+      <div class="sc-name">AI Assistant (Vault AI)</div>
+      <div class="sc-sub">Conversational AI layer across all your files — summaries, Q&A, generation</div>
+    </div>
+    <div class="sc-arrow">▾</div>
+  </div>
+  <div class="sc-body">
+    <div class="feat-list">
+      <div class="feat-item"><div class="feat-dot purple"></div><div><div class="feat-label">Chat interface with file context</div><div class="feat-desc">Ask Claude about any file: "Summarize this contract" "What are the key dates in this PDF?"</div></div></div>
+      <div class="feat-item"><div class="feat-dot purple"></div><div><div class="feat-label">Multi-file reasoning</div><div class="feat-desc">"Compare these two proposals" — Claude reads both and returns structured comparison</div></div></div>
+      <div class="feat-item"><div class="feat-dot purple"></div><div><div class="feat-label">Auto-tagging and categorization</div><div class="feat-desc">On upload, Claude suggests tags, category, and smart folder — user confirms in 1 click</div></div></div>
+      <div class="feat-item"><div class="feat-dot purple"></div><div><div class="feat-label">Duplicate detection results</div><div class="feat-desc">Weekly duplicate report: "47 near-duplicates found — saves 2.3 GB if cleaned"</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="section-label">Settings & account <div class="section-line"></div></div>
+
+<!-- WEB 12: Settings — Security -->
+<div class="screen-card" onclick="toggleCard(this)">
+  <div class="sc-header">
+    <div class="sc-icon" style="background:var(--red-bg)">🔒</div>
+    <div class="sc-meta">
+      <div class="sc-name">Settings — Security & Privacy</div>
+      <div class="sc-sub">2FA, device sessions, zero-knowledge verification, IP rules</div>
+    </div>
+    <div class="sc-arrow">▾</div>
+  </div>
+  <div class="sc-body">
+    <div class="feat-list">
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Two-factor authentication setup</div><div class="feat-desc">TOTP (Google Authenticator), SMS, or hardware key — enforce for org members</div></div></div>
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Active sessions panel</div><div class="feat-desc">All logged-in devices with IP, browser, last active — remote logout per device</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">IP Allowlist configuration</div><div class="feat-desc">Add CIDR ranges — access blocked from outside these ranges at the org level</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Session timeout setting</div><div class="feat-desc">Auto-logout after inactivity (required for HIPAA compliance) — default 30 min</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- WEB 13: Settings — Storage & Sync -->
+<div class="screen-card" onclick="toggleCard(this)">
+  <div class="sc-header">
+    <div class="sc-icon" style="background:var(--teal-bg)">💾</div>
+    <div class="sc-meta">
+      <div class="sc-name">Settings — Storage & Sync</div>
+      <div class="sc-sub">Bandwidth throttling, sync preferences, backup sources</div>
+    </div>
+    <div class="sc-arrow">▾</div>
+  </div>
+  <div class="sc-body">
+    <div class="feat-list">
+      <div class="feat-item"><div class="feat-dot blue"></div><div><div class="feat-label">Upload / download speed limits</div><div class="feat-desc">Set max KB/s for background sync — token bucket throttle — or leave unlimited</div></div></div>
+      <div class="feat-item"><div class="feat-dot blue"></div><div><div class="feat-label">Sync-only-on-WiFi toggle</div><div class="feat-desc">Prevent background uploads over metered connections</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Desktop client sync folder</div><div class="feat-desc">Choose which local folders sync to CloudVault via desktop client</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Version retention policy</div><div class="feat-desc">How many versions to keep per file — 30 / 90 / 180 days or unlimited by plan</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- WEB 14: GDPR Compliance Center -->
+<div class="screen-card" onclick="toggleCard(this)">
+  <div class="sc-header">
+    <div class="sc-icon" style="background:var(--green-bg)">🛡️</div>
+    <div class="sc-meta">
+      <div class="sc-name">GDPR & Compliance Center</div>
+      <div class="sc-sub">Data export, right to erasure, consent toggles, DPA download</div>
+    </div>
+    <div class="sc-arrow">▾</div>
+  </div>
+  <div class="sc-body">
+    <div class="feat-list">
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Export all my data (Art. 20)</div><div class="feat-desc">Generate ZIP of all files + metadata — delivered by email when ready</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Delete account + all data (Art. 17)</div><div class="feat-desc">Schedule deletion — files removed from all servers within 30 days — confirmation email</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Consent management toggles</div><div class="feat-desc">Granular: analytics collection, marketing emails, usage telemetry — each separate</div></div></div>
+      <div class="feat-item"><div class="feat-dot blue"></div><div><div class="feat-label">DPA download (Enterprise)</div><div class="feat-desc">Data Processing Agreement PDF — auto-generated with org name pre-filled</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- WEB 15: Admin Panel -->
+<div class="screen-card" onclick="toggleCard(this)">
+  <div class="sc-header">
+    <div class="sc-icon" style="background:var(--amber-bg)">⚙️</div>
+    <div class="sc-meta">
+      <div class="sc-name">Admin Panel (Org Owners)</div>
+      <div class="sc-sub">Org-wide member management, billing, usage analytics</div>
+    </div>
+    <div class="sc-arrow">▾</div>
+  </div>
+  <div class="sc-body">
+    <div class="feat-list">
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Member directory + role controls</div><div class="feat-desc">Add / remove members, promote to Admin, set per-user storage quota</div></div></div>
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Billing & plan management</div><div class="feat-desc">Current plan, usage vs limit, upgrade, invoice history, Stripe portal link</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Org-wide audit log</div><div class="feat-desc">All file access events across all team spaces — export as CSV for compliance</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">HIPAA controls (Enterprise)</div><div class="feat-desc">Force session timeout, enforce 2FA, download BAA, view compliance checklist</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">SSO configuration (SAML / OIDC)</div><div class="feat-desc">Connect enterprise IdP — Okta, Azure AD — so members sign in with company credentials</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- WEB 16: Trash / Recovery -->
+<div class="screen-card" onclick="toggleCard(this)">
+  <div class="sc-header">
+    <div class="sc-icon" style="background:var(--red-bg)">🗑️</div>
+    <div class="sc-meta">
+      <div class="sc-name">Trash & Recovery</div>
+      <div class="sc-sub">Soft-deleted files with restore, permanent delete, auto-expiry</div>
+    </div>
+    <div class="sc-arrow">▾</div>
+  </div>
+  <div class="sc-body">
+    <div class="feat-list">
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Deleted file list with expiry countdown</div><div class="feat-desc">"Deleted 3 days ago — permanently removed in 27 days" countdown per file</div></div></div>
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Restore to original location</div><div class="feat-desc">One click restores file to the folder it was deleted from; warns if folder no longer exists</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Bulk empty trash</div><div class="feat-desc">Select all or filter → permanently delete → storage freed immediately</div></div></div>
+    </div>
+  </div>
+</div>
+
+</div>
+
+<!-- MOBILE PANEL -->
+<div id="panel-mobile" class="panel">
+
+<div class="legend">
+  <div class="legend-item"><div class="legend-dot" style="background:var(--red)"></div> Critical feature</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--amber)"></div> Moderate feature</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--blue)"></div> Low / Enhancement</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--purple)"></div> AI exclusive</div>
+  <div class="legend-item"><div class="legend-dot" style="background:var(--teal)"></div> Mobile-only</div>
+</div>
+
+<div class="section-label">Core navigation <div class="section-line"></div></div>
+
+<!-- MOB 1: Bottom Nav / Home -->
+<div class="screen-card" onclick="toggleCard(this)">
+  <div class="sc-header">
+    <div class="sc-icon" style="background:var(--blue-bg)">📱</div>
+    <div class="sc-meta">
+      <div class="sc-name">Home Tab (Bottom Nav)</div>
+      <div class="sc-sub">Recents, quick upload FAB, storage ring, AI suggestions</div>
+    </div>
+    <div class="sc-arrow">▾</div>
+  </div>
+  <div class="sc-body">
+    <div class="feat-list">
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Recent files horizontal scroll</div><div class="feat-desc">Thumbnail cards — swipe to scroll, tap to open, long-press for quick actions menu</div></div></div>
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Floating Action Button (FAB)</div><div class="feat-desc">Tap → expand to: Upload file, Scan document, Take photo, New document</div></div></div>
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Storage donut widget</div><div class="feat-desc">Compact ring showing used/free — tap to open Storage Settings</div></div></div>
+      <div class="feat-item"><div class="feat-dot purple"></div><div><div class="feat-label">AI Smart Suggestion chips</div><div class="feat-desc">Horizontal chips: "Review 3 unread shared docs" "2 duplicate clusters found"</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Sync status bar</div><div class="feat-desc">Thin banner: "Syncing 4 files…" with progress — tap to see sync queue</div></div></div>
+    </div>
+    <div class="tags-row">
+      <span class="tag badge-teal">Mobile-first</span><span class="tag badge-purple">AI suggestions</span>
+    </div>
+  </div>
+</div>
+
+<!-- MOB 2: Files Tab -->
+<div class="screen-card" onclick="toggleCard(this)">
+  <div class="sc-header">
+    <div class="sc-icon" style="background:var(--teal-bg)">📂</div>
+    <div class="sc-meta">
+      <div class="sc-name">Files Tab</div>
+      <div class="sc-sub">Full file browser optimized for touch — swipe actions, long press menu</div>
+    </div>
+    <div class="sc-arrow">▾</div>
+  </div>
+  <div class="sc-body">
+    <div class="feat-list">
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Swipe-to-share and swipe-to-delete</div><div class="feat-desc">Swipe right on file row → Share; swipe left → Delete with undo toast</div></div></div>
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Pull-to-refresh</div><div class="feat-desc">Standard iOS/Android pull gesture triggers sync from server</div></div></div>
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Long-press multi-select</div><div class="feat-desc">Long press → multi-select mode → floating action bar: Share, Move, Delete, Download</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">File type filter chips (horizontal)</div><div class="feat-desc">Scrollable chip row: All · Docs · Images · Video · Audio · Code</div></div></div>
+      <div class="feat-item"><div class="feat-dot purple"></div><div><div class="feat-label">AI search with voice input</div><div class="feat-desc">Microphone icon in search bar — speak query — Claude interprets and filters</div></div></div>
+      <div class="feat-item"><div class="feat-dot teal"></div><div><div class="feat-label">Offline-available badge</div><div class="feat-desc">Green checkmark on files cached locally — accessible with no internet</div></div></div>
+    </div>
+    <div class="tags-row">
+      <span class="tag badge-teal">Touch-optimized</span><span class="tag badge-purple">Voice search</span>
+    </div>
+  </div>
+</div>
+
+<!-- MOB 3: Camera Upload / Scanner -->
+<div class="screen-card" onclick="toggleCard(this)">
+  <div class="sc-header">
+    <div class="sc-icon" style="background:var(--teal-bg)">📷</div>
+    <div class="sc-meta">
+      <div class="sc-name">Camera Upload & Document Scanner</div>
+      <div class="sc-sub">Mobile-exclusive: scan, auto-crop, OCR and upload in one flow</div>
+    </div>
+    <div class="sc-arrow">▾</div>
+  </div>
+  <div class="sc-body">
+    <div class="feat-list">
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Live edge detection + auto-crop</div><div class="feat-desc">Camera overlay detects document edges in real-time, highlights border, auto-crops on capture</div></div></div>
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Multi-page scan into single PDF</div><div class="feat-desc">Scan page 1, tap +, scan page 2 — merged into a single PDF automatically</div></div></div>
+      <div class="feat-item"><div class="feat-dot purple"></div><div><div class="feat-label">OCR + AI title suggestion</div><div class="feat-desc">After scan: Claude reads text, suggests filename ("Invoice_HDFC_March2026.pdf")</div></div></div>
+      <div class="feat-item"><div class="feat-dot purple"></div><div><div class="feat-label">Auto-categorization post-scan</div><div class="feat-desc">Claude suggests folder: "Looks like an invoice — save to /Finance/Invoices?"</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Gallery batch upload</div><div class="feat-desc">Select multiple photos from gallery → upload with auto-album grouping by date/event</div></div></div>
+    </div>
+    <div class="tags-row">
+      <span class="tag badge-teal">Mobile-only</span><span class="tag badge-purple">OCR + AI</span>
+    </div>
+  </div>
+</div>
+
+<!-- MOB 4: File Viewer (Mobile) -->
+<div class="screen-card" onclick="toggleCard(this)">
+  <div class="sc-header">
+    <div class="sc-icon" style="background:var(--purple-bg)">👁️</div>
+    <div class="sc-meta">
+      <div class="sc-name">File Viewer (Mobile)</div>
+      <div class="sc-sub">Full-screen preview optimized for each file type with bottom action sheet</div>
+    </div>
+    <div class="sc-arrow">▾</div>
+  </div>
+  <div class="sc-body">
+    <div class="feat-list">
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">PDF / image / video native viewer</div><div class="feat-desc">Native renderer per type — PDF pinch-zoom, image gestures, video player with scrubber</div></div></div>
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Bottom action sheet</div><div class="feat-desc">Share / Download / Comments / Version history / Lock / Delete — swipe-up drawer</div></div></div>
+      <div class="feat-item"><div class="feat-dot purple"></div><div><div class="feat-label">AI Q&A panel (bottom drawer)</div><div class="feat-desc">Swipe up → type "What is the total amount on this invoice?" → Claude answers instantly</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Comments floating button</div><div class="feat-desc">Floating comment icon → comment thread drawer — threaded, @mention supported</div></div></div>
+      <div class="feat-item"><div class="feat-dot teal"></div><div><div class="feat-label">Make available offline toggle</div><div class="feat-desc">Three-dot menu → "Save for offline" → file cached to device storage</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MOB 5: Shared Tab -->
+<div class="screen-card" onclick="toggleCard(this)">
+  <div class="sc-header">
+    <div class="sc-icon" style="background:var(--amber-bg)">🤝</div>
+    <div class="sc-meta">
+      <div class="sc-name">Shared Tab</div>
+      <div class="sc-sub">Files shared with you and files you've shared — with quick permission view</div>
+    </div>
+    <div class="sc-arrow">▾</div>
+  </div>
+  <div class="sc-body">
+    <div class="feat-list">
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Segmented control: With Me / By Me</div><div class="feat-desc">Switch between files others shared with you vs files you've shared out</div></div></div>
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Pending share requests badge</div><div class="feat-desc">Red badge on Shared tab icon when new shares are waiting for acceptance</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Quick revoke via long-press</div><div class="feat-desc">Long press a shared file → "Revoke access" option in action menu</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MOB 6: Team Spaces (Mobile) -->
+<div class="screen-card" onclick="toggleCard(this)">
+  <div class="sc-header">
+    <div class="sc-icon" style="background:var(--red-bg)">🏢</div>
+    <div class="sc-meta">
+      <div class="sc-name">Team Spaces (Mobile)</div>
+      <div class="sc-sub">Workspace switcher with per-space file access and notifications</div>
+    </div>
+    <div class="sc-arrow">▾</div>
+  </div>
+  <div class="sc-body">
+    <div class="feat-list">
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Workspace switcher (top)</div><div class="feat-desc">Avatar chip at top-left → dropdown to switch between Personal and team spaces</div></div></div>
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Team file browser</div><div class="feat-desc">Same swipe/long-press file UX, scoped to team space — role badge in header</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Members list (read access)</div><div class="feat-desc">See who's in the space; admins can manage roles from mobile too</div></div></div>
+    </div>
+  </div>
+</div>
+
+<div class="section-label">Mobile-exclusive screens <div class="section-line"></div></div>
+
+<!-- MOB 7: Auto Camera Backup -->
+<div class="screen-card" onclick="toggleCard(this)">
+  <div class="sc-header">
+    <div class="sc-icon" style="background:var(--teal-bg)">🔄</div>
+    <div class="sc-meta">
+      <div class="sc-name">Auto Camera Backup</div>
+      <div class="sc-sub">Automatic photo/video upload from camera roll — configurable triggers</div>
+    </div>
+    <div class="sc-arrow">▾</div>
+  </div>
+  <div class="sc-body">
+    <div class="feat-list">
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Enable/disable backup toggle</div><div class="feat-desc">Master on/off for camera backup — shown in onboarding flow on first install</div></div></div>
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Backup trigger options</div><div class="feat-desc">WiFi only / any network; while charging only / always; video yes/no toggle</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Backup progress screen</div><div class="feat-desc">X of Y photos backed up, estimated time remaining, pause / resume button</div></div></div>
+      <div class="feat-item"><div class="feat-dot teal"></div><div><div class="feat-label">SD card backup option</div><div class="feat-desc">Settings > Backup > Add SD Card — uses Android SAF for persistent permission</div></div></div>
+      <div class="feat-item"><div class="feat-dot blue"></div><div><div class="feat-label">Bandwidth throttle (inherits from Settings)</div><div class="feat-desc">Backup respects global max upload speed setting — shown in this screen as info text</div></div></div>
+    </div>
+    <div class="tags-row">
+      <span class="tag badge-teal">Mobile-only</span><span class="tag badge-teal">SD card support</span>
+    </div>
+  </div>
+</div>
+
+<!-- MOB 8: Offline Files -->
+<div class="screen-card" onclick="toggleCard(this)">
+  <div class="sc-header">
+    <div class="sc-icon" style="background:var(--green-bg)">📴</div>
+    <div class="sc-meta">
+      <div class="sc-name">Offline Files Screen</div>
+      <div class="sc-sub">All files cached locally — viewable and editable without internet</div>
+    </div>
+    <div class="sc-arrow">▾</div>
+  </div>
+  <div class="sc-body">
+    <div class="feat-list">
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Offline file list</div><div class="feat-desc">Files with green "Offline" badge — size on device shown below filename</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Offline edit indicator</div><div class="feat-desc">Yellow "Edited offline" badge on files changed while disconnected — syncs on reconnect</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Remove from device option</div><div class="feat-desc">Free up local storage by removing offline copy — file stays in cloud</div></div></div>
+      <div class="feat-item"><div class="feat-dot blue"></div><div><div class="feat-label">Total offline storage usage</div><div class="feat-desc">Header shows "Using X MB of local storage" with a clear all button</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MOB 9: Notifications -->
+<div class="screen-card" onclick="toggleCard(this)">
+  <div class="sc-header">
+    <div class="sc-icon" style="background:var(--amber-bg)">🔔</div>
+    <div class="sc-meta">
+      <div class="sc-name">Notifications</div>
+      <div class="sc-sub">Push notifications for shares, comments, automation triggers</div>
+    </div>
+    <div class="sc-arrow">▾</div>
+  </div>
+  <div class="sc-body">
+    <div class="feat-list">
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Grouped notification feed</div><div class="feat-desc">Grouped by type: Shares, Comments, AI insights, Automations — swipe to dismiss</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Deep-link on tap</div><div class="feat-desc">Tap "John shared a file" → opens that file directly in the viewer</div></div></div>
+      <div class="feat-item"><div class="feat-dot purple"></div><div><div class="feat-label">AI insight notifications</div><div class="feat-desc">"Duplicate cluster found — tap to review and free 1.2 GB"</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MOB 10: Settings (Mobile) -->
+<div class="screen-card" onclick="toggleCard(this)">
+  <div class="sc-header">
+    <div class="sc-icon" style="background:var(--blue-bg)">⚙️</div>
+    <div class="sc-meta">
+      <div class="sc-name">Settings (Mobile)</div>
+      <div class="sc-sub">Account, security, appearance, backup, sync, biometrics, theming</div>
+    </div>
+    <div class="sc-arrow">▾</div>
+  </div>
+  <div class="sc-body">
+    <div class="feat-list">
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Biometric lock toggle</div><div class="feat-desc">Fingerprint / Face ID to open app — app re-locks after X minutes in background</div></div></div>
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Security settings (2FA, sessions)</div><div class="feat-desc">Same 2FA setup as web — session list shows desktop + mobile sessions together</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Material You theming (Android 12+)</div><div class="feat-desc">Toggle "Use system colors" — app adopts wallpaper-based color palette from Monet</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Backup configuration</div><div class="feat-desc">Camera backup on/off, SD card, WiFi-only — shortcut to Auto Backup screen</div></div></div>
+      <div class="feat-item"><div class="feat-dot blue"></div><div><div class="feat-label">Upload speed throttle slider</div><div class="feat-desc">Drag to set max KB/s for background sync — labeled "Unlimited" at max position</div></div></div>
+    </div>
+    <div class="tags-row">
+      <span class="tag badge-teal">Biometrics</span><span class="tag badge-amber">Material You</span>
+    </div>
+  </div>
+</div>
+
+<!-- MOB 11: Onboarding -->
+<div class="screen-card" onclick="toggleCard(this)">
+  <div class="sc-header">
+    <div class="sc-icon" style="background:var(--purple-bg)">👋</div>
+    <div class="sc-meta">
+      <div class="sc-name">Onboarding Flow</div>
+      <div class="sc-sub">First-launch: permissions, camera backup, team invite, AI intro</div>
+    </div>
+    <div class="sc-arrow">▾</div>
+  </div>
+  <div class="sc-body">
+    <div class="feat-list">
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Step 1 — Permissions</div><div class="feat-desc">Request: Camera, Photos, Notifications — with plain-language explanation per permission</div></div></div>
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Step 2 — Camera backup setup</div><div class="feat-desc">Enable auto-backup? WiFi only? — pre-select recommended defaults with one-tap confirm</div></div></div>
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Step 3 — Join or create team</div><div class="feat-desc">Enter invite code or skip — creates personal space by default</div></div></div>
+      <div class="feat-item"><div class="feat-dot purple"></div><div><div class="feat-label">Step 4 — AI features intro</div><div class="feat-desc">Carousel: Smart Search, Document Scanner, Duplicate Finder — with sample screenshots</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MOB 12: Lock Screen Widget -->
+<div class="screen-card" onclick="toggleCard(this)">
+  <div class="sc-header">
+    <div class="sc-icon" style="background:var(--teal-bg)">🔒</div>
+    <div class="sc-meta">
+      <div class="sc-name">Lock Screen & Home Screen Widgets</div>
+      <div class="sc-sub">iOS / Android widgets — sync status, storage, quick upload</div>
+    </div>
+    <div class="sc-arrow">▾</div>
+  </div>
+  <div class="sc-body">
+    <div class="feat-list">
+      <div class="feat-item"><div class="feat-dot blue"></div><div><div class="feat-label">Small widget — sync status</div><div class="feat-desc">"All synced ✓" or "Syncing 3 files" — tap to open app</div></div></div>
+      <div class="feat-item"><div class="feat-dot blue"></div><div><div class="feat-label">Medium widget — storage ring + recents</div><div class="feat-desc">Donut chart + 3 recent file names — tap to open file directly</div></div></div>
+      <div class="feat-item"><div class="feat-dot teal"></div><div><div class="feat-label">Lock screen widget (iOS 16+ / Android 12+)</div><div class="feat-desc">Quick upload shortcut on lock screen — opens camera in CloudVault context</div></div></div>
+    </div>
+    <div class="tags-row">
+      <span class="tag badge-teal">Mobile-only</span>
+    </div>
+  </div>
+</div>
+
+<!-- MOB 13: Search (Mobile) -->
+<div class="screen-card" onclick="toggleCard(this)">
+  <div class="sc-header">
+    <div class="sc-icon" style="background:var(--purple-bg)">🔍</div>
+    <div class="sc-meta">
+      <div class="sc-name">Search Tab (Mobile)</div>
+      <div class="sc-sub">Full-screen search with voice input, recent queries, AI interpretation</div>
+    </div>
+    <div class="sc-arrow">▾</div>
+  </div>
+  <div class="sc-body">
+    <div class="feat-list">
+      <div class="feat-item"><div class="feat-dot purple"></div><div><div class="feat-label">Voice search microphone</div><div class="feat-desc">Tap mic → speak → waveform animation → Claude transcribes and filters</div></div></div>
+      <div class="feat-item"><div class="feat-dot purple"></div><div><div class="feat-label">Search suggestions from AI</div><div class="feat-desc">As you type: AI-powered suggestions: "invoices this month", "photos from December"</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Recent searches history</div><div class="feat-desc">Last 10 queries shown before typing starts — swipe to delete individual items</div></div></div>
+      <div class="feat-item"><div class="feat-dot blue"></div><div><div class="feat-label">Quick filter chips below search bar</div><div class="feat-desc">Docs · Images · Shared · This team — one-tap scope narrowing</div></div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MOB 14: Profile / Account -->
+<div class="screen-card" onclick="toggleCard(this)">
+  <div class="sc-header">
+    <div class="sc-icon" style="background:var(--amber-bg)">👤</div>
+    <div class="sc-meta">
+      <div class="sc-name">Profile & Account</div>
+      <div class="sc-sub">Avatar, plan status, logout, GDPR export, linked devices</div>
+    </div>
+    <div class="sc-arrow">▾</div>
+  </div>
+  <div class="sc-body">
+    <div class="feat-list">
+      <div class="feat-item"><div class="feat-dot red"></div><div><div class="feat-label">Profile card with storage bar</div><div class="feat-desc">Name, email, plan badge, used/total storage bar with upgrade button if on free</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Linked devices list</div><div class="feat-desc">All active sessions — remote logout per device from mobile</div></div></div>
+      <div class="feat-item"><div class="feat-dot amber"></div><div><div class="feat-label">Export / Delete account (GDPR)</div><div class="feat-desc">Link into GDPR flow — opens web browser to full compliance center</div></div></div>
+      <div class="feat-item"><div class="feat-dot blue"></div><div><div class="feat-label">App version + support link</div><div class="feat-desc">Version number, changelog link, contact support chat shortcut</div></div></div>
+    </div>
+  </div>
+</div>
+
+</div>
+</div>
+
+<script>
+function switchTab(name, btn) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  document.querySelectorAll('.ptab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+function toggleCard(card) {
+  const body = card.querySelector('.sc-body');
+  const arrow = card.querySelector('.sc-arrow');
+  const isOpen = body.classList.contains('open');
+  body.classList.toggle('open', !isOpen);
+  card.classList.toggle('expanded', !isOpen);
+  arrow.style.transform = isOpen ? '' : 'rotate(180deg)';
+}
+</script>

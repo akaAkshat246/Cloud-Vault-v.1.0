@@ -1,0 +1,1575 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CloudVault — Complete Feature Guide</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;500;600;700;800&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #07090f;
+  --bg2: #0c0f1a;
+  --bg3: #111625;
+  --surface: rgba(255,255,255,0.04);
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.12);
+  --ink: #f0f2f8;
+  --ink2: #9ba3bf;
+  --ink3: #5c6480;
+  --blue: #4d8dff;
+  --blue-soft: rgba(77,141,255,0.12);
+  --blue-glow: rgba(77,141,255,0.25);
+  --teal: #2dd4bf;
+  --teal-soft: rgba(45,212,191,0.1);
+  --amber: #f59e0b;
+  --amber-soft: rgba(245,158,11,0.1);
+  --red: #f87171;
+  --red-soft: rgba(248,113,113,0.1);
+  --green: #4ade80;
+  --green-soft: rgba(74,222,128,0.1);
+  --purple: #a78bfa;
+  --purple-soft: rgba(167,139,250,0.1);
+  --r: 12px;
+  --r2: 18px;
+  --font-h: 'Syne', sans-serif;
+  --font-b: 'DM Sans', sans-serif;
+  --font-m: 'JetBrains Mono', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-b);
+  background: var(--bg);
+  color: var(--ink);
+  line-height: 1.65;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 4px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+/* NAV */
+nav {
+  position: sticky; top: 0; z-index: 200;
+  background: rgba(7,9,15,0.85);
+  backdrop-filter: blur(24px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 32px;
+  height: 56px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-brand { display: flex; align-items: center; gap: 10px; font-family: var(--font-h); font-size: 15px; font-weight: 700; color: var(--ink); }
+.nav-logo { width: 30px; height: 30px; background: linear-gradient(135deg, #2dd4bf, #4d8dff); border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 16px; }
+.nav-pills { display: flex; gap: 4px; }
+.nav-pill { font-size: 11.5px; padding: 5px 14px; border-radius: 20px; cursor: pointer; background: transparent; border: 1px solid var(--border); color: var(--ink2); font-family: var(--font-b); transition: all .2s; white-space: nowrap; }
+.nav-pill.active, .nav-pill:hover { background: var(--blue-soft); border-color: var(--blue); color: var(--blue); }
+
+/* HERO */
+.hero {
+  padding: 80px 0 60px;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background: radial-gradient(ellipse 70% 50% at 50% 0%, rgba(77,141,255,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  font-family: var(--font-m); font-size: 11px;
+  background: var(--blue-soft); border: 1px solid rgba(77,141,255,0.3);
+  color: var(--blue); padding: 5px 14px; border-radius: 20px; margin-bottom: 24px;
+}
+.hero-dot { width: 6px; height: 6px; background: var(--blue); border-radius: 50%; animation: blink 2s infinite; }
+@keyframes blink { 0%,100%{opacity:1}50%{opacity:.3} }
+.hero h1 { font-family: var(--font-h); font-size: clamp(32px, 5vw, 60px); font-weight: 800; line-height: 1.0; letter-spacing: -.03em; margin-bottom: 16px; }
+.hero h1 span { background: linear-gradient(135deg, #4d8dff, #2dd4bf); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.hero p { font-size: 16px; color: var(--ink2); max-width: 560px; margin: 0 auto 36px; }
+.hero-stats { display: flex; justify-content: center; gap: 32px; flex-wrap: wrap; }
+.hs { text-align: center; }
+.hs-num { font-family: var(--font-h); font-size: 32px; font-weight: 800; }
+.hs-num.blue { color: var(--blue); }
+.hs-num.teal { color: var(--teal); }
+.hs-num.amber { color: var(--amber); }
+.hs-num.red { color: var(--red); }
+.hs-label { font-size: 11px; color: var(--ink3); text-transform: uppercase; letter-spacing: .08em; }
+
+/* CONTAINER */
+.wrap { max-width: 1100px; margin: 0 auto; padding: 0 32px; }
+
+/* SECTION */
+section { padding: 64px 0; }
+.sec-eyebrow { font-family: var(--font-m); font-size: 11px; color: var(--blue); letter-spacing: .1em; text-transform: uppercase; margin-bottom: 8px; }
+.sec-title { font-family: var(--font-h); font-size: clamp(24px, 3vw, 36px); font-weight: 700; letter-spacing: -.02em; margin-bottom: 10px; }
+.sec-sub { font-size: 14.5px; color: var(--ink2); max-width: 560px; line-height: 1.7; margin-bottom: 32px; }
+.divider { height: 1px; background: var(--border); margin: 0; }
+
+/* TABS (section-level) */
+.stabs { display: flex; gap: 6px; margin-bottom: 28px; flex-wrap: wrap; }
+.stab { padding: 8px 20px; font-size: 13px; border-radius: 8px; cursor: pointer; background: var(--surface); border: 1px solid var(--border); color: var(--ink2); font-family: var(--font-b); transition: all .18s; }
+.stab.active { background: var(--blue); border-color: var(--blue); color: white; }
+
+/* FEATURE CARDS GRID */
+.features-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 14px; }
+.feat-card {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--r2);
+  padding: 22px;
+  transition: border-color .2s, transform .2s;
+  cursor: pointer;
+  position: relative;
+}
+.feat-card:hover { border-color: var(--border2); transform: translateY(-1px); }
+.feat-card.expanded { border-color: var(--blue); }
+.feat-card.critical { border-left: 3px solid var(--red); }
+.feat-card.moderate { border-left: 3px solid var(--amber); }
+.feat-card.low { border-left: 3px solid var(--ink3); }
+.feat-card.existing { border-left: 3px solid var(--teal); }
+.feat-card.ai-exclusive { border-left: 3px solid var(--blue); background: rgba(77,141,255,0.04); }
+.feat-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; margin-bottom: 10px; }
+.feat-icon { width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; flex-shrink: 0; }
+.fi-blue { background: var(--blue-soft); }
+.fi-teal { background: var(--teal-soft); }
+.fi-amber { background: var(--amber-soft); }
+.fi-red { background: var(--red-soft); }
+.fi-purple { background: var(--purple-soft); }
+.fi-green { background: var(--green-soft); }
+.feat-badge { font-family: var(--font-m); font-size: 9px; padding: 3px 8px; border-radius: 5px; font-weight: 700; letter-spacing: .03em; flex-shrink: 0; }
+.fb-red { background: var(--red-soft); color: var(--red); }
+.fb-amber { background: var(--amber-soft); color: var(--amber); }
+.fb-gray { background: rgba(255,255,255,0.06); color: var(--ink3); }
+.fb-teal { background: var(--teal-soft); color: var(--teal); }
+.fb-blue { background: var(--blue-soft); color: var(--blue); }
+.fb-purple { background: var(--purple-soft); color: var(--purple); }
+.fb-green { background: var(--green-soft); color: var(--green); }
+.feat-title { font-family: var(--font-h); font-size: 14px; font-weight: 600; margin-bottom: 5px; }
+.feat-short { font-size: 12.5px; color: var(--ink2); line-height: 1.6; }
+.feat-expand { max-height: 0; overflow: hidden; transition: max-height .4s ease; }
+.feat-expand.open { max-height: 600px; }
+.feat-detail { padding-top: 14px; margin-top: 14px; border-top: 1px solid var(--border); font-size: 12.5px; color: var(--ink2); line-height: 1.7; }
+.feat-detail h4 { font-family: var(--font-h); font-size: 12px; color: var(--ink); text-transform: uppercase; letter-spacing: .06em; margin: 12px 0 5px; }
+.feat-detail ul { padding-left: 16px; }
+.feat-detail li { margin-bottom: 4px; }
+.feat-detail .tech-note { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 8px; padding: 10px 12px; font-family: var(--font-m); font-size: 11px; color: var(--ink3); margin-top: 10px; }
+.feat-toggle { font-size: 11px; color: var(--blue); cursor: pointer; margin-top: 10px; display: inline-block; }
+.chevron { display: inline-block; transition: transform .2s; }
+.feat-card.expanded .chevron { transform: rotate(180deg); }
+
+/* INTEGRATION SECTION */
+.int-hero { background: linear-gradient(135deg, rgba(77,141,255,0.06), rgba(45,212,191,0.06)); border: 1px solid var(--border2); border-radius: var(--r2); padding: 36px; margin-bottom: 32px; }
+.int-comparison { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 16px; margin: 24px 0; }
+.int-card { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--r); padding: 20px; text-align: center; }
+.int-logo { font-size: 28px; margin-bottom: 8px; }
+.int-name { font-family: var(--font-h); font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+.int-count { font-family: var(--font-h); font-size: 28px; font-weight: 800; margin: 6px 0; }
+.int-desc { font-size: 11px; color: var(--ink3); }
+.int-count.google { color: #4285F4; }
+.int-count.od { color: #0078D4; }
+.int-count.db { color: #0061FF; }
+.int-count.cv { color: var(--teal); }
+
+.strategy-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 24px; }
+.strategy-card { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--r); padding: 22px; }
+.strategy-card h3 { font-family: var(--font-h); font-size: 14px; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 8px; }
+.strategy-card p { font-size: 12.5px; color: var(--ink2); line-height: 1.7; }
+.strategy-card .step-list { margin-top: 12px; display: flex; flex-direction: column; gap: 6px; }
+.step { display: flex; gap: 10px; align-items: flex-start; font-size: 12px; color: var(--ink2); }
+.step-num { width: 20px; height: 20px; background: var(--blue-soft); color: var(--blue); border-radius: 50%; font-size: 10px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+
+/* ROADMAP TIMELINE */
+.timeline { position: relative; padding-left: 28px; margin-top: 24px; }
+.timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: var(--border); }
+.tl-item { position: relative; margin-bottom: 24px; }
+.tl-dot { position: absolute; left: -24px; width: 14px; height: 14px; border-radius: 50%; border: 2px solid var(--bg); top: 4px; }
+.tl-dot.p1 { background: var(--red); }
+.tl-dot.p2 { background: var(--amber); }
+.tl-dot.p3 { background: var(--blue); }
+.tl-label { font-family: var(--font-m); font-size: 10px; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 4px; }
+.tl-label.p1 { color: var(--red); }
+.tl-label.p2 { color: var(--amber); }
+.tl-label.p3 { color: var(--blue); }
+.tl-title { font-family: var(--font-h); font-size: 14px; font-weight: 600; margin-bottom: 4px; }
+.tl-desc { font-size: 12px; color: var(--ink2); line-height: 1.6; }
+
+/* WHO HAS IT */
+.who-has { font-family: var(--font-m); font-size: 10px; color: var(--ink3); margin-top: 8px; padding: 6px 10px; background: rgba(255,255,255,0.02); border-radius: 6px; border: 1px solid var(--border); }
+
+/* SEARCH */
+.search-bar { width: 100%; background: var(--bg3); border: 1px solid var(--border2); border-radius: 10px; padding: 12px 16px; font-family: var(--font-b); font-size: 14px; color: var(--ink); outline: none; margin-bottom: 20px; }
+.search-bar::placeholder { color: var(--ink3); }
+.search-bar:focus { border-color: var(--blue); }
+
+/* PANEL */
+.panel { display: none; }
+.panel.active { display: block; }
+
+/* COVERAGE BAR */
+.coverage-row { display: flex; align-items: center; gap: 12px; margin-bottom: 10px; }
+.coverage-label { font-size: 12px; min-width: 100px; color: var(--ink2); }
+.coverage-track { flex: 1; height: 6px; background: rgba(255,255,255,0.06); border-radius: 3px; overflow: hidden; }
+.coverage-fill { height: 6px; border-radius: 3px; transition: width 1s ease; }
+.coverage-val { font-family: var(--font-m); font-size: 11px; min-width: 36px; text-align: right; }
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .nav-pills { display: none; }
+  .features-grid { grid-template-columns: 1fr; }
+  .strategy-grid { grid-template-columns: 1fr; }
+  .int-comparison { grid-template-columns: 1fr 1fr; }
+  .hero h1 { font-size: 32px; }
+  .hero-stats { gap: 20px; }
+  .wrap { padding: 0 16px; }
+}
+
+/* FULL FEATURE WORKING SECTION */
+.full-feature { background: var(--bg3); border: 1px solid var(--border); border-radius: var(--r2); margin-bottom: 12px; overflow: hidden; }
+.ff-header { display: flex; align-items: center; gap: 14px; padding: 18px 22px; cursor: pointer; transition: background .15s; }
+.ff-header:hover { background: rgba(255,255,255,0.03); }
+.ff-icon { width: 38px; height: 38px; border-radius: 9px; display: flex; align-items: center; justify-content: center; font-size: 18px; flex-shrink: 0; }
+.ff-meta { flex: 1; }
+.ff-name { font-family: var(--font-h); font-size: 14px; font-weight: 600; }
+.ff-category { font-size: 11px; color: var(--ink3); font-family: var(--font-m); margin-top: 2px; }
+.ff-arrow { font-size: 12px; color: var(--ink3); transition: transform .2s; }
+.ff-body { max-height: 0; overflow: hidden; transition: max-height .5s ease; border-top: 1px solid transparent; }
+.ff-body.open { max-height: 800px; border-top-color: var(--border); }
+.ff-content { padding: 20px 22px; font-size: 13px; color: var(--ink2); line-height: 1.75; }
+.ff-content h4 { font-family: var(--font-h); font-size: 12px; text-transform: uppercase; letter-spacing: .08em; color: var(--ink); margin: 14px 0 6px; }
+.ff-content h4:first-child { margin-top: 0; }
+.ff-content ul { padding-left: 18px; }
+.ff-content li { margin-bottom: 5px; }
+.ff-content .tech { background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 8px; padding: 10px 14px; font-family: var(--font-m); font-size: 11px; color: var(--teal); margin-top: 12px; }
+.ff-content .note { background: var(--amber-soft); border: 1px solid rgba(245,158,11,0.2); border-radius: 8px; padding: 10px 14px; font-size: 12px; color: var(--amber); margin-top: 10px; }
+
+.category-header { font-family: var(--font-h); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--ink3); padding: 12px 0 8px; margin-top: 8px; display: flex; align-items: center; gap: 8px; }
+.category-line { flex: 1; height: 1px; background: var(--border); }
+
+/* FILTER CHIPS */
+.filter-chips { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 20px; }
+.chip { font-size: 11.5px; padding: 5px 12px; border-radius: 20px; cursor: pointer; background: var(--surface); border: 1px solid var(--border); color: var(--ink2); transition: all .15s; }
+.chip.active { background: var(--teal-soft); border-color: var(--teal); color: var(--teal); }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-brand">
+    <div class="nav-logo">☁️</div>
+    CloudVault
+  </div>
+  <div class="nav-pills">
+    <button class="nav-pill active" onclick="showPanel('missing')">Missing Features</button>
+    <button class="nav-pill" onclick="showPanel('integrations')">Collaboration Strategy</button>
+    <button class="nav-pill" onclick="showPanel('allfeatures')">All Features Guide</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-badge"><div class="hero-dot"></div> CloudVault · Feature Intelligence Report · April 2026</div>
+  <h1>Build the <span>Complete</span><br>Cloud Platform</h1>
+  <p>A full breakdown of every gap to close, how to build 900+ integrations like Google Drive, and how every feature of CloudVault works.</p>
+  <div class="hero-stats">
+    <div class="hs"><div class="hs-num red">17</div><div class="hs-label">Gaps to Close</div></div>
+    <div class="hs"><div class="hs-num teal">15</div><div class="hs-label">Features to Add</div></div>
+    <div class="hs"><div class="hs-num blue">8</div><div class="hs-label">AI Exclusives</div></div>
+    <div class="hs"><div class="hs-num amber">900+</div><div class="hs-label">Integration Target</div></div>
+  </div>
+</div>
+
+<div class="divider"></div>
+
+<!-- MOBILE TABS -->
+<div style="padding: 16px; display: none;" id="mobileTabs">
+  <div class="stabs">
+    <button class="stab active" onclick="showPanel('missing');document.querySelectorAll('.stab').forEach(s=>s.classList.remove('active'));this.classList.add('active')">Missing</button>
+    <button class="stab" onclick="showPanel('integrations');document.querySelectorAll('.stab').forEach(s=>s.classList.remove('active'));this.classList.add('active')">Integrations</button>
+    <button class="stab" onclick="showPanel('allfeatures');document.querySelectorAll('.stab').forEach(s=>s.classList.remove('active'));this.classList.add('active')">All Features</button>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════ PANEL 1: MISSING FEATURES ═══════════════════════════════════ -->
+<div id="panel-missing" class="panel active">
+<section>
+  <div class="wrap">
+    <div class="sec-eyebrow">01 — Competitive Gaps</div>
+    <h2 class="sec-title">17 Features CloudVault Must Add</h2>
+    <p class="sec-sub">Every gap identified from the competitor analysis — with how to build it, and which competitors already have it.</p>
+
+    <div class="filter-chips">
+      <div class="chip active" onclick="filterGaps('all',this)">All (17)</div>
+      <div class="chip" onclick="filterGaps('critical',this)">🔴 Critical (4)</div>
+      <div class="chip" onclick="filterGaps('moderate',this)">🟡 Moderate (8)</div>
+      <div class="chip" onclick="filterGaps('low',this)">⚪ Low (5)</div>
+    </div>
+
+    <div class="features-grid" id="gaps-grid">
+
+      <!-- CRITICAL -->
+      <div class="feat-card critical" data-severity="critical">
+        <div class="feat-header">
+          <div class="feat-icon fi-red">✏️</div>
+          <span class="feat-badge fb-red">CRITICAL</span>
+        </div>
+        <div class="feat-title">Real-Time Collaborative Editing</div>
+        <div class="feat-short">Simultaneous multi-user document editing with live cursors, presence indicators, and change tracking.</div>
+        <div class="feat-expand">
+          <div class="feat-detail">
+            <h4>How to Build It</h4>
+            Use <strong>Tiptap (rich text)</strong> + <strong>Y.js (CRDT engine)</strong> for conflict-free real-time sync. Y.js allows any number of users to edit simultaneously without conflicts — it's the same tech behind Notion. Sync via WebSockets (Socket.io or Hocuspocus server).
+            <h4>Key Features to Include</h4>
+            <ul>
+              <li>Colored live cursors showing each user's position</li>
+              <li>User presence avatars (who's viewing/editing)</li>
+              <li>Comment threads with @mentions</li>
+              <li>Change tracking (Accept / Reject)</li>
+              <li>Offline edit queue with auto-sync on reconnect</li>
+            </ul>
+            <div class="who-has">Has it: Google Drive (Docs/Sheets/Slides) ✓ · OneDrive (Office Online) ✓ · Dropbox (partial)</div>
+            <div class="tech-note">Tech: Tiptap + Y.js + Hocuspocus WebSocket server + Redis pub/sub for scale</div>
+          </div>
+        </div>
+        <span class="feat-toggle" onclick="toggleCard(this)">Learn how to build it <span class="chevron">▾</span></span>
+      </div>
+
+      <div class="feat-card critical" data-severity="critical">
+        <div class="feat-header">
+          <div class="feat-icon fi-red">📄</div>
+          <span class="feat-badge fb-red">CRITICAL</span>
+        </div>
+        <div class="feat-title">Built-In Document Editor</div>
+        <div class="feat-short">Create and edit documents, spreadsheets, and notes directly inside CloudVault — no third-party tool required.</div>
+        <div class="feat-expand">
+          <div class="feat-detail">
+            <h4>How to Build It</h4>
+            Build a lightweight editor using <strong>Tiptap</strong> or <strong>Quill.js</strong> for rich text. Store documents as structured JSON (not binary), which makes E2E encryption trivial and enables AI summarization. Support Markdown input with live preview.
+            <h4>Document Types to Support</h4>
+            <ul>
+              <li>Rich Text (Tiptap — headings, bold, lists, tables)</li>
+              <li>Markdown (raw .md files with live preview)</li>
+              <li>Code files (Monaco editor — same as VS Code)</li>
+              <li>Basic spreadsheet view (Handsontable or AG Grid)</li>
+            </ul>
+            <div class="who-has">Has it: Google Drive (Docs) ✓ · OneDrive (Office Online) ✓</div>
+            <div class="tech-note">Tech: Tiptap v2 + ProseMirror + Monaco Editor for code files</div>
+          </div>
+        </div>
+        <span class="feat-toggle" onclick="toggleCard(this)">Learn how to build it <span class="chevron">▾</span></span>
+      </div>
+
+      <div class="feat-card critical" data-severity="critical">
+        <div class="feat-header">
+          <div class="feat-icon fi-purple">🔌</div>
+          <span class="feat-badge fb-red">CRITICAL</span>
+        </div>
+        <div class="feat-title">Third-Party App Integrations</div>
+        <div class="feat-short">Connect CloudVault to 100s of apps — Slack, Notion, Gmail, Figma — so users never need to leave their workflow.</div>
+        <div class="feat-expand">
+          <div class="feat-detail">
+            <h4>How to Build It</h4>
+            Build a <strong>CloudVault Integration Hub</strong> with a public REST API and OAuth 2.0 authentication. Partners build integrations using your API. Also list on Zapier and Make (formerly Integromat) as a "trigger" app — this alone gives access to 6,000+ app ecosystem.
+            <h4>Integration Categories</h4>
+            <ul>
+              <li>Productivity: Slack, Notion, Trello, Asana</li>
+              <li>Communication: Gmail, Outlook, Teams</li>
+              <li>Design: Figma, Adobe Creative Cloud</li>
+              <li>Dev: GitHub, GitLab, Jira</li>
+              <li>Automation: Zapier, Make, n8n</li>
+            </ul>
+            <div class="who-has">Has it: Google Drive 1000+ · OneDrive 500+ · Dropbox 300+</div>
+            <div class="tech-note">Tech: REST API + OAuth 2.0 + Zapier Developer Platform + Webhook system</div>
+          </div>
+        </div>
+        <span class="feat-toggle" onclick="toggleCard(this)">Learn how to build it <span class="chevron">▾</span></span>
+      </div>
+
+      <div class="feat-card critical" data-severity="critical">
+        <div class="feat-header">
+          <div class="feat-icon fi-blue">🏢</div>
+          <span class="feat-badge fb-red">CRITICAL</span>
+        </div>
+        <div class="feat-title">Team Spaces & Workspace Management</div>
+        <div class="feat-short">Shared team vaults with role-based access control (Owner/Editor/Viewer), org admin panel, and team billing.</div>
+        <div class="feat-expand">
+          <div class="feat-detail">
+            <h4>How to Build It</h4>
+            Create an <strong>organization model</strong> in your database — one org can have many team spaces, each space has members with roles. Admin gets a dashboard to add/remove users, view usage, and manage permissions. Use RBAC (Role-Based Access Control) middleware.
+            <h4>Roles to Implement</h4>
+            <ul>
+              <li><strong>Owner</strong> — full control, billing, delete org</li>
+              <li><strong>Admin</strong> — manage members, view audit logs</li>
+              <li><strong>Editor</strong> — upload, edit, share files</li>
+              <li><strong>Viewer</strong> — read-only access</li>
+              <li><strong>Guest</strong> — limited external access via invite link</li>
+            </ul>
+            <div class="who-has">Has it: All 6 competitors (Google, OneDrive, Dropbox, Proton, MEGA, Tresorit)</div>
+            <div class="tech-note">Tech: RBAC middleware + org model in DB + Stripe for team billing</div>
+          </div>
+        </div>
+        <span class="feat-toggle" onclick="toggleCard(this)">Learn how to build it <span class="chevron">▾</span></span>
+      </div>
+
+      <!-- MODERATE -->
+      <div class="feat-card moderate" data-severity="moderate">
+        <div class="feat-header">
+          <div class="feat-icon fi-amber">⚡</div>
+          <span class="feat-badge fb-amber">MODERATE</span>
+        </div>
+        <div class="feat-title">Zapier / Webhook Automation Hub</div>
+        <div class="feat-short">Let users trigger automated workflows when files are uploaded, shared, or modified — connect to thousands of apps.</div>
+        <div class="feat-expand">
+          <div class="feat-detail">
+            <h4>How to Build It</h4>
+            Create an <strong>event-driven webhook system</strong>. When a file is uploaded/modified/deleted, CloudVault fires a POST request to any URL the user configures. Register as a Zapier app using Zapier Platform CLI — this immediately unlocks 6000+ Zapier integrations.
+            <h4>Events to Expose</h4>
+            <ul>
+              <li>file.uploaded, file.deleted, file.moved</li>
+              <li>share.created, share.accessed, share.expired</li>
+              <li>vault.quota_reached, vault.new_member</li>
+              <li>document.edited, comment.added</li>
+            </ul>
+            <div class="who-has">Has it: Google Drive ✓ · OneDrive ✓ · Dropbox ✓</div>
+            <div class="tech-note">Tech: Zapier CLI + custom webhook config UI + Redis event queue</div>
+          </div>
+        </div>
+        <span class="feat-toggle" onclick="toggleCard(this)">Learn how to build it <span class="chevron">▾</span></span>
+      </div>
+
+      <div class="feat-card moderate" data-severity="moderate">
+        <div class="feat-header">
+          <div class="feat-icon fi-blue">🔑</div>
+          <span class="feat-badge fb-amber">MODERATE</span>
+        </div>
+        <div class="feat-title">FIDO2 / Hardware Security Key (YubiKey)</div>
+        <div class="feat-short">Allow users to authenticate with a physical YubiKey or other FIDO2 hardware key as a second factor.</div>
+        <div class="feat-expand">
+          <div class="feat-detail">
+            <h4>How to Build It</h4>
+            Implement the <strong>WebAuthn API</strong> (built into all modern browsers) on the server using <strong>SimpleWebAuthn</strong> library. Users register their YubiKey once — login then requires physical tap. This is the same standard used by GitHub, Google, and Apple.
+            <h4>Steps</h4>
+            <ul>
+              <li>Add WebAuthn registration flow (one-time key enrollment)</li>
+              <li>Add WebAuthn authentication challenge/response</li>
+              <li>Store credential IDs and public keys in DB</li>
+              <li>Show "Security Keys" section in account settings</li>
+              <li>Support multiple keys per account (backup key)</li>
+            </ul>
+            <div class="who-has">Has it: Google ✓ · OneDrive ✓ · Proton Drive ✓ · Tresorit ✓</div>
+            <div class="tech-note">Tech: Web Authentication API + SimpleWebAuthn (Node.js library)</div>
+          </div>
+        </div>
+        <span class="feat-toggle" onclick="toggleCard(this)">Learn how to build it <span class="chevron">▾</span></span>
+      </div>
+
+      <div class="feat-card moderate" data-severity="moderate">
+        <div class="feat-header">
+          <div class="feat-icon fi-teal">📱</div>
+          <span class="feat-badge fb-amber">MODERATE</span>
+        </div>
+        <div class="feat-title">Android Homescreen Widget + Quick Tile</div>
+        <div class="feat-short">Homescreen widget showing recent files, and a Quick Settings tile for instant camera backup.</div>
+        <div class="feat-expand">
+          <div class="feat-detail">
+            <h4>How to Build It</h4>
+            Since CloudVault uses <strong>Capacitor</strong>, use the <strong>Capacitor Widgets</strong> community plugin or build a native Android Widget using AppWidgetProvider. The Quick Settings tile uses Android's TileService API.
+            <h4>Widget Features</h4>
+            <ul>
+              <li>Recent files list (last 5 files, tap to open)</li>
+              <li>Storage usage bar (X GB of Y GB used)</li>
+              <li>Quick upload button (opens camera/gallery)</li>
+              <li>Quick Tile: tap to instantly upload last photo</li>
+            </ul>
+            <div class="who-has">Has it: Google Drive ✓ · OneDrive ✓</div>
+            <div class="tech-note">Tech: Capacitor + @capacitor-community/app-widget-plugin or native Kotlin AppWidgetProvider</div>
+          </div>
+        </div>
+        <span class="feat-toggle" onclick="toggleCard(this)">Learn how to build it <span class="chevron">▾</span></span>
+      </div>
+
+      <div class="feat-card moderate" data-severity="moderate">
+        <div class="feat-header">
+          <div class="feat-icon fi-teal">📷</div>
+          <span class="feat-badge fb-amber">MODERATE</span>
+        </div>
+        <div class="feat-title">Document Scanner with OCR</div>
+        <div class="feat-short">Camera-based document scanning — auto-detects edges, deskews, and extracts text via OCR.</div>
+        <div class="feat-expand">
+          <div class="feat-detail">
+            <h4>How to Build It</h4>
+            Use <strong>OpenCV.js</strong> (or Android's built-in ML Kit) for edge detection and perspective correction. Use <strong>Tesseract.js</strong> or Claude Vision API for OCR text extraction. Save scans as searchable PDFs.
+            <h4>Flow</h4>
+            <ul>
+              <li>Open camera in scan mode</li>
+              <li>Auto-detect document edges (green overlay)</li>
+              <li>Tap to capture — auto-deskew and enhance contrast</li>
+              <li>Run OCR → extract text → save as searchable PDF</li>
+              <li>Claude auto-tags the document (invoice, receipt, contract)</li>
+            </ul>
+            <div class="who-has">Has it: Google Drive ✓ · OneDrive ✓</div>
+            <div class="tech-note">Tech: ML Kit Document Scanner API (Android) + Claude Vision for OCR/tagging</div>
+          </div>
+        </div>
+        <span class="feat-toggle" onclick="toggleCard(this)">Learn how to build it <span class="chevron">▾</span></span>
+      </div>
+
+      <div class="feat-card moderate" data-severity="moderate">
+        <div class="feat-header">
+          <div class="feat-icon fi-red">🛡️</div>
+          <span class="feat-badge fb-amber">MODERATE</span>
+        </div>
+        <div class="feat-title">IP Access Restrictions (Enterprise)</div>
+        <div class="feat-short">Admin-level allowlisting: only allow vault access from specific IP ranges (office network, VPN, etc.)</div>
+        <div class="feat-expand">
+          <div class="feat-detail">
+            <h4>How to Build It</h4>
+            Add an <strong>IP allowlist</strong> field in org settings. On every API request, check the requesting IP against the allowlist. If denied, return 403. Admins can add CIDR ranges (e.g., 192.168.1.0/24) for office networks.
+            <h4>What to Show in UI</h4>
+            <ul>
+              <li>Admin panel > Security > IP Allowlist</li>
+              <li>Add/remove IP ranges with a label (e.g., "Office Network")</li>
+              <li>Emergency bypass via email-verified override</li>
+              <li>Audit log of denied access attempts</li>
+            </ul>
+            <div class="who-has">Has it: Tresorit ✓ (only competitor)</div>
+            <div class="tech-note">Tech: Server-side middleware IP check + CIDR npm package + audit log table</div>
+          </div>
+        </div>
+        <span class="feat-toggle" onclick="toggleCard(this)">Learn how to build it <span class="chevron">▾</span></span>
+      </div>
+
+      <div class="feat-card moderate" data-severity="moderate">
+        <div class="feat-header">
+          <div class="feat-icon fi-blue">🏥</div>
+          <span class="feat-badge fb-amber">MODERATE</span>
+        </div>
+        <div class="feat-title">HIPAA Compliance Documentation</div>
+        <div class="feat-short">Formal HIPAA Business Associate Agreement (BAA) and audit controls for healthcare organizations.</div>
+        <div class="feat-expand">
+          <div class="feat-detail">
+            <h4>How to Achieve It</h4>
+            HIPAA compliance isn't a single feature — it's a combination of <strong>technical safeguards + legal documentation + audit controls</strong>. Since CloudVault already has E2E + ZK encryption, most of the technical side is covered.
+            <h4>Steps to Get HIPAA Ready</h4>
+            <ul>
+              <li>Engage a HIPAA consultant to audit your infrastructure</li>
+              <li>Generate a BAA template (Business Associate Agreement)</li>
+              <li>Enable audit logs for all file access events</li>
+              <li>Add automatic log-out after inactivity (session timeout)</li>
+              <li>Offer HIPAA plan as an Enterprise tier add-on</li>
+            </ul>
+            <div class="who-has">Has it: Tresorit ✓ (fully certified) · Google/OneDrive (partial)</div>
+            <div class="tech-note">Action: Hire HIPAA compliance consultant + enable full audit logging</div>
+          </div>
+        </div>
+        <span class="feat-toggle" onclick="toggleCard(this)">Learn how to build it <span class="chevron">▾</span></span>
+      </div>
+
+      <div class="feat-card moderate" data-severity="moderate">
+        <div class="feat-header">
+          <div class="feat-icon fi-teal">✏️</div>
+          <span class="feat-badge fb-amber">MODERATE</span>
+        </div>
+        <div class="feat-title">Offline Document Editing</div>
+        <div class="feat-short">Edit documents while offline — changes sync automatically when internet connection is restored.</div>
+        <div class="feat-expand">
+          <div class="feat-detail">
+            <h4>How to Build It</h4>
+            Use <strong>IndexedDB</strong> (via Dexie.js) to store document state locally. <strong>Service Worker</strong> intercepts API calls when offline and queues edits. On reconnect, edits are synced using <strong>Y.js CRDT</strong> for conflict-free merge.
+            <h4>What to Handle</h4>
+            <ul>
+              <li>Cache documents on first open (mark as "Available Offline")</li>
+              <li>Store all edits in IndexedDB with timestamps</li>
+              <li>Show "Offline Mode" indicator in UI</li>
+              <li>Conflict resolution if another user edited the same doc</li>
+              <li>Show merge diff before final save</li>
+            </ul>
+            <div class="who-has">Has it: Google Drive ✓ · OneDrive ✓</div>
+            <div class="tech-note">Tech: IndexedDB + Dexie.js + Service Worker + Y.js CRDT merge</div>
+          </div>
+        </div>
+        <span class="feat-toggle" onclick="toggleCard(this)">Learn how to build it <span class="chevron">▾</span></span>
+      </div>
+
+      <div class="feat-card moderate" data-severity="moderate">
+        <div class="feat-header">
+          <div class="feat-icon fi-purple">🎨</div>
+          <span class="feat-badge fb-amber">MODERATE</span>
+        </div>
+        <div class="feat-title">Material You Dynamic Theming</div>
+        <div class="feat-short">CloudVault adapts its colors to match the user's Android 12+ wallpaper using Monet color extraction.</div>
+        <div class="feat-expand">
+          <div class="feat-detail">
+            <h4>How to Build It</h4>
+            Android 12+ exposes system color palettes via <strong>Material You (Monet engine)</strong>. Use the <strong>@capacitor-community/material-you-colors</strong> plugin to read the device's dynamic color palette and apply it to CSS variables.
+            <h4>Implementation</h4>
+            <ul>
+              <li>Read system palette: colorPrimary, colorSecondary, etc.</li>
+              <li>Map to CSS variables: --cv-primary, --cv-accent</li>
+              <li>Apply across all UI components dynamically</li>
+              <li>Fall back to CloudVault blue (#4D8DFF) on non-Android 12</li>
+            </ul>
+            <div class="who-has">Has it: Google Drive ✓ (fully) · OneDrive (partial)</div>
+            <div class="tech-note">Tech: Capacitor + Android 12 DynamicColors API + CSS custom properties</div>
+          </div>
+        </div>
+        <span class="feat-toggle" onclick="toggleCard(this)">Learn how to build it <span class="chevron">▾</span></span>
+      </div>
+
+      <!-- LOW -->
+      <div class="feat-card low" data-severity="low">
+        <div class="feat-header">
+          <div class="feat-icon fi-teal">⚡</div>
+          <span class="feat-badge fb-gray">LOW</span>
+        </div>
+        <div class="feat-title">Delta / Block-Level Sync</div>
+        <div class="feat-short">Only sync the changed blocks within a file — dramatically reduces bandwidth for large file edits.</div>
+        <div class="feat-expand">
+          <div class="feat-detail">
+            <h4>How to Build It</h4>
+            Use <strong>rsync algorithm</strong> (or Dropbox's own librsync) to split files into blocks (e.g., 4MB chunks), hash each block, and only upload blocks that changed. For text files, use line-level diff.
+            <h4>Why It Matters</h4>
+            If a user edits 100 bytes in a 500MB video file, CloudVault currently re-uploads all 500MB. Delta sync would upload only those changed 100 bytes + small overhead.
+            <div class="who-has">Has it: Dropbox ✓ (only competitor with true block-delta)</div>
+            <div class="tech-note">Tech: rsync algorithm + content-defined chunking (CDC) + rolling hash</div>
+          </div>
+        </div>
+        <span class="feat-toggle" onclick="toggleCard(this)">Learn how to build it <span class="chevron">▾</span></span>
+      </div>
+
+      <div class="feat-card low" data-severity="low">
+        <div class="feat-header">
+          <div class="feat-icon fi-amber">💾</div>
+          <span class="feat-badge fb-gray">LOW</span>
+        </div>
+        <div class="feat-title">SD Card Backup (Android)</div>
+        <div class="feat-short">Auto-backup files stored on the device's external SD card storage to CloudVault.</div>
+        <div class="feat-expand">
+          <div class="feat-detail">
+            <h4>How to Build It</h4>
+            Use Android's <strong>Storage Access Framework (SAF)</strong> to get persistent permission to the SD card directory. Then use a background WorkManager job to periodically check for new/modified files and upload them.
+            <h4>User Setup Flow</h4>
+            <ul>
+              <li>Settings > Backup > Add SD Card Location</li>
+              <li>User grants permission via system picker</li>
+              <li>WorkManager scans for changes every 15 min</li>
+              <li>Changed files queue for upload (respects bandwidth throttle)</li>
+            </ul>
+            <div class="who-has">Has it: Google Drive ✓ · OneDrive ✓</div>
+            <div class="tech-note">Tech: Android SAF + Capacitor Filesystem plugin + WorkManager</div>
+          </div>
+        </div>
+        <span class="feat-toggle" onclick="toggleCard(this)">Learn how to build it <span class="chevron">▾</span></span>
+      </div>
+
+      <div class="feat-card low" data-severity="low">
+        <div class="feat-header">
+          <div class="feat-icon fi-blue">📶</div>
+          <span class="feat-badge fb-gray">LOW</span>
+        </div>
+        <div class="feat-title">Bandwidth Throttling Controls</div>
+        <div class="feat-short">Limit how much data CloudVault uses for background sync — useful on metered connections.</div>
+        <div class="feat-expand">
+          <div class="feat-detail">
+            <h4>How to Build It</h4>
+            Add a rate limiter to the upload/download worker. User sets max upload speed (e.g., 500 KB/s) in settings. Use a <strong>token bucket algorithm</strong> on the upload queue to throttle throughput.
+            <h4>Settings to Expose</h4>
+            <ul>
+              <li>Max upload speed (KB/s or unlimited)</li>
+              <li>Max download speed (KB/s or unlimited)</li>
+              <li>Sync only on Wi-Fi toggle</li>
+              <li>Sync only when charging toggle</li>
+            </ul>
+            <div class="who-has">Has it: Dropbox ✓ · MEGA ✓</div>
+            <div class="tech-note">Tech: Token bucket algorithm + Capacitor Network plugin for Wi-Fi detection</div>
+          </div>
+        </div>
+        <span class="feat-toggle" onclick="toggleCard(this)">Learn how to build it <span class="chevron">▾</span></span>
+      </div>
+
+      <div class="feat-card low" data-severity="low">
+        <div class="feat-header">
+          <div class="feat-icon fi-teal">💬</div>
+          <span class="feat-badge fb-gray">LOW</span>
+        </div>
+        <div class="feat-title">File Comments & Annotations</div>
+        <div class="feat-short">Leave threaded comments and @mention teammates on any file or folder for async review workflows.</div>
+        <div class="feat-expand">
+          <div class="feat-detail">
+            <h4>How to Build It</h4>
+            Create a <strong>comments table</strong> in your database linked to file IDs. Each comment has: author, timestamp, text, parent_id (for threads), and resolved boolean. Display in a right panel when a file is opened.
+            <h4>Features to Include</h4>
+            <ul>
+              <li>Threaded replies (not flat comments)</li>
+              <li>@mention — triggers notification to mentioned user</li>
+              <li>Resolve/unresolve comment threads</li>
+              <li>Emoji reactions on comments</li>
+              <li>Claude can summarize all open comments ("3 unresolved review points")</li>
+            </ul>
+            <div class="who-has">Has it: Google Drive ✓ · OneDrive ✓ · Dropbox ✓</div>
+            <div class="tech-note">Tech: Comments DB table + WebSocket real-time delivery + @mention parser</div>
+          </div>
+        </div>
+        <span class="feat-toggle" onclick="toggleCard(this)">Learn how to build it <span class="chevron">▾</span></span>
+      </div>
+
+      <div class="feat-card low" data-severity="low">
+        <div class="feat-header">
+          <div class="feat-icon fi-blue">🖥️</div>
+          <span class="feat-badge fb-gray">LOW</span>
+        </div>
+        <div class="feat-title">Desktop Sync Client (Mac + Windows)</div>
+        <div class="feat-short">A native desktop app with Finder/Explorer integration and selective folder sync.</div>
+        <div class="feat-expand">
+          <div class="feat-detail">
+            <h4>How to Build It</h4>
+            Use <strong>Electron.js</strong> (cross-platform: Mac, Windows, Linux) with a <strong>virtual filesystem driver</strong> (like Tauri or a native shell extension) to show CloudVault files directly in Finder/Explorer without downloading everything.
+            <h4>Core Features</h4>
+            <ul>
+              <li>System tray icon with sync status</li>
+              <li>Selective sync: choose which folders to download locally</li>
+              <li>Right-click context menu (Share, Lock, View in CloudVault)</li>
+              <li>File placeholder icons (synced / syncing / online-only)</li>
+              <li>Startup on login option</li>
+            </ul>
+            <div class="who-has">Has it: All 6 competitors</div>
+            <div class="tech-note">Tech: Electron.js + Tauri (lighter alternative) + virtual filesystem (cfapi on macOS, GVFS on Windows)</div>
+          </div>
+        </div>
+        <span class="feat-toggle" onclick="toggleCard(this)">Learn how to build it <span class="chevron">▾</span></span>
+      </div>
+
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ═══════════════════════════════════ PANEL 2: INTEGRATIONS ═══════════════════════════════════ -->
+<div id="panel-integrations" class="panel">
+<section>
+  <div class="wrap">
+    <div class="sec-eyebrow">02 — Collaboration Strategy</div>
+    <h2 class="sec-title">How to Build 900+ Integrations</h2>
+    <p class="sec-sub">Google Drive has 900+ integrations, OneDrive 500+, Dropbox 300+. Here's exactly how they do it — and how CloudVault can replicate and surpass that.</p>
+
+    <!-- Comparison -->
+    <div class="int-comparison">
+      <div class="int-card">
+        <div class="int-logo">🔵</div>
+        <div class="int-name">Google Drive</div>
+        <div class="int-count google">1000+</div>
+        <div class="int-desc">Via Google Workspace Marketplace. Open SDK since 2011.</div>
+      </div>
+      <div class="int-card">
+        <div class="int-logo">🔷</div>
+        <div class="int-name">OneDrive</div>
+        <div class="int-count od">500+</div>
+        <div class="int-desc">Via Microsoft AppSource. Deeply tied to M365 ecosystem.</div>
+      </div>
+      <div class="int-card">
+        <div class="int-logo">📦</div>
+        <div class="int-name">Dropbox</div>
+        <div class="int-count db">300+</div>
+        <div class="int-desc">Dropbox App Center + Zapier. Native Slack & Zoom integrations.</div>
+      </div>
+      <div class="int-card" style="border-color: rgba(45,212,191,0.3); background: rgba(45,212,191,0.04);">
+        <div class="int-logo">☁️</div>
+        <div class="int-name">CloudVault Target</div>
+        <div class="int-count cv">500+</div>
+        <div class="int-desc">Year-1 goal via Zapier listing + Partner API program.</div>
+      </div>
+    </div>
+
+    <!-- How they build it -->
+    <div class="int-hero">
+      <h3 style="font-family: var(--font-h); font-size: 20px; margin-bottom: 12px; color: var(--ink);">How Google Drive Got 1000+ Integrations</h3>
+      <p style="font-size: 13.5px; color: var(--ink2); line-height: 1.8; margin-bottom: 16px;">
+        Google Drive didn't build all 1000+ integrations themselves. They built <strong style="color: var(--ink);">infrastructure for others to build on</strong>. Here's the exact playbook:
+      </p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+        <div style="background: rgba(255,255,255,0.04); border-radius: 10px; padding: 16px;">
+          <div style="font-size: 24px; margin-bottom: 8px;">🏗️</div>
+          <div style="font-family: var(--font-h); font-size: 13px; font-weight: 700; margin-bottom: 6px;">1. Build a Public API</div>
+          <div style="font-size: 12px; color: var(--ink2); line-height: 1.65;">Google Drive API lets any developer read/write files, manage permissions, and subscribe to changes. Over 10M apps use the Drive API. Free to use — Google just wants adoption.</div>
+        </div>
+        <div style="background: rgba(255,255,255,0.04); border-radius: 10px; padding: 16px;">
+          <div style="font-size: 24px; margin-bottom: 8px;">🛒</div>
+          <div style="font-family: var(--font-h); font-size: 13px; font-weight: 700; margin-bottom: 6px;">2. Create an App Marketplace</div>
+          <div style="font-size: 12px; color: var(--ink2); line-height: 1.65;">Google Workspace Marketplace is where third-party apps list their Drive integration. Users can install them in one click from inside Drive. Developers pay $100 to register — Google reviews submissions.</div>
+        </div>
+        <div style="background: rgba(255,255,255,0.04); border-radius: 10px; padding: 16px;">
+          <div style="font-size: 24px; margin-bottom: 8px;">⚡</div>
+          <div style="font-family: var(--font-h); font-size: 13px; font-weight: 700; margin-bottom: 6px;">3. List on Zapier / Make</div>
+          <div style="font-size: 12px; color: var(--ink2); line-height: 1.65;">By registering Google Drive as a Zapier app, they instantly connected to 6000+ apps without building a single direct integration. This is the #1 fastest path to 500+ "integrations".</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CloudVault's strategy -->
+    <h3 style="font-family: var(--font-h); font-size: 20px; margin-bottom: 8px;">CloudVault's Integration Roadmap</h3>
+    <p style="font-size: 13.5px; color: var(--ink2); margin-bottom: 24px; line-height: 1.7;">Follow this exact 4-phase plan to go from 0 to 500+ integrations in 12 months.</p>
+
+    <div class="strategy-grid">
+      <div class="strategy-card" style="border-left: 3px solid var(--red);">
+        <h3><span style="font-size:20px">🏗️</span> Phase 1: Build the Foundation (Month 1–2)</h3>
+        <p>Create the core API infrastructure everything else depends on.</p>
+        <div class="step-list">
+          <div class="step"><div class="step-num">1</div><div>Publish a REST API with full documentation at docs.cloudvault.io</div></div>
+          <div class="step"><div class="step-num">2</div><div>Implement OAuth 2.0 so third-party apps can get user permission</div></div>
+          <div class="step"><div class="step-num">3</div><div>Create a developer portal with API keys, usage stats, sandbox</div></div>
+          <div class="step"><div class="step-num">4</div><div>Build a webhook system (POST to any URL on file events)</div></div>
+        </div>
+      </div>
+
+      <div class="strategy-card" style="border-left: 3px solid var(--amber);">
+        <h3><span style="font-size:20px">⚡</span> Phase 2: Zapier & Make (Month 2–3)</h3>
+        <p>Register CloudVault on Zapier and Make to instantly connect to 6,000+ apps.</p>
+        <div class="step-list">
+          <div class="step"><div class="step-num">1</div><div>Go to zapier.com/developer → create a Zapier App using Zapier CLI</div></div>
+          <div class="step"><div class="step-num">2</div><div>Define "Triggers" (file uploaded, shared, deleted)</div></div>
+          <div class="step"><div class="step-num">3</div><div>Define "Actions" (create folder, upload file, move file)</div></div>
+          <div class="step"><div class="step-num">4</div><div>Submit for review → users now connect CV to Slack, Gmail, Notion, etc.</div></div>
+          <div class="step"><div class="step-num">5</div><div>Do the same on Make (make.com) for EU-based enterprise users</div></div>
+        </div>
+      </div>
+
+      <div class="strategy-card" style="border-left: 3px solid var(--blue);">
+        <h3><span style="font-size:20px">🤝</span> Phase 3: Direct Partnerships (Month 4–8)</h3>
+        <p>Reach out directly to popular apps for built-in, native integrations.</p>
+        <div class="step-list">
+          <div class="step"><div class="step-num">1</div><div><strong>Slack:</strong> Build a Slack App — "/cloudvault share [file]" slash command</div></div>
+          <div class="step"><div class="step-num">2</div><div><strong>Notion:</strong> CloudVault file embeds inside Notion pages</div></div>
+          <div class="step"><div class="step-num">3</div><div><strong>Figma:</strong> Export Figma frames directly to CloudVault</div></div>
+          <div class="step"><div class="step-num">4</div><div><strong>GitHub:</strong> Auto-backup repos to CloudVault as encrypted archives</div></div>
+          <div class="step"><div class="step-num">5</div><div><strong>Gmail/Outlook:</strong> "Save to CloudVault" button in email attachments</div></div>
+        </div>
+      </div>
+
+      <div class="strategy-card" style="border-left: 3px solid var(--teal);">
+        <h3><span style="font-size:20px">🛒</span> Phase 4: App Marketplace (Month 9–12)</h3>
+        <p>Build the CloudVault Marketplace — where third-party developers list their integrations.</p>
+        <div class="step-list">
+          <div class="step"><div class="step-num">1</div><div>Build marketplace.cloudvault.io with searchable app listings</div></div>
+          <div class="step"><div class="step-num">2</div><div>Developer registration: $0 fee (unlike Google's $100) to encourage adoption</div></div>
+          <div class="step"><div class="step-num">3</div><div>Featured integrations: Slack, Notion, Figma, GitHub at the top</div></div>
+          <div class="step"><div class="step-num">4</div><div>Revenue share program: 70% to developer, 30% to CloudVault on paid integrations</div></div>
+          <div class="step"><div class="step-num">5</div><div>Hackathon: $10,000 prize for best CloudVault integration — generates 50+ submissions</div></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Direct Partner Examples -->
+    <div style="margin-top: 32px;">
+      <h3 style="font-family: var(--font-h); font-size: 18px; margin-bottom: 20px;">How Each Major Integration Works</h3>
+      <div class="features-grid">
+        <div class="feat-card existing">
+          <div class="feat-header"><div class="feat-icon fi-purple">💬</div><span class="feat-badge fb-purple">SLACK</span></div>
+          <div class="feat-title">CloudVault × Slack</div>
+          <div class="feat-short">Share vault files in Slack channels. Get notified in Slack when files are shared with you.</div>
+          <div class="feat-expand">
+            <div class="feat-detail">
+              <h4>How It Works</h4>
+              Build a Slack App using Slack's Bolt SDK. Users install it via Slack's App Directory. After OAuth authorization:
+              <ul>
+                <li>/cloudvault search [query] — searches your vault from Slack</li>
+                <li>/cloudvault share [file] #channel — posts a secure link</li>
+                <li>Slack notifications when someone accesses your shared file</li>
+                <li>File previews unfurl directly in Slack chat</li>
+              </ul>
+              <div class="tech-note">Tech: Slack Bolt SDK (Node.js) + CloudVault OAuth 2.0 + Slack App Directory listing</div>
+            </div>
+          </div>
+          <span class="feat-toggle" onclick="toggleCard(this)">See details <span class="chevron">▾</span></span>
+        </div>
+
+        <div class="feat-card existing">
+          <div class="feat-header"><div class="feat-icon fi-teal">📝</div><span class="feat-badge fb-teal">NOTION</span></div>
+          <div class="feat-title">CloudVault × Notion</div>
+          <div class="feat-short">Embed CloudVault files directly in Notion pages. Create database entries from file uploads.</div>
+          <div class="feat-expand">
+            <div class="feat-detail">
+              <h4>How It Works</h4>
+              Build a Notion Integration using Notion's public API. Register on Notion's integration page.
+              <ul>
+                <li>Paste a CloudVault file link in Notion → unfurls as embed</li>
+                <li>"Save to Notion" button inside CloudVault file preview</li>
+                <li>Auto-create Notion database entries when files are tagged</li>
+                <li>Two-way sync: Notion page content can be saved as a CloudVault doc</li>
+              </ul>
+              <div class="tech-note">Tech: Notion API + CloudVault Webhook → Notion page creation</div>
+            </div>
+          </div>
+          <span class="feat-toggle" onclick="toggleCard(this)">See details <span class="chevron">▾</span></span>
+        </div>
+
+        <div class="feat-card existing">
+          <div class="feat-header"><div class="feat-icon fi-amber">⚙️</div><span class="feat-badge fb-amber">ZAPIER</span></div>
+          <div class="feat-title">CloudVault × Zapier (6000+ Apps)</div>
+          <div class="feat-short">Automate anything: "When a PDF is uploaded, send it to my Airtable database and notify in Teams."</div>
+          <div class="feat-expand">
+            <div class="feat-detail">
+              <h4>Example Zap Workflows</h4>
+              <ul>
+                <li>New file in CloudVault → Add row in Google Sheets</li>
+                <li>New shared file → Send email via Gmail</li>
+                <li>Invoice uploaded → Create bill in QuickBooks</li>
+                <li>New team member added → Send welcome email via Mailchimp</li>
+                <li>File deleted → Create Jira ticket for review</li>
+              </ul>
+              <h4>How to Register on Zapier</h4>
+              Go to developer.zapier.com → Create App → Define triggers/actions → Submit for review → Live in Zapier's App Directory
+              <div class="tech-note">Tech: Zapier Platform CLI + CloudVault REST API + OAuth 2.0</div>
+            </div>
+          </div>
+          <span class="feat-toggle" onclick="toggleCard(this)">See details <span class="chevron">▾</span></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+</div>
+
+<!-- ═══════════════════════════════════ PANEL 3: ALL FEATURES GUIDE ═══════════════════════════════════ -->
+<div id="panel-allfeatures" class="panel">
+<section>
+  <div class="wrap">
+    <div class="sec-eyebrow">03 — Complete Feature Guide</div>
+    <h2 class="sec-title">How Every Feature Works</h2>
+    <p class="sec-sub">Full working & functionality of every feature CloudVault will possess — both current and planned.</p>
+
+    <input class="search-bar" id="featureSearch" placeholder="🔍  Search features... (e.g. 'encryption', 'AI', 'sync')" oninput="filterFeatures(this.value)">
+
+    <div id="all-features-list">
+
+    <div class="category-header"><span>✦ AI-Exclusive Features</span><div class="category-line"></div></div>
+
+    <div class="full-feature">
+      <div class="ff-header" onclick="toggleFF(this)">
+        <div class="ff-icon fi-blue">💬</div>
+        <div class="ff-meta">
+          <div class="ff-name">AI Vault Assistant (Claude)</div>
+          <div class="ff-category">AI-EXCLUSIVE · All Platforms</div>
+        </div>
+        <span class="ff-arrow">▾</span>
+      </div>
+      <div class="ff-body">
+        <div class="ff-content">
+          <h4>What It Does</h4>
+          A conversational natural-language interface to your entire vault. Instead of navigating folders, you just ask: "Find the invoice I uploaded last month" or "Summarize the contract named ABC Corp."
+          <h4>How It Works (Under the Hood)</h4>
+          <ul>
+            <li>User types a query into the chat interface</li>
+            <li>Query is sent to Claude API (claude-sonnet-4-20250514) with a system prompt that includes the user's file metadata (filenames, tags, dates, folder structure)</li>
+            <li>Claude interprets intent and returns structured actions: SEARCH, OPEN, SUMMARIZE, MOVE, SHARE, etc.</li>
+            <li>CloudVault frontend executes the action and displays result</li>
+            <li>Multi-turn conversation: "Now share it with Priya" remembers context from previous message</li>
+          </ul>
+          <h4>Example Queries</h4>
+          <ul>
+            <li>"Find all PDFs larger than 50MB I haven't opened in 6 months"</li>
+            <li>"Who has access to the Q4 report?"</li>
+            <li>"Create a folder called Projects 2026 and move all files tagged #project into it"</li>
+            <li>"What changed between version 3 and version 4 of the contract?"</li>
+          </ul>
+          <div class="tech">Tech: Claude API + file metadata indexing + tool-use for actions + conversation history context</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="full-feature">
+      <div class="ff-header" onclick="toggleFF(this)">
+        <div class="ff-icon fi-blue">📝</div>
+        <div class="ff-meta">
+          <div class="ff-name">AI Document Summarization</div>
+          <div class="ff-category">AI-EXCLUSIVE · All Platforms</div>
+        </div>
+        <span class="ff-arrow">▾</span>
+      </div>
+      <div class="ff-body">
+        <div class="ff-content">
+          <h4>What It Does</h4>
+          Instant Claude-powered TL;DR on any PDF, Word document, or presentation — streamed live inside the file preview without downloading.
+          <h4>How It Works</h4>
+          <ul>
+            <li>User opens a file → Preview pane shows a "✦ Summarize" button</li>
+            <li>On click: file text is extracted server-side (pdfminer / mammoth for docx)</li>
+            <li>Text is sent to Claude with a summarization prompt (length-controlled)</li>
+            <li>Summary streams back token-by-token into the preview sidebar</li>
+            <li>Summary is cached for 24hrs so re-opening is instant</li>
+          </ul>
+          <h4>Summary Types</h4>
+          <ul>
+            <li>TL;DR (3 bullet points) — default</li>
+            <li>Executive Summary (2 paragraphs)</li>
+            <li>Action Items extracted from meeting notes</li>
+            <li>Key Clauses extracted from contracts/legal docs</li>
+          </ul>
+          <div class="tech">Tech: Claude API + streaming + pdfminer/mammoth text extraction + server-side summary cache</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="full-feature">
+      <div class="ff-header" onclick="toggleFF(this)">
+        <div class="ff-icon fi-blue">🏷️</div>
+        <div class="ff-meta">
+          <div class="ff-name">AI Auto-Tagging & Organisation</div>
+          <div class="ff-category">AI-EXCLUSIVE · All Platforms</div>
+        </div>
+        <span class="ff-arrow">▾</span>
+      </div>
+      <div class="ff-body">
+        <div class="ff-content">
+          <h4>What It Does</h4>
+          Every file uploaded gets automatically analysed by Claude — it reads the content and assigns smart tags (Invoice, Contract, Photo, Design, Code, Report) and suggests a folder to move it to.
+          <h4>How It Works</h4>
+          <ul>
+            <li>File upload triggers a background job (queue)</li>
+            <li>File text/content is extracted and sent to Claude with a tagging prompt</li>
+            <li>Claude returns: category, tags[], suggested_folder, confidence</li>
+            <li>Tags are stored in DB and shown as coloured chips on the file card</li>
+            <li>High-confidence suggestions auto-apply; low-confidence asks user to confirm</li>
+          </ul>
+          <h4>Tag Categories</h4>
+          Invoice · Receipt · Contract · Legal · Photo · Video · Design · Code · Spreadsheet · Report · Presentation · Medical · Personal · Work · Finance
+          <div class="tech">Tech: Claude API (batch job on upload) + tag DB table + confidence threshold system</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="full-feature">
+      <div class="ff-header" onclick="toggleFF(this)">
+        <div class="ff-icon fi-blue">🔍</div>
+        <div class="ff-meta">
+          <div class="ff-name">AI Semantic Search (Vector)</div>
+          <div class="ff-category">AI-EXCLUSIVE · All Platforms</div>
+        </div>
+        <span class="ff-arrow">▾</span>
+      </div>
+      <div class="ff-body">
+        <div class="ff-content">
+          <h4>What It Does</h4>
+          Search by meaning, not just filename. "Show me that thing about the Dubai trip" finds your travel itinerary even if it's named "doc_2025_11_final_v3.pdf".
+          <h4>How It Works</h4>
+          <ul>
+            <li>On upload, file text is extracted and sent to an embedding model (text-embedding-3-small)</li>
+            <li>The embedding (a vector of 1536 numbers) is stored in a vector database (pgvector or Pinecone)</li>
+            <li>On search: user's query is also embedded → nearest-neighbour search finds semantically similar docs</li>
+            <li>Results ranked by semantic similarity score + recency + user activity</li>
+            <li>Works even if the user uses different words than what's in the document</li>
+          </ul>
+          <div class="tech">Tech: OpenAI text-embedding-3-small + pgvector (PostgreSQL extension) + cosine similarity search</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="full-feature">
+      <div class="ff-header" onclick="toggleFF(this)">
+        <div class="ff-icon fi-blue">📊</div>
+        <div class="ff-meta">
+          <div class="ff-name">AI Vault Insights Dashboard</div>
+          <div class="ff-category">AI-EXCLUSIVE · All Platforms</div>
+        </div>
+        <span class="ff-arrow">▾</span>
+      </div>
+      <div class="ff-body">
+        <div class="ff-content">
+          <h4>What It Does</h4>
+          A weekly AI-generated report showing: largest files, never-opened files, duplicate candidates, storage cost breakdown, and recommended cleanups — like having a personal vault manager.
+          <h4>How It Works</h4>
+          <ul>
+            <li>Weekly cron job runs analysis on file metadata (size, last opened, access count)</li>
+            <li>Claude generates a natural-language insights report from the data</li>
+            <li>Dashboard shows: Total storage used · Largest 10 files · Files not opened in 90+ days · Estimated duplicates · Storage cost per category</li>
+            <li>One-click actions: "Archive these files" / "Delete duplicates" / "Compress large video"</li>
+          </ul>
+          <div class="tech">Tech: Cron job + Claude API for narrative generation + chart.js for visualizations</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="full-feature">
+      <div class="ff-header" onclick="toggleFF(this)">
+        <div class="ff-icon fi-blue">📅</div>
+        <div class="ff-meta">
+          <div class="ff-name">AI Version Diff Summary</div>
+          <div class="ff-category">AI-EXCLUSIVE · Web</div>
+        </div>
+        <span class="ff-arrow">▾</span>
+      </div>
+      <div class="ff-body">
+        <div class="ff-content">
+          <h4>What It Does</h4>
+          File version history, but with AI-generated change summaries. Instead of just "v3 — 2 days ago", it says: "Added Section 4 on payment terms. Removed clause 2.3. Changed total amount from ₹50,000 to ₹65,000."
+          <h4>How It Works</h4>
+          <ul>
+            <li>When a new version is uploaded, text is extracted from both old and new versions</li>
+            <li>A diff is computed (word-level or line-level)</li>
+            <li>The diff is sent to Claude: "Summarize what changed between these two document versions"</li>
+            <li>Summary is stored with the version record and shown in the version history panel</li>
+          </ul>
+          <div class="tech">Tech: diff-match-patch library + Claude API for natural-language summary + version table in DB</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="category-header"><span>🔒 Security & Privacy</span><div class="category-line"></div></div>
+
+    <div class="full-feature">
+      <div class="ff-header" onclick="toggleFF(this)">
+        <div class="ff-icon fi-teal">🔐</div>
+        <div class="ff-meta">
+          <div class="ff-name">End-to-End Encryption (E2EE)</div>
+          <div class="ff-category">SECURITY · All Platforms</div>
+        </div>
+        <span class="ff-arrow">▾</span>
+      </div>
+      <div class="ff-body">
+        <div class="ff-content">
+          <h4>What It Does</h4>
+          Every file is encrypted on your device before it leaves. Even CloudVault's servers cannot read your files. Only you (and people you explicitly share with) can decrypt them.
+          <h4>How It Works</h4>
+          <ul>
+            <li>Each file is encrypted client-side using AES-256-GCM before upload</li>
+            <li>A unique file encryption key (FEK) is generated per file</li>
+            <li>FEK is encrypted with the user's master key (derived from password via Argon2)</li>
+            <li>Only the encrypted FEK is stored on server — server cannot reconstruct it without the password</li>
+            <li>On download: FEK is decrypted client-side, then used to decrypt the file</li>
+          </ul>
+          <div class="tech">Tech: AES-256-GCM + Argon2id key derivation + Web Crypto API + client-side encryption before upload</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="full-feature">
+      <div class="ff-header" onclick="toggleFF(this)">
+        <div class="ff-icon fi-teal">🗝️</div>
+        <div class="ff-meta">
+          <div class="ff-name">Zero-Knowledge Encryption (ZKE)</div>
+          <div class="ff-category">SECURITY · All Platforms</div>
+        </div>
+        <span class="ff-arrow">▾</span>
+      </div>
+      <div class="ff-body">
+        <div class="ff-content">
+          <h4>What It Does</h4>
+          CloudVault has zero knowledge of your files. Even if the server is hacked or CloudVault receives a legal demand, they cannot hand over readable file data — because they never had it.
+          <h4>How It Differs from Standard E2EE</h4>
+          E2EE just means data is encrypted in transit. ZKE means the server never holds the decryption key at any point. The key is derived entirely from your password, never sent to the server, and never stored anywhere outside your device.
+          <div class="note">⚠️ Consequence: If you forget your password, your files CANNOT be recovered. CloudVault cannot reset your encryption key.</div>
+          <div class="tech">Tech: PBKDF2 / Argon2id key derivation on-device + keys never leave the client</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="full-feature">
+      <div class="ff-header" onclick="toggleFF(this)">
+        <div class="ff-icon fi-teal">🔒</div>
+        <div class="ff-meta">
+          <div class="ff-name">Visible Encryption Indicator (AI-Exclusive)</div>
+          <div class="ff-category">SECURITY · UI · All Platforms</div>
+        </div>
+        <span class="ff-arrow">▾</span>
+      </div>
+      <div class="ff-body">
+        <div class="ff-content">
+          <h4>What It Does</h4>
+          Every file shows its encryption status right on the file card — a padlock icon with a badge showing "E2E Encrypted" or "Server Encrypted". Click it to see cryptographic proof details.
+          <h4>What the Proof Shows</h4>
+          <ul>
+            <li>Encryption algorithm (AES-256-GCM)</li>
+            <li>Key derivation method (Argon2id)</li>
+            <li>File hash (SHA-256 of ciphertext) — proves file integrity</li>
+            <li>Timestamp of last encryption</li>
+            <li>"Zero-knowledge verified" badge if ZKE is active</li>
+          </ul>
+          <div class="tech">Tech: File metadata stored in DB includes encryption_type, key_hash, algorithm fields</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="category-header"><span>☁️ Sync & Backup</span><div class="category-line"></div></div>
+
+    <div class="full-feature">
+      <div class="ff-header" onclick="toggleFF(this)">
+        <div class="ff-icon fi-blue">🔄</div>
+        <div class="ff-meta">
+          <div class="ff-name">Background File Sync</div>
+          <div class="ff-category">SYNC · Android</div>
+        </div>
+        <span class="ff-arrow">▾</span>
+      </div>
+      <div class="ff-body">
+        <div class="ff-content">
+          <h4>What It Does</h4>
+          Files sync in the background even when the app is closed. Any new file added to a watched folder automatically uploads to CloudVault.
+          <h4>How It Works</h4>
+          <ul>
+            <li>Android WorkManager schedules periodic sync tasks (every 15 min, or on network change)</li>
+            <li>FileObserver watches selected local folders for changes</li>
+            <li>Changed files are added to an upload queue</li>
+            <li>Queue processes files sequentially, retries on failure, respects battery saver mode</li>
+            <li>A persistent notification shows sync progress</li>
+          </ul>
+          <div class="tech">Tech: Android WorkManager + FileObserver + Foreground Service for active sync</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="full-feature">
+      <div class="ff-header" onclick="toggleFF(this)">
+        <div class="ff-icon fi-teal">📸</div>
+        <div class="ff-meta">
+          <div class="ff-name">Auto Camera Backup</div>
+          <div class="ff-category">SYNC · Android</div>
+        </div>
+        <span class="ff-arrow">▾</span>
+      </div>
+      <div class="ff-body">
+        <div class="ff-content">
+          <h4>What It Does</h4>
+          Every photo and video you take is automatically backed up to CloudVault. Works in background without user action.
+          <h4>How It Works</h4>
+          <ul>
+            <li>On first setup: user grants READ_EXTERNAL_STORAGE permission</li>
+            <li>ContentObserver watches MediaStore.Images.Media URI for new photos</li>
+            <li>New photo detected → added to upload queue immediately</li>
+            <li>Uploaded photos organized in /Camera Backup/[Year]/[Month]/ folders</li>
+            <li>Duplicates are detected by hash — same photo not uploaded twice</li>
+            <li>Option: backup only on Wi-Fi (saves mobile data)</li>
+          </ul>
+          <div class="tech">Tech: ContentObserver + MediaStore API + MD5 hash deduplication + WorkManager</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="full-feature">
+      <div class="ff-header" onclick="toggleFF(this)">
+        <div class="ff-icon fi-amber">🕐</div>
+        <div class="ff-meta">
+          <div class="ff-name">Version History</div>
+          <div class="ff-category">SYNC · Web + Android</div>
+        </div>
+        <span class="ff-arrow">▾</span>
+      </div>
+      <div class="ff-body">
+        <div class="ff-content">
+          <h4>What It Does</h4>
+          Every time a file is modified and re-uploaded, CloudVault keeps the previous versions. You can view, compare, or restore any past version.
+          <h4>How It Works</h4>
+          <ul>
+            <li>Each file has a versions table in DB (version_id, file_id, created_at, size, uploader)</li>
+            <li>When a new version uploads, old version is retained (not overwritten) in storage</li>
+            <li>Version history panel shows all versions with timestamps and sizes</li>
+            <li>Click "Restore" → current version archived as a version, older version becomes current</li>
+            <li>Storage plan determines how many versions are kept (Free: 30 days, Pro: unlimited)</li>
+          </ul>
+          <div class="tech">Tech: Immutable object storage (S3/R2 versioning) + versions DB table + restore logic</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="category-header"><span>🤝 Sharing & Collaboration</span><div class="category-line"></div></div>
+
+    <div class="full-feature">
+      <div class="ff-header" onclick="toggleFF(this)">
+        <div class="ff-icon fi-blue">🔗</div>
+        <div class="ff-meta">
+          <div class="ff-name">Password-Protected Share Links</div>
+          <div class="ff-category">SHARING · All Platforms</div>
+        </div>
+        <span class="ff-arrow">▾</span>
+      </div>
+      <div class="ff-body">
+        <div class="ff-content">
+          <h4>What It Does</h4>
+          Generate a share link that requires a password to access. Send the link publicly, but only people with the password can download the file.
+          <h4>How It Works</h4>
+          <ul>
+            <li>Share link has a unique token (UUID) stored in DB with: password_hash, expiry_date, download_limit, file_id</li>
+            <li>When someone opens the link, they see a password prompt page</li>
+            <li>On correct password: file is temporarily decrypted and served (or a signed download URL generated)</li>
+            <li>Password is hashed (bcrypt) — CloudVault never stores plaintext password</li>
+            <li>Failed attempts are rate-limited (max 5 tries before lock)</li>
+          </ul>
+          <div class="tech">Tech: UUID share tokens + bcrypt password hashing + rate limiting + signed CDN URLs</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="full-feature">
+      <div class="ff-header" onclick="toggleFF(this)">
+        <div class="ff-icon fi-teal">🔗</div>
+        <div class="ff-meta">
+          <div class="ff-name">Privacy Report on Shared Links (AI-Exclusive)</div>
+          <div class="ff-category">SHARING · AI · All Platforms</div>
+        </div>
+        <span class="ff-arrow">▾</span>
+      </div>
+      <div class="ff-body">
+        <div class="ff-content">
+          <h4>What It Does</h4>
+          When someone opens a CloudVault share link, they see a "Privacy Report" before downloading — confirming the file is encrypted, who shared it, when the link expires, and whether CloudVault can read it.
+          <h4>What the Report Shows</h4>
+          <ul>
+            <li>✓ File is End-to-End Encrypted</li>
+            <li>✓ Zero-Knowledge: CloudVault cannot read this file</li>
+            <li>📅 Link expires: [date]</li>
+            <li>👁️ Downloads remaining: [n]</li>
+            <li>🌍 Shared from: [country] (via IP geolocation)</li>
+          </ul>
+          <div class="tech">Tech: Share link metadata lookup + encryption status from file record + IP geolocation API</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="category-header"><span>📱 Platform & Ecosystem</span><div class="category-line"></div></div>
+
+    <div class="full-feature">
+      <div class="ff-header" onclick="toggleFF(this)">
+        <div class="ff-icon fi-purple">💰</div>
+        <div class="ff-meta">
+          <div class="ff-name">Cost-Per-File Display (AI-Exclusive)</div>
+          <div class="ff-category">PLATFORM · AI · All Platforms</div>
+        </div>
+        <span class="ff-arrow">▾</span>
+      </div>
+      <div class="ff-body">
+        <div class="ff-content">
+          <h4>What It Does</h4>
+          Shows users exactly how much money each file is costing them in storage fees — in their local currency. Helps users make intelligent storage decisions.
+          <h4>How It Works</h4>
+          <ul>
+            <li>Storage cost per GB is defined per plan (e.g., ₹2/GB/month for Pro)</li>
+            <li>Each file's size / total storage × plan cost = file's monthly cost</li>
+            <li>Shown as "₹0.04/month" on the file card (on hover or always-on in compact mode)</li>
+            <li>Category breakdown: "Photos cost ₹45/month · Videos cost ₹120/month"</li>
+            <li>Helps users identify and delete expensive files they don't need</li>
+          </ul>
+          <div class="tech">Tech: File size metadata + plan pricing config + cost calculation on render</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="full-feature">
+      <div class="ff-header" onclick="toggleFF(this)">
+        <div class="ff-icon fi-green">🌐</div>
+        <div class="ff-meta">
+          <div class="ff-name">Progressive Web App (PWA)</div>
+          <div class="ff-category">PLATFORM · Web</div>
+        </div>
+        <span class="ff-arrow">▾</span>
+      </div>
+      <div class="ff-body">
+        <div class="ff-content">
+          <h4>What It Does</h4>
+          CloudVault web app can be installed on any device (iOS, Android, Windows, Mac) from the browser — like a native app, with offline access and push notifications.
+          <h4>How It Works</h4>
+          <ul>
+            <li>Service Worker caches app shell and recently accessed files</li>
+            <li>Web App Manifest defines name, icons, theme color, display mode (standalone)</li>
+            <li>Browser shows "Install CloudVault" prompt after repeated visits</li>
+            <li>Installed app opens without browser chrome (full-screen, like native)</li>
+            <li>Push notifications via Web Push API (for file shares, comments, sync complete)</li>
+          </ul>
+          <div class="tech">Tech: Service Worker + Cache API + Web App Manifest + Web Push (VAPID)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="category-header"><span>🗺️ Planned Features (Roadmap)</span><div class="category-line"></div></div>
+
+    <div class="full-feature">
+      <div class="ff-header" onclick="toggleFF(this)">
+        <div class="ff-icon fi-amber">🤖</div>
+        <div class="ff-meta">
+          <div class="ff-name">AI Smart Folder Rules (P3)</div>
+          <div class="ff-category">AI · PLANNED · All Platforms</div>
+        </div>
+        <span class="ff-arrow">▾</span>
+      </div>
+      <div class="ff-body">
+        <div class="ff-content">
+          <h4>What It Does</h4>
+          Define rules in plain English: "Move all invoices to /Finance/2026 automatically" — Claude evaluates every new file upload and applies matching rules.
+          <h4>How It Works</h4>
+          <ul>
+            <li>User writes a rule in natural language in the Rules editor</li>
+            <li>On every file upload, file metadata + extracted text is sent to Claude with all active rules</li>
+            <li>Claude returns: matched_rule_id + confidence + action (move, tag, notify)</li>
+            <li>Actions are executed automatically if confidence > 0.85</li>
+            <li>Rules history log shows every action taken automatically</li>
+          </ul>
+          <div class="tech">Tech: Claude API rule evaluation + confidence thresholds + rules DB table + audit log</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="full-feature">
+      <div class="ff-header" onclick="toggleFF(this)">
+        <div class="ff-icon fi-red">🗂️</div>
+        <div class="ff-meta">
+          <div class="ff-name">AI Duplicate Detection (P3)</div>
+          <div class="ff-category">AI · PLANNED · All Platforms</div>
+        </div>
+        <span class="ff-arrow">▾</span>
+      </div>
+      <div class="ff-body">
+        <div class="ff-content">
+          <h4>What It Does</h4>
+          Finds near-duplicate files — not just exact hash matches, but "v1 and v2 of the same report" or "same photo with different crop". Shows projected storage savings before deletion.
+          <h4>How It Works</h4>
+          <ul>
+            <li>Exact duplicates: SHA-256 hash comparison (fast, always-on)</li>
+            <li>Near-duplicates (text files): cosine similarity of embeddings (>0.95 similarity)</li>
+            <li>Near-duplicates (images): perceptual hash (pHash) comparison</li>
+            <li>Weekly scan groups suspected duplicates and presents them as "Review Groups"</li>
+            <li>User picks which version to keep — others archived or deleted</li>
+            <li>Shows: "Freeing 2.3 GB by removing 47 duplicates (saves ₹38/month)"</li>
+          </ul>
+          <div class="tech">Tech: SHA-256 + pgvector cosine similarity + pHash (images) + weekly cron scan</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="full-feature">
+      <div class="ff-header" onclick="toggleFF(this)">
+        <div class="ff-icon fi-purple">👥</div>
+        <div class="ff-meta">
+          <div class="ff-name">AI Collaborative Annotations on Shared Files (P3)</div>
+          <div class="ff-category">AI · PLANNED · All Platforms</div>
+        </div>
+        <span class="ff-arrow">▾</span>
+      </div>
+      <div class="ff-body">
+        <div class="ff-content">
+          <h4>What It Does</h4>
+          When a file is shared with someone, both parties can use Claude together in a sidebar — highlight sections, ask questions about the document, and co-annotate. A collaborative AI layer on top of encrypted files.
+          <h4>How It Works</h4>
+          <ul>
+            <li>Shared file opens with an AI Annotations sidebar visible to all shared users</li>
+            <li>Any user can highlight text and click "Ask Claude about this"</li>
+            <li>Claude's response is visible to all users in the session (shared context)</li>
+            <li>Annotations persist and are exportable as a summary report</li>
+            <li>Example: Two lawyers reviewing a contract together — both can ask Claude "What does clause 4.2 mean?" and see the answer together</li>
+          </ul>
+          <div class="tech">Tech: Shared Claude conversation context + real-time WebSocket for annotation sync + sidebar UI</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="full-feature">
+      <div class="ff-header" onclick="toggleFF(this)">
+        <div class="ff-icon fi-green">🛡️</div>
+        <div class="ff-meta">
+          <div class="ff-name">GDPR Compliance Center (P2)</div>
+          <div class="ff-category">COMPLIANCE · PLANNED · All Platforms</div>
+        </div>
+        <span class="ff-arrow">▾</span>
+      </div>
+      <div class="ff-body">
+        <div class="ff-content">
+          <h4>What It Does</h4>
+          A dedicated GDPR settings page that gives EU users full control over their data: export everything, delete account + data, view what data is stored, and download the Data Processing Agreement (DPA).
+          <h4>GDPR Rights CloudVault Must Implement</h4>
+          <ul>
+            <li><strong>Article 15 (Right to Access):</strong> "Show me all data CloudVault holds about me"</li>
+            <li><strong>Article 17 (Right to Erasure):</strong> Delete account + all files + all backups within 30 days</li>
+            <li><strong>Article 20 (Data Portability):</strong> Export all files + metadata as a ZIP</li>
+            <li><strong>Article 7 (Consent):</strong> Granular consent toggles (analytics, marketing)</li>
+            <li>DPA (Data Processing Agreement) downloadable for enterprise customers</li>
+          </ul>
+          <div class="tech">Tech: Data export job (ZIP generation) + deletion queue with 30-day window + consent DB table</div>
+        </div>
+      </div>
+    </div>
+
+    </div><!-- /all-features-list -->
+  </div>
+</section>
+</div>
+
+<!-- FOOTER -->
+<div class="divider"></div>
+<footer style="padding: 28px 32px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; max-width: 1100px; margin: 0 auto;">
+  <div style="font-family: var(--font-m); font-size: 11px; color: var(--ink3);">CloudVault Feature Intelligence Report · April 2026 · Built with Claude AI</div>
+  <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+    <span style="font-size: 11px; padding: 4px 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; color: var(--ink3);">17 Gaps Identified</span>
+    <span style="font-size: 11px; padding: 4px 10px; background: var(--surface); border: 1px solid var(--border); border-radius: 6px; color: var(--ink3);">15 Features Planned</span>
+    <span style="font-size: 11px; padding: 4px 10px; background: var(--blue-soft); border: 1px solid rgba(77,141,255,0.3); border-radius: 6px; color: var(--blue);">React 18 · TypeScript · Capacitor 6</span>
+  </div>
+</footer>
+
+<script>
+// Panel switching
+function showPanel(name) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + name).classList.add('active');
+  document.querySelectorAll('.nav-pill').forEach(b => b.classList.remove('active'));
+  const idx = {missing:0,integrations:1,allfeatures:2}[name];
+  document.querySelectorAll('.nav-pill')[idx]?.classList.add('active');
+  window.scrollTo({top:56, behavior:'smooth'});
+}
+
+// Toggle feature card expand
+function toggleCard(el) {
+  const card = el.closest('.feat-card');
+  const expand = card.querySelector('.feat-expand');
+  card.classList.toggle('expanded');
+  expand.classList.toggle('open');
+}
+
+// Toggle full-feature accordion
+function toggleFF(el) {
+  const body = el.nextElementSibling;
+  const arrow = el.querySelector('.ff-arrow');
+  body.classList.toggle('open');
+  arrow.style.transform = body.classList.contains('open') ? 'rotate(180deg)' : '';
+}
+
+// Filter gaps by severity
+function filterGaps(severity, chipEl) {
+  document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+  chipEl.classList.add('active');
+  document.querySelectorAll('#gaps-grid .feat-card').forEach(card => {
+    if (severity === 'all' || card.dataset.severity === severity) {
+      card.style.display = '';
+    } else {
+      card.style.display = 'none';
+    }
+  });
+}
+
+// Search features
+function filterFeatures(query) {
+  const q = query.toLowerCase();
+  document.querySelectorAll('#all-features-list .full-feature').forEach(ff => {
+    const text = ff.textContent.toLowerCase();
+    ff.style.display = text.includes(q) ? '' : 'none';
+  });
+  document.querySelectorAll('.category-header').forEach(ch => {
+    ch.style.display = '';
+  });
+}
+
+// Animate coverage bars on load
+window.addEventListener('load', () => {
+  document.querySelectorAll('.coverage-fill').forEach(bar => {
+    const w = bar.style.width;
+    bar.style.width = '0%';
+    setTimeout(() => bar.style.width = w, 300);
+  });
+});
+
+// Mobile tabs visibility
+if (window.innerWidth <= 768) {
+  document.getElementById('mobileTabs').style.display = 'block';
+}
+</script>
+</body>
+</html>

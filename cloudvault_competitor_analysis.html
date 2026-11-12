@@ -1,0 +1,1024 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CloudVault — Competitive Analysis Report</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Mona+Sans:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --pearl:#f5f4f2; --frost:#fafaf9; --ink:#1a1917; --ink-muted:#6b6860; --ink-faint:#a8a49e;
+  --line:rgba(26,25,23,0.08); --teal:#007aff; --teal-soft:rgba(0,122,255,0.10);
+  --gold:#c9a84c; --gold-soft:rgba(201,168,76,0.12); --danger:#d94f3d; --success:#2e8b57;
+  --card-bg:rgba(255,255,255,0.82); --card-border:rgba(26,25,23,0.07);
+  --shadow-sm:0 1px 3px rgba(0,0,0,0.05),0 1px 2px rgba(0,0,0,0.06);
+  --shadow-md:0 4px 20px rgba(0,0,0,0.07),0 2px 8px rgba(0,0,0,0.05);
+  --r-sm:8px; --r-md:14px; --r-lg:22px;
+  --font-d:'DM Serif Display',Georgia,serif;
+  --font-s:'Mona Sans',-apple-system,sans-serif;
+  --font-m:'JetBrains Mono',monospace;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:var(--font-s);background:var(--pearl);color:var(--ink);line-height:1.6;overflow-x:hidden;-webkit-font-smoothing:antialiased}
+
+/* NAV */
+nav{position:sticky;top:0;z-index:100;backdrop-filter:blur(28px) saturate(160%);background:rgba(245,244,242,0.82);border-bottom:1px solid var(--line)}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 32px;height:56px;display:flex;align-items:center;justify-content:space-between}
+.nav-brand{display:flex;align-items:center;gap:10px;font-size:16px;font-weight:600;letter-spacing:-0.02em;text-decoration:none;color:var(--ink)}
+.nav-icon{width:28px;height:28px;background:linear-gradient(135deg,#5ac8fa,#007aff);border-radius:8px;display:flex;align-items:center;justify-content:center}
+.nav-icon svg{width:14px;height:14px;fill:white}
+.nav-badge{font-size:11px;color:var(--ink-faint);padding:4px 10px;background:white;border:1px solid var(--line);border-radius:20px}
+
+/* LAYOUT */
+.wrap{max-width:1200px;margin:0 auto;padding:0 32px}
+
+/* SECTIONS */
+section{padding:72px 0;position:relative}
+section:nth-child(even){background:rgba(255,255,255,0.45)}
+
+/* SECTION HEADER */
+.sec-label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--teal);margin-bottom:10px}
+.sec-title{font-family:var(--font-d);font-size:clamp(26px,3.5vw,40px);line-height:1.1;letter-spacing:-.02em;margin-bottom:10px}
+.sec-sub{font-size:15px;color:var(--ink-muted);line-height:1.7;max-width:560px}
+
+/* GLASS CARD */
+.glass{background:var(--card-bg);backdrop-filter:blur(20px);border:1px solid var(--card-border);border-radius:var(--r-lg);box-shadow:var(--shadow-md)}
+
+/* METRIC CARDS */
+.metrics-row{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:36px 0}
+.metric{background:white;border:1px solid var(--line);border-radius:var(--r-md);padding:18px 20px;text-align:center}
+.metric-num{font-family:var(--font-d);font-size:32px;color:var(--ink);line-height:1;margin-bottom:6px}
+.metric-label{font-size:11.5px;font-weight:500;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.05em}
+.metric-num.lead{color:var(--success)}
+.metric-num.lag{color:var(--danger)}
+.metric-num.ai{color:var(--gold)}
+
+/* BADGES */
+.badge{font-size:10.5px;font-weight:600;padding:2px 8px;border-radius:8px;letter-spacing:.01em;display:inline-block}
+.b-green{background:#eaf3de;color:#3b6d11}
+.b-red{background:#fcebeb;color:#a32d2d}
+.b-amber{background:#faeeda;color:#854f0b}
+.b-blue{background:#e6f1fb;color:#185fa5}
+.b-purple{background:#eeedfe;color:#534ab7}
+.b-gold{background:var(--gold-soft);color:#8a6520;border:1px solid rgba(201,168,76,.2)}
+.b-gray{background:#f1efe8;color:#5f5e5a}
+
+/* COMPARISON TABLE */
+.tbl-wrap{overflow-x:auto;margin-top:24px}
+.ctbl{width:100%;border-collapse:collapse;border:0.5px solid var(--line);border-radius:var(--r-lg);overflow:hidden;min-width:900px}
+.ctbl thead th{background:#f0f0ee;padding:10px 8px;font-size:11px;font-weight:600;text-align:center;border-bottom:1px solid var(--line);color:var(--ink-muted);white-space:nowrap}
+.ctbl thead th.feat-col{text-align:left;padding-left:14px;min-width:180px}
+.ctbl thead th.cv-col{background:#e8f1ff;color:#0051b3;border-bottom:2px solid var(--teal);position:relative}
+.ctbl thead th.cv-col::after{content:'★';font-size:10px;margin-left:4px;color:var(--teal)}
+.ctbl tbody tr:last-child td{border-bottom:none}
+.ctbl td{padding:8px 7px;font-size:12px;text-align:center;border-bottom:0.5px solid var(--line);color:var(--ink-muted);vertical-align:middle}
+.ctbl td.feat-col{text-align:left;padding-left:14px;font-size:12px;color:var(--ink-muted);background:#fafaf9;border-right:1px solid var(--line)}
+.ctbl td.cv-col{background:rgba(0,122,255,0.04);border-right:1px solid rgba(0,122,255,.15);border-left:1px solid rgba(0,122,255,.15)}
+.ctbl tr.cat-row td{background:#f5f4f2;font-size:10.5px;font-weight:600;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.06em;padding:6px 14px;border-bottom:0.5px solid var(--line)}
+.ctbl tr.cat-row td.cv-col{background:#edf4ff}
+.yes-i{color:#3b6d11;font-weight:700;font-size:14px}
+.no-i{color:#a32d2d;font-weight:700;font-size:13px}
+.part-i{color:#854f0b;font-weight:700;font-size:13px}
+.val-v{font-size:11px;font-weight:600;color:var(--ink)}
+.star-v{color:var(--gold);font-weight:700;font-size:12px}
+
+/* TABS */
+.tabs{display:flex;gap:6px;margin-bottom:4px}
+.tab{padding:7px 18px;font-size:13px;border:0.5px solid var(--line);border-radius:20px;cursor:pointer;background:transparent;color:var(--ink-muted);font-family:var(--font-s);transition:all .15s}
+.tab.active{background:var(--ink);color:white;border-color:transparent}
+
+/* LEADS / LAGS CARDS */
+.cards-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-top:24px}
+.feat-card{padding:22px 24px;border-radius:var(--r-md)}
+.fc-icon{width:38px;height:38px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:18px;margin-bottom:13px;flex-shrink:0}
+.fc-title{font-size:14.5px;font-weight:600;letter-spacing:-.01em;color:var(--ink);margin-bottom:6px}
+.fc-desc{font-size:12.5px;color:var(--ink-muted);line-height:1.65}
+.fc-tags{display:flex;flex-wrap:wrap;gap:5px;margin-top:12px}
+.fc-extra{font-family:var(--font-m);font-size:10.5px;color:var(--ink-faint);margin-top:8px;padding:6px 10px;background:var(--frost);border:1px solid var(--line);border-radius:6px}
+
+/* LAGS LIST */
+.lags-list{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:24px}
+.lag-item{display:flex;gap:14px;align-items:flex-start;padding:16px 18px;background:white;border:1px solid var(--line);border-radius:var(--r-md)}
+.lag-sev{width:4px;min-height:50px;border-radius:2px;flex-shrink:0}
+.lag-sev.critical{background:#d94f3d}
+.lag-sev.moderate{background:#e9a028}
+.lag-sev.low{background:#94a3b8}
+.lag-body{}
+.lag-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:3px}
+.lag-desc{font-size:11.5px;color:var(--ink-muted);line-height:1.6}
+.lag-who{font-size:10.5px;margin-top:5px;color:var(--ink-faint);font-family:var(--font-m)}
+
+/* ROADMAP */
+.roadmap{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-top:24px}
+.rp-col{background:white;border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden}
+.rp-header{padding:14px 18px;font-size:12px;font-weight:600;letter-spacing:.04em;text-transform:uppercase;border-bottom:1px solid var(--line)}
+.rp-header.p1{background:#fcebeb;color:#a32d2d}
+.rp-header.p2{background:#faeeda;color:#854f0b}
+.rp-header.p3{background:#e6f1fb;color:#185fa5}
+.rp-item{display:flex;gap:10px;padding:12px 18px;border-bottom:0.5px solid var(--line);align-items:flex-start}
+.rp-item:last-child{border-bottom:none}
+.rp-num{font-family:var(--font-m);font-size:10px;color:var(--ink-faint);padding-top:2px;min-width:18px}
+.rp-text{}
+.rp-name{font-size:12.5px;font-weight:600;color:var(--ink);margin-bottom:2px}
+.rp-why{font-size:11px;color:var(--ink-muted);line-height:1.5}
+
+/* CHART WRAPPER */
+.chart-wrap{background:white;border:1px solid var(--line);border-radius:var(--r-lg);padding:28px;margin-top:24px}
+.chart-title{font-size:13px;font-weight:600;color:var(--ink);margin-bottom:20px}
+.chart-legend{display:flex;flex-wrap:wrap;gap:14px;margin-bottom:20px}
+.leg-item{display:flex;align-items:center;gap:5px;font-size:11px;color:var(--ink-muted)}
+.leg-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
+.cv-highlight{border-left:4px solid var(--teal);padding-left:12px}
+
+/* HERO */
+.hero-banner{background:white;border:1px solid var(--line);border-radius:var(--r-lg);padding:36px 40px;margin-top:32px;margin-bottom:0;display:flex;align-items:flex-start;justify-content:space-between;gap:32px;flex-wrap:wrap}
+.hero-left{}
+.hero-eye{display:inline-flex;align-items:center;gap:7px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--teal);background:var(--teal-soft);border:1px solid rgba(0,122,255,.15);padding:5px 12px;border-radius:20px;margin-bottom:16px}
+.hero-dot{width:6px;height:6px;background:var(--teal);border-radius:50%;animation:pulse 2s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+.hero-title{font-family:var(--font-d);font-size:clamp(28px,4vw,46px);line-height:1.05;letter-spacing:-.02em;color:var(--ink);margin-bottom:12px}
+.hero-title em{font-style:italic;color:var(--teal)}
+.hero-sub{font-size:15px;color:var(--ink-muted);line-height:1.7;max-width:480px}
+.hero-right{display:flex;flex-direction:column;gap:8px;align-items:flex-end;flex-shrink:0}
+.service-pill{font-size:11.5px;font-weight:500;padding:6px 14px;border:0.5px solid var(--line);border-radius:20px;background:var(--frost);color:var(--ink-muted);display:flex;align-items:center;gap:6px}
+.sp-dot{width:7px;height:7px;border-radius:50%;flex-shrink:0}
+
+/* SCORE TABLE */
+.score-tbl{width:100%;border-collapse:collapse;margin-top:20px}
+.score-tbl th{font-size:11px;font-weight:600;color:var(--ink-faint);letter-spacing:.05em;text-transform:uppercase;padding:6px 10px;border-bottom:0.5px solid var(--line);text-align:left}
+.score-tbl th:not(:first-child){text-align:center}
+.score-tbl td{padding:8px 10px;font-size:12px;border-bottom:0.5px solid var(--line);color:var(--ink-muted)}
+.score-tbl td:not(:first-child){text-align:center}
+.score-tbl tr.cv-row td{background:rgba(0,122,255,.04);font-weight:600;color:var(--ink)}
+.score-bar-wrap{width:80px;height:7px;background:#eee;border-radius:4px;display:inline-block;vertical-align:middle;margin-left:6px}
+.score-bar{height:7px;border-radius:4px;background:var(--teal)}
+.score-bar.cv{background:var(--teal)}
+.score-bar.gdrive{background:#4285F4}
+.score-bar.od{background:#0078D4}
+.score-bar.db{background:#0061FF}
+.score-bar.proton{background:#6D4AFF}
+.score-bar.mega{background:#D32F2F}
+.score-bar.tresorit{background:#1B2C4A}
+
+/* UNIQUE FEATURES DARK SECTION */
+.ai-section{background:linear-gradient(145deg,#0a0f1a,#0d1a2e,#091223);padding:72px 0;position:relative;overflow:hidden}
+.ai-section::before{content:'';position:absolute;inset:0;background:radial-gradient(ellipse 50% 60% at 20% 50%,rgba(90,200,250,.10) 0%,transparent 60%),radial-gradient(ellipse 40% 50% at 80% 30%,rgba(0,122,255,.12) 0%,transparent 55%);pointer-events:none}
+.ai-section .sec-label{color:#5ac8fa}
+.ai-section .sec-title{color:white}
+.ai-section .sec-sub{color:rgba(255,255,255,.55)}
+.ai-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin-top:28px}
+.ai-card{background:rgba(255,255,255,.05);border:1px solid rgba(255,255,255,.09);border-radius:var(--r-md);padding:22px}
+.ai-card.exclusive{border-color:rgba(0,122,255,.30);background:rgba(0,122,255,.08)}
+.ai-card-icon{width:36px;height:36px;border-radius:9px;background:rgba(0,122,255,.15);border:1px solid rgba(0,122,255,.25);display:flex;align-items:center;justify-content:center;font-size:16px;margin-bottom:12px}
+.ai-card.gold-card .ai-card-icon{background:rgba(201,168,76,.15);border-color:rgba(201,168,76,.25)}
+.ai-card-title{font-size:14px;font-weight:600;color:white;margin-bottom:5px}
+.ai-card-desc{font-size:12px;color:rgba(255,255,255,.50);line-height:1.65}
+.ai-badge{font-size:10px;padding:2px 8px;border-radius:6px;background:rgba(0,122,255,.20);color:#7dd3fc;font-weight:600;display:inline-block;margin-top:10px}
+.ai-badge.gold-b{background:rgba(201,168,76,.20);color:#e6c068}
+
+/* FOOTER */
+footer{padding:36px 0;border-top:1px solid var(--line)}
+.footer-inner{display:flex;align-items:center;justify-content:space-between;gap:20px;flex-wrap:wrap}
+.footer-copy{font-size:12px;color:var(--ink-faint)}
+.footer-chips{display:flex;gap:8px;flex-wrap:wrap}
+.footer-chip{font-size:10.5px;padding:3px 10px;background:white;border:1px solid var(--line);border-radius:8px;color:var(--ink-muted)}
+
+/* LEGEND GRID */
+.services-legend{display:flex;flex-wrap:wrap;gap:8px;margin:20px 0}
+.svc-chip{display:flex;align-items:center;gap:6px;padding:5px 12px;border:0.5px solid var(--line);border-radius:20px;background:white;font-size:11.5px;font-weight:500;color:var(--ink-muted)}
+.svc-chip.cv-chip{border-color:rgba(0,122,255,.35);background:rgba(0,122,255,.06);color:var(--teal);font-weight:700}
+.svc-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0}
+
+/* AI EXCLUSIVE BADGE */
+.ex-badge{font-size:9.5px;padding:2px 7px;background:var(--gold-soft);color:#8a6520;border:1px solid rgba(201,168,76,.25);border-radius:6px;font-weight:700;letter-spacing:.03em;display:inline-block;margin-left:5px;vertical-align:middle}
+
+@media(max-width:768px){
+  .metrics-row{grid-template-columns:repeat(2,1fr)}
+  .cards-grid,.ai-cards,.roadmap{grid-template-columns:1fr}
+  .lags-list{grid-template-columns:1fr}
+  .hero-banner{padding:24px}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a class="nav-brand" href="#">
+      <div class="nav-icon"><svg viewBox="0 0 24 24"><path d="M12 2C8.7 2 6 4.7 6 8c0 .5.1 1 .2 1.4C4.3 10.3 3 12 3 14c0 2.8 2.2 5 5 5h9c2.8 0 5-2.2 5-5 0-2.4-1.7-4.4-4-4.9C17.3 7.4 14.9 5 12 5c0-1.7 0-3 0-3z"/></svg></div>
+      CloudVault
+    </a>
+    <span class="nav-badge">Competitive Analysis Report · April 2026</span>
+  </div>
+</nav>
+
+<!-- HERO -->
+<div class="wrap">
+  <div class="hero-banner">
+    <div class="hero-left">
+      <div class="hero-eye"><div class="hero-dot"></div>Product Intelligence</div>
+      <h1 class="hero-title">CloudVault vs.<br><em>The Market</em></h1>
+      <p class="hero-sub">A full feature-by-feature breakdown comparing CloudVault against Google Drive, OneDrive, Dropbox, Proton Drive, MEGA, and Tresorit — across Android and Web platforms. Identifies 9 lead areas, 17 gaps, and 15 recommended additions.</p>
+    </div>
+    <div class="hero-right">
+      <div style="font-size:11px;font-weight:600;color:var(--ink-faint);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Compared Against</div>
+      <div class="service-pill"><div class="sp-dot" style="background:#4285F4"></div>Google Drive</div>
+      <div class="service-pill"><div class="sp-dot" style="background:#0078D4"></div>OneDrive</div>
+      <div class="service-pill"><div class="sp-dot" style="background:#0061FF"></div>Dropbox</div>
+      <div class="service-pill"><div class="sp-dot" style="background:#6D4AFF"></div>Proton Drive</div>
+      <div class="service-pill"><div class="sp-dot" style="background:#D32F2F"></div>MEGA</div>
+      <div class="service-pill"><div class="sp-dot" style="background:#1B2C4A"></div>Tresorit</div>
+    </div>
+  </div>
+
+  <!-- METRICS -->
+  <div class="metrics-row">
+    <div class="metric">
+      <div class="metric-num lead">9</div>
+      <div class="metric-label">Lead Features</div>
+    </div>
+    <div class="metric">
+      <div class="metric-num lag">17</div>
+      <div class="metric-label">Feature Gaps</div>
+    </div>
+    <div class="metric">
+      <div class="metric-num ai">8</div>
+      <div class="metric-label">Exclusive Features</div>
+    </div>
+    <div class="metric">
+      <div class="metric-num">15</div>
+      <div class="metric-label">Recommended Adds</div>
+    </div>
+  </div>
+</div>
+
+<!-- OVERVIEW SCORE -->
+<section>
+  <div class="wrap">
+    <div class="sec-label">01 — Overview</div>
+    <h2 class="sec-title">Feature coverage by category</h2>
+    <p class="sec-sub">Coverage score = percentage of category features available. CloudVault scores competitively in Security but lags in Platform & Ecosystem integration.</p>
+
+    <div class="chart-wrap">
+      <div class="chart-title">Feature coverage score — all categories</div>
+      <div class="chart-legend">
+        <span class="leg-item"><span class="leg-dot" style="background:#007aff"></span>CloudVault</span>
+        <span class="leg-item"><span class="leg-dot" style="background:#4285F4"></span>Google Drive</span>
+        <span class="leg-item"><span class="leg-dot" style="background:#0078D4"></span>OneDrive</span>
+        <span class="leg-item"><span class="leg-dot" style="background:#0061FF"></span>Dropbox</span>
+        <span class="leg-item"><span class="leg-dot" style="background:#6D4AFF"></span>Proton Drive</span>
+        <span class="leg-item"><span class="leg-dot" style="background:#D32F2F"></span>MEGA</span>
+        <span class="leg-item"><span class="leg-dot" style="background:#4a5568"></span>Tresorit</span>
+      </div>
+      <div style="position:relative;width:100%;height:320px">
+        <canvas id="overviewChart" role="img" aria-label="Grouped bar chart showing feature coverage scores for CloudVault and 6 competitors across 5 categories">Coverage scores: Sync & Backup, Sharing, Security, Platform, Offline.</canvas>
+      </div>
+    </div>
+
+    <!-- Detailed score table -->
+    <div class="chart-wrap" style="margin-top:16px">
+      <div class="chart-title">Category score breakdown</div>
+      <table class="score-tbl">
+        <thead>
+          <tr>
+            <th>Service</th>
+            <th>Sync</th>
+            <th>Sharing</th>
+            <th>Security</th>
+            <th>Platform</th>
+            <th>Offline</th>
+            <th>Overall</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr class="cv-row">
+            <td><span style="display:flex;align-items:center;gap:6px"><span class="svc-dot" style="background:#007aff;width:8px;height:8px;border-radius:50%"></span>CloudVault</span></td>
+            <td>64%<span class="score-bar-wrap"><span class="score-bar cv" style="width:64%"></span></span></td>
+            <td>68%<span class="score-bar-wrap"><span class="score-bar cv" style="width:68%"></span></span></td>
+            <td>73%<span class="score-bar-wrap"><span class="score-bar cv" style="width:73%"></span></span></td>
+            <td>48%<span class="score-bar-wrap"><span class="score-bar cv" style="width:48%"></span></span></td>
+            <td>60%<span class="score-bar-wrap"><span class="score-bar cv" style="width:60%"></span></span></td>
+            <td><strong>63%</strong></td>
+          </tr>
+          <tr>
+            <td><span style="display:flex;align-items:center;gap:6px"><span class="svc-dot" style="background:#4285F4;width:8px;height:8px;border-radius:50%"></span>Google Drive</span></td>
+            <td>80%<span class="score-bar-wrap"><span class="score-bar gdrive" style="width:80%"></span></span></td>
+            <td>88%<span class="score-bar-wrap"><span class="score-bar gdrive" style="width:88%"></span></span></td>
+            <td>50%<span class="score-bar-wrap"><span class="score-bar gdrive" style="width:50%"></span></span></td>
+            <td>91%<span class="score-bar-wrap"><span class="score-bar gdrive" style="width:91%"></span></span></td>
+            <td>78%<span class="score-bar-wrap"><span class="score-bar gdrive" style="width:78%"></span></span></td>
+            <td>77%</td>
+          </tr>
+          <tr>
+            <td><span style="display:flex;align-items:center;gap:6px"><span class="svc-dot" style="background:#0078D4;width:8px;height:8px;border-radius:50%"></span>OneDrive</span></td>
+            <td>78%<span class="score-bar-wrap"><span class="score-bar od" style="width:78%"></span></span></td>
+            <td>84%<span class="score-bar-wrap"><span class="score-bar od" style="width:84%"></span></span></td>
+            <td>52%<span class="score-bar-wrap"><span class="score-bar od" style="width:52%"></span></span></td>
+            <td>88%<span class="score-bar-wrap"><span class="score-bar od" style="width:88%"></span></span></td>
+            <td>76%<span class="score-bar-wrap"><span class="score-bar od" style="width:76%"></span></span></td>
+            <td>76%</td>
+          </tr>
+          <tr>
+            <td><span style="display:flex;align-items:center;gap:6px"><span class="svc-dot" style="background:#0061FF;width:8px;height:8px;border-radius:50%"></span>Dropbox</span></td>
+            <td>84%<span class="score-bar-wrap"><span class="score-bar db" style="width:84%"></span></span></td>
+            <td>66%<span class="score-bar-wrap"><span class="score-bar db" style="width:66%"></span></span></td>
+            <td>35%<span class="score-bar-wrap"><span class="score-bar db" style="width:35%"></span></span></td>
+            <td>62%<span class="score-bar-wrap"><span class="score-bar db" style="width:62%"></span></span></td>
+            <td>56%<span class="score-bar-wrap"><span class="score-bar db" style="width:56%"></span></span></td>
+            <td>61%</td>
+          </tr>
+          <tr>
+            <td><span style="display:flex;align-items:center;gap:6px"><span class="svc-dot" style="background:#6D4AFF;width:8px;height:8px;border-radius:50%"></span>Proton Drive</span></td>
+            <td>55%<span class="score-bar-wrap"><span class="score-bar proton" style="width:55%"></span></span></td>
+            <td>54%<span class="score-bar-wrap"><span class="score-bar proton" style="width:54%"></span></span></td>
+            <td>94%<span class="score-bar-wrap"><span class="score-bar proton" style="width:94%"></span></span></td>
+            <td>28%<span class="score-bar-wrap"><span class="score-bar proton" style="width:28%"></span></span></td>
+            <td>38%<span class="score-bar-wrap"><span class="score-bar proton" style="width:38%"></span></span></td>
+            <td>54%</td>
+          </tr>
+          <tr>
+            <td><span style="display:flex;align-items:center;gap:6px"><span class="svc-dot" style="background:#D32F2F;width:8px;height:8px;border-radius:50%"></span>MEGA</span></td>
+            <td>77%<span class="score-bar-wrap"><span class="score-bar mega" style="width:77%"></span></span></td>
+            <td>52%<span class="score-bar-wrap"><span class="score-bar mega" style="width:52%"></span></span></td>
+            <td>79%<span class="score-bar-wrap"><span class="score-bar mega" style="width:79%"></span></span></td>
+            <td>30%<span class="score-bar-wrap"><span class="score-bar mega" style="width:30%"></span></span></td>
+            <td>54%<span class="score-bar-wrap"><span class="score-bar mega" style="width:54%"></span></span></td>
+            <td>58%</td>
+          </tr>
+          <tr>
+            <td><span style="display:flex;align-items:center;gap:6px"><span class="svc-dot" style="background:#1B2C4A;width:8px;height:8px;border-radius:50%"></span>Tresorit</span></td>
+            <td>64%<span class="score-bar-wrap"><span class="score-bar tresorit" style="width:64%"></span></span></td>
+            <td>82%<span class="score-bar-wrap"><span class="score-bar tresorit" style="width:82%"></span></span></td>
+            <td>100%<span class="score-bar-wrap"><span class="score-bar tresorit" style="width:100%"></span></span></td>
+            <td>35%<span class="score-bar-wrap"><span class="score-bar tresorit" style="width:35%"></span></span></td>
+            <td>42%<span class="score-bar-wrap"><span class="score-bar tresorit" style="width:42%"></span></span></td>
+            <td>65%</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="font-size:11px;color:var(--ink-faint);margin-top:12px">* CloudVault coverage based on published framework spec (v1.0, April 2026). AI-exclusive features not included in base scoring; they add a unique category where CloudVault scores 100% and all competitors score 0%.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURE MATRIX -->
+<section>
+  <div class="wrap">
+    <div class="sec-label">02 — Feature Matrix</div>
+    <h2 class="sec-title">Head-to-head comparison</h2>
+    <p class="sec-sub">CloudVault highlighted in blue. ✓ = Full &nbsp; ◑ = Partial &nbsp; ✗ = Not available &nbsp; <span class="badge b-amber">Paid</span> = Paid only &nbsp; <span class="ex-badge">AI ONLY</span> = CloudVault exclusive</p>
+
+    <div class="services-legend" style="margin-top:16px">
+      <div class="svc-chip cv-chip"><div class="svc-dot" style="background:#007aff"></div>CloudVault ★</div>
+      <div class="svc-chip"><div class="svc-dot" style="background:#4285F4"></div>Google Drive</div>
+      <div class="svc-chip"><div class="svc-dot" style="background:#0078D4"></div>OneDrive</div>
+      <div class="svc-chip"><div class="svc-dot" style="background:#0061FF"></div>Dropbox</div>
+      <div class="svc-chip"><div class="svc-dot" style="background:#6D4AFF"></div>Proton Drive</div>
+      <div class="svc-chip"><div class="svc-dot" style="background:#D32F2F"></div>MEGA</div>
+      <div class="svc-chip"><div class="svc-dot" style="background:#1B2C4A"></div>Tresorit</div>
+    </div>
+
+    <div class="tabs">
+      <button class="tab active" onclick="switchTab('android',this)">Android</button>
+      <button class="tab" onclick="switchTab('web',this)">Web</button>
+    </div>
+
+    <div class="tbl-wrap">
+      <table class="ctbl" id="mainTable">
+        <thead>
+          <tr>
+            <th class="feat-col">Feature</th>
+            <th class="cv-col">CV ★</th>
+            <th>Drive</th>
+            <th>OneDrive</th>
+            <th>Dropbox</th>
+            <th>Proton</th>
+            <th>MEGA</th>
+            <th>Tresorit</th>
+          </tr>
+        </thead>
+        <tbody id="tableBody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- LEADS (DARK AI SECTION) -->
+<div class="ai-section">
+  <div class="wrap" style="position:relative;z-index:1">
+    <div class="sec-label">03 — Competitive Advantages</div>
+    <h2 class="sec-title">Where CloudVault <em style="font-style:italic;color:#5ac8fa">leads</em> the market</h2>
+    <p class="sec-sub">8 features that are either exclusively available in CloudVault or significantly ahead of every competitor.</p>
+
+    <div class="ai-cards">
+      <div class="ai-card exclusive">
+        <div class="ai-card-icon">💬</div>
+        <div class="ai-card-title">AI Vault Assistant</div>
+        <div class="ai-card-desc">Conversational natural-language interface to search, navigate and act on files. "Find the contract I signed last March" — no competitor offers anything close.</div>
+        <span class="ai-badge">Exclusive — 0/6 competitors</span>
+      </div>
+      <div class="ai-card exclusive">
+        <div class="ai-card-icon">📝</div>
+        <div class="ai-card-title">AI Document Summarization</div>
+        <div class="ai-card-desc">Instant Claude-powered TL;DR on any PDF, document, or presentation, streamed live inside the file preview — without downloading.</div>
+        <span class="ai-badge">Exclusive — 0/6 competitors</span>
+      </div>
+      <div class="ai-card exclusive">
+        <div class="ai-card-icon">🏷️</div>
+        <div class="ai-card-title">Auto-Tagging & AI Organisation</div>
+        <div class="ai-card-desc">Claude reads file content and automatically applies smart tags, categories, and suggested folder moves. Competitors rely on user-defined manual tags only.</div>
+        <span class="ai-badge">Exclusive — 0/6 competitors</span>
+      </div>
+      <div class="ai-card exclusive">
+        <div class="ai-card-icon">🔍</div>
+        <div class="ai-card-title">Semantic Search (Vector)</div>
+        <div class="ai-card-desc">Embeddings-based search finds files by their <em style="color:rgba(255,255,255,.7)">content meaning</em>, not just filename. Proton, MEGA, Tresorit only offer partial keyword search.</div>
+        <span class="ai-badge">Exclusive — 0/6 true semantic</span>
+      </div>
+      <div class="ai-card exclusive">
+        <div class="ai-card-icon">📊</div>
+        <div class="ai-card-title">AI Vault Insights Dashboard</div>
+        <div class="ai-card-desc">AI surfaces storage patterns — large files, never-opened files, archive candidates, duplicate candidates. No competitor offers intelligent storage analytics.</div>
+        <span class="ai-badge">Exclusive — 0/6 competitors</span>
+      </div>
+      <div class="ai-card gold-card">
+        <div class="ai-card-icon">🔒</div>
+        <div class="ai-card-title">Visible Encryption Indicator</div>
+        <div class="ai-card-desc">Every file shows its encryption status inline with a zero-knowledge badge and key proof on demand — a trust UX feature no competitor has implemented.</div>
+        <span class="ai-badge gold-b">Unique UX — 0/6 competitors</span>
+      </div>
+      <div class="ai-card gold-card">
+        <div class="ai-card-icon">🔗</div>
+        <div class="ai-card-title">Privacy Report on Shared Links</div>
+        <div class="ai-card-desc">Recipients of shared links see a real-time "Privacy Report" confirming the encryption state of the file before they download it. Proton Drive and Tresorit don't do this.</div>
+        <span class="ai-badge gold-b">Unique UX — 0/6 competitors</span>
+      </div>
+      <div class="ai-card gold-card">
+        <div class="ai-card-icon">💰</div>
+        <div class="ai-card-title">Cost-Per-File Display</div>
+        <div class="ai-card-desc">Shows users exactly how much storage (and its monetary cost) each file consumes. Helps users manage quotas intelligently. No competitor surfaces this data.</div>
+        <span class="ai-badge gold-b">Unique UX — 0/6 competitors</span>
+      </div>
+      <div class="ai-card exclusive">
+        <div class="ai-card-icon">📅</div>
+        <div class="ai-card-title">AI-Powered Version Diff</div>
+        <div class="ai-card-desc">File versioning with AI-generated change summaries between versions — not just timestamps. Google Drive and Tresorit have version history but no AI diff analysis.</div>
+        <span class="ai-badge">Ahead — 0/6 offer AI diff</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- LAGS -->
+<section>
+  <div class="wrap">
+    <div class="sec-label">04 — Competitive Gaps</div>
+    <h2 class="sec-title">Where CloudVault <span style="color:var(--danger)">lags</span> behind</h2>
+    <p class="sec-sub">17 features where one or more competitors currently have an advantage. Grouped by severity.</p>
+
+    <div class="lags-list">
+      <!-- CRITICAL -->
+      <div class="lag-item">
+        <div class="lag-sev critical"></div>
+        <div class="lag-body">
+          <div class="lag-title">Real-Time Collaborative Editing <span class="badge b-red">Critical</span></div>
+          <div class="lag-desc">Google Drive (Docs/Sheets/Slides) and OneDrive (Office Online) offer full simultaneous co-editing with live cursors, comments, and change tracking. This is a major gap for teams.</div>
+          <div class="lag-who">Has it: Google Drive ✓ · OneDrive ✓ · Dropbox (partial)</div>
+        </div>
+      </div>
+      <div class="lag-item">
+        <div class="lag-sev critical"></div>
+        <div class="lag-body">
+          <div class="lag-title">Built-In Document Editor <span class="badge b-red">Critical</span></div>
+          <div class="lag-desc">CloudVault has rich file previews but no in-browser editing. Google Docs and Microsoft Office Online are core reasons users pick Drive and OneDrive. Absence limits use as a productivity suite.</div>
+          <div class="lag-who">Has it: Google Drive ✓ · OneDrive ✓</div>
+        </div>
+      </div>
+      <div class="lag-item">
+        <div class="lag-sev critical"></div>
+        <div class="lag-body">
+          <div class="lag-title">Third-Party App Integrations <span class="badge b-red">Critical</span></div>
+          <div class="lag-desc">Google Drive has 1000+ integrations, OneDrive 500+, Dropbox 300+. CloudVault has essentially none beyond its own Claude API. This severely limits enterprise and power-user adoption.</div>
+          <div class="lag-who">Has it: Google Drive 1000+ · OneDrive 500+ · Dropbox 300+</div>
+        </div>
+      </div>
+      <div class="lag-item">
+        <div class="lag-sev critical"></div>
+        <div class="lag-body">
+          <div class="lag-title">Team & Workspace Management <span class="badge b-red">Critical</span></div>
+          <div class="lag-desc">No shared team spaces, org-level admin panel, role-based access, or member management. All six competitors offer some form of workspace feature — Tresorit and Google Drive are most complete.</div>
+          <div class="lag-who">Has it: All 6 competitors (varies)</div>
+        </div>
+      </div>
+      <div class="lag-item">
+        <div class="lag-sev moderate"></div>
+        <div class="lag-body">
+          <div class="lag-title">Zapier / Automation Integrations <span class="badge b-amber">Moderate</span></div>
+          <div class="lag-desc">No webhook, Zapier, or Make integration. Google Drive and OneDrive connect to thousands of workflows. Dropbox has native Zapier support. Blocks CloudVault from enterprise automation workflows.</div>
+          <div class="lag-who">Has it: Google Drive ✓ · OneDrive ✓ · Dropbox ✓</div>
+        </div>
+      </div>
+      <div class="lag-item">
+        <div class="lag-sev moderate"></div>
+        <div class="lag-body">
+          <div class="lag-title">FIDO2 / Hardware Security Key Support <span class="badge b-amber">Moderate</span></div>
+          <div class="lag-desc">No YubiKey or FIDO2 hardware key support for authentication. Google Drive, OneDrive, Proton Drive, and Tresorit all support hardware 2FA — critical for enterprise security standards.</div>
+          <div class="lag-who">Has it: Google ✓ · OneDrive ✓ · Proton ✓ · Tresorit ✓</div>
+        </div>
+      </div>
+      <div class="lag-item">
+        <div class="lag-sev moderate"></div>
+        <div class="lag-body">
+          <div class="lag-title">Android Homescreen Widget &amp; Quick Tiles <span class="badge b-amber">Moderate</span></div>
+          <div class="lag-desc">No Android widget for recent files or quick upload, and no Quick Settings tile for camera upload. Google Drive and OneDrive have both. Reduces surface area and daily active engagement.</div>
+          <div class="lag-who">Has it: Google Drive ✓ · OneDrive ✓</div>
+        </div>
+      </div>
+      <div class="lag-item">
+        <div class="lag-sev moderate"></div>
+        <div class="lag-body">
+          <div class="lag-title">Document Scanning with OCR <span class="badge b-amber">Moderate</span></div>
+          <div class="lag-desc">No camera-based document scanner with OCR text extraction. Google Drive and OneDrive both offer this natively on Android. A key mobile workflow for receipt/document capture.</div>
+          <div class="lag-who">Has it: Google Drive ✓ · OneDrive ✓</div>
+        </div>
+      </div>
+      <div class="lag-item">
+        <div class="lag-sev moderate"></div>
+        <div class="lag-body">
+          <div class="lag-title">IP Access Restrictions (Enterprise) <span class="badge b-amber">Moderate</span></div>
+          <div class="lag-desc">No IP allowlisting to restrict vault access by network. Tresorit offers this as an enterprise feature. Critical for compliance-heavy industries (finance, legal, healthcare).</div>
+          <div class="lag-who">Has it: Tresorit ✓</div>
+        </div>
+      </div>
+      <div class="lag-item">
+        <div class="lag-sev moderate"></div>
+        <div class="lag-body">
+          <div class="lag-title">HIPAA Compliance Documentation <span class="badge b-amber">Moderate</span></div>
+          <div class="lag-desc">No HIPAA BAA or formal compliance documentation. Tresorit is fully HIPAA-certified. Google Drive and OneDrive offer partial compliance. Blocks healthcare sector adoption entirely.</div>
+          <div class="lag-who">Has it: Tresorit ✓ · Google/OneDrive (partial)</div>
+        </div>
+      </div>
+      <div class="lag-item">
+        <div class="lag-sev moderate"></div>
+        <div class="lag-body">
+          <div class="lag-title">Offline Document Editing <span class="badge b-amber">Moderate</span></div>
+          <div class="lag-desc">CloudVault supports offline file access and viewing but not editing. Google Drive (with Docs) and OneDrive (with Office) both allow full offline document editing with sync-on-reconnect.</div>
+          <div class="lag-who">Has it: Google Drive ✓ · OneDrive ✓</div>
+        </div>
+      </div>
+      <div class="lag-item">
+        <div class="lag-sev moderate"></div>
+        <div class="lag-body">
+          <div class="lag-title">Material You Dynamic Theming <span class="badge b-amber">Moderate</span></div>
+          <div class="lag-desc">No Android 12+ Material You support — the app doesn't adapt its color theme to the user's wallpaper. Google Drive uses Material You. Signals a lack of deep Android platform integration.</div>
+          <div class="lag-who">Has it: Google Drive ✓ · OneDrive (partial)</div>
+        </div>
+      </div>
+      <div class="lag-item">
+        <div class="lag-sev low"></div>
+        <div class="lag-body">
+          <div class="lag-title">Delta / Block-Level Sync <span class="badge b-gray">Low</span></div>
+          <div class="lag-desc">Dropbox uniquely syncs only the changed blocks within a file (Project Infinite), dramatically reducing bandwidth usage for large file edits. CloudVault does chunked upload but not block-delta.</div>
+          <div class="lag-who">Has it: Dropbox ✓ (only)</div>
+        </div>
+      </div>
+      <div class="lag-item">
+        <div class="lag-sev low"></div>
+        <div class="lag-body">
+          <div class="lag-title">SD Card Backup (Android) <span class="badge b-gray">Low</span></div>
+          <div class="lag-desc">No ability to auto-backup files from SD card storage on Android. Google Drive and OneDrive support this. Relevant for users on lower-end Android devices with external storage.</div>
+          <div class="lag-who">Has it: Google Drive ✓ · OneDrive ✓</div>
+        </div>
+      </div>
+      <div class="lag-item">
+        <div class="lag-sev low"></div>
+        <div class="lag-body">
+          <div class="lag-title">Bandwidth Throttling Controls <span class="badge b-gray">Low</span></div>
+          <div class="lag-desc">No upload/download bandwidth limiting for background sync. Dropbox and MEGA offer this. Useful for users on metered connections who don't want cloud sync to consume all bandwidth.</div>
+          <div class="lag-who">Has it: Dropbox ✓ · MEGA ✓</div>
+        </div>
+      </div>
+      <div class="lag-item">
+        <div class="lag-sev low"></div>
+        <div class="lag-body">
+          <div class="lag-title">Comments & Annotations on Files <span class="badge b-gray">Low</span></div>
+          <div class="lag-desc">No ability to leave comments, reactions, or annotations on shared files. Google Drive, OneDrive, and Dropbox support file-level comments. Key for async review workflows.</div>
+          <div class="lag-who">Has it: Google Drive ✓ · OneDrive ✓ · Dropbox ✓</div>
+        </div>
+      </div>
+      <div class="lag-item">
+        <div class="lag-sev low"></div>
+        <div class="lag-body">
+          <div class="lag-title">Desktop App (Mac / Windows) <span class="badge b-gray">Low</span></div>
+          <div class="lag-desc">CloudVault currently targets Android via Capacitor and Web via browser. No native desktop sync client for Mac or Windows. All six competitors have dedicated desktop apps with Finder/Explorer integration.</div>
+          <div class="lag-who">Has it: All 6 competitors</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ROADMAP -->
+<section>
+  <div class="wrap">
+    <div class="sec-label">05 — Feature Recommendations</div>
+    <h2 class="sec-title">Suggested features to build</h2>
+    <p class="sec-sub">15 additions prioritized by competitive impact and user value. P1 addresses critical gaps; P3 drives further differentiation.</p>
+
+    <div class="roadmap">
+      <div class="rp-col">
+        <div class="rp-header p1">P1 — Critical &amp; High Impact</div>
+        <div class="rp-item">
+          <div class="rp-num">01</div>
+          <div class="rp-text">
+            <div class="rp-name">Collaborative Document Editing</div>
+            <div class="rp-why">Build a lightweight rich-text editor (Tiptap + Y.js for real-time CRDT sync) to close the biggest gap vs Google Docs and Office. Even a basic note editor with live presence closes 80% of the gap for most users.</div>
+          </div>
+        </div>
+        <div class="rp-item">
+          <div class="rp-num">02</div>
+          <div class="rp-text">
+            <div class="rp-name">Team Spaces with RBAC</div>
+            <div class="rp-why">Shared team vaults with Owner / Editor / Viewer roles, org-level admin dashboard, member management, and shared billing. Unlocks B2B/SMB revenue and retention.</div>
+          </div>
+        </div>
+        <div class="rp-item">
+          <div class="rp-num">03</div>
+          <div class="rp-text">
+            <div class="rp-name">Integration Hub (Zapier / Webhooks)</div>
+            <div class="rp-why">A webhook API + Zapier/Make connector so CloudVault triggers and receives events from Slack, Notion, Gmail, and other tools. Critical for enterprise adoption and reducing Dropbox stickiness.</div>
+          </div>
+        </div>
+        <div class="rp-item">
+          <div class="rp-num">04</div>
+          <div class="rp-text">
+            <div class="rp-name">FIDO2 Hardware Key (YubiKey)</div>
+            <div class="rp-why">Add WebAuthn / FIDO2 as a 2FA option alongside TOTP. Matches Proton Drive and Tresorit, signals enterprise-grade security positioning.</div>
+          </div>
+        </div>
+        <div class="rp-item">
+          <div class="rp-num">05</div>
+          <div class="rp-text">
+            <div class="rp-name">File Comments &amp; Annotations</div>
+            <div class="rp-why">Threaded comments on files/folders with @mentions and resolution status. Enables async review workflows and reduces need for external tools like Slack just to discuss a file.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rp-col">
+        <div class="rp-header p2">P2 — Medium Priority Improvements</div>
+        <div class="rp-item">
+          <div class="rp-num">06</div>
+          <div class="rp-text">
+            <div class="rp-name">Android Widget + Quick Settings Tile</div>
+            <div class="rp-why">Homescreen widget showing recent files and a Quick Settings tile for instant camera upload. Drives daily engagement and makes CloudVault feel like a native Android citizen vs a web wrapper.</div>
+          </div>
+        </div>
+        <div class="rp-item">
+          <div class="rp-num">07</div>
+          <div class="rp-text">
+            <div class="rp-name">AI-Powered Document Scanner</div>
+            <div class="rp-why">Camera-based scan with Claude OCR — auto-detects document edges, deskews, and extracts text. Makes CloudVault a replacement for Scanner Pro/Adobe Scan and directly leverages Claude AI already in the stack.</div>
+          </div>
+        </div>
+        <div class="rp-item">
+          <div class="rp-num">08</div>
+          <div class="rp-text">
+            <div class="rp-name">Material You Dynamic Theming</div>
+            <div class="rp-why">Implement Android 12+ monet color extraction via Capacitor plugin to adapt the app's accent colors to the user's wallpaper. Low effort, high perceived polish, signals platform commitment.</div>
+          </div>
+        </div>
+        <div class="rp-item">
+          <div class="rp-num">09</div>
+          <div class="rp-text">
+            <div class="rp-name">GDPR Compliance Center</div>
+            <div class="rp-why">In-app data export (Article 20), deletion audit trail, and a GDPR settings page with DPA documentation. Required for EU users and enterprise procurement — currently a gap vs all competitors.</div>
+          </div>
+        </div>
+        <div class="rp-item">
+          <div class="rp-num">10</div>
+          <div class="rp-text">
+            <div class="rp-name">Offline Editing (PWA Cache API)</div>
+            <div class="rp-why">Use IndexedDB + Service Worker to let users edit text/markdown documents offline with conflict-free merge on sync. Gaps in PWA offline mode (currently partial) become a strength.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="rp-col">
+        <div class="rp-header p3">P3 — Differentiation &amp; Future Moat</div>
+        <div class="rp-item">
+          <div class="rp-num">11</div>
+          <div class="rp-text">
+            <div class="rp-name">AI Smart Folder Rules</div>
+            <div class="rp-why">Let users define natural-language rules: "Move all invoices to /Finance/2026 automatically." Claude evaluates every new upload against rules. Zero-setup organisation that no competitor can replicate without AI.</div>
+          </div>
+        </div>
+        <div class="rp-item">
+          <div class="rp-num">12</div>
+          <div class="rp-text">
+            <div class="rp-name">AI Duplicate Detection</div>
+            <div class="rp-why">Claude-powered content deduplication that finds near-duplicate files (not just identical hashes) — e.g., two slightly different drafts of the same report. Shows projected storage savings before removal.</div>
+          </div>
+        </div>
+        <div class="rp-item">
+          <div class="rp-num">13</div>
+          <div class="rp-text">
+            <div class="rp-name">IP Access Restrictions (Enterprise)</div>
+            <div class="rp-why">Admin-level IP allowlisting for vault access. Currently only Tresorit offers this. Required to unlock finance, legal, and healthcare enterprise contracts. Directly expands TAM.</div>
+          </div>
+        </div>
+        <div class="rp-item">
+          <div class="rp-num">14</div>
+          <div class="rp-text">
+            <div class="rp-name">Desktop Sync Client (Mac + Windows)</div>
+            <div class="rp-why">A lightweight Electron or native desktop app with Finder/Explorer integration and selective sync. Without a desktop client, CloudVault cannot displace Dropbox or Google Drive for heavy desktop users.</div>
+          </div>
+        </div>
+        <div class="rp-item">
+          <div class="rp-num">15</div>
+          <div class="rp-text">
+            <div class="rp-name">AI Collaborative Annotations on Shared Files</div>
+            <div class="rp-why">When a file is shared, let both parties use Claude to annotate, question, and summarise sections together in a sidebar. A collaborative AI layer on top of encrypted files — a entirely new product category.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary recommendation -->
+    <div class="glass" style="padding:28px 32px;margin-top:24px;display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap">
+      <div style="flex:1;min-width:220px">
+        <div style="font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;color:var(--teal);margin-bottom:10px">Strategic Verdict</div>
+        <div style="font-size:15px;font-weight:600;color:var(--ink);margin-bottom:8px;line-height:1.4">CloudVault's AI moat is real — the execution gap is in ecosystem</div>
+        <div style="font-size:13.5px;color:var(--ink-muted);line-height:1.7">CloudVault's AI-native architecture (Claude assistant, semantic search, auto-tagging, vault insights) is a genuine 12–18 month head start that cannot be easily replicated by incumbents. The product's security posture (E2E + ZK) also outclasses Google Drive and Dropbox. The primary risk is being seen as a <em>storage</em> app rather than an <em>intelligence</em> layer — the feature gaps in collaboration, integrations, and platform depth make it hard for teams to fully migrate. Closing P1 gaps (team spaces, doc editing, integration hub) transforms CloudVault from a personal vault into a team productivity platform.</div>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;min-width:200px">
+        <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-faint);margin-bottom:4px">Immediate priorities</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink)"><span class="badge b-red">Critical</span>Team Spaces + RBAC</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink)"><span class="badge b-red">Critical</span>Integration / Webhook Hub</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink)"><span class="badge b-amber">Moderate</span>File Comments System</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink)"><span class="badge b-amber">Moderate</span>FIDO2 Hardware Key</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink)"><span class="badge b-blue">P2</span>Android Widget + Quick Tile</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink)"><span class="badge b-blue">P2</span>GDPR Compliance Center</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink)"><span class="badge b-purple">P3</span>AI Smart Folder Rules</div>
+        <div style="display:flex;align-items:center;gap:8px;font-size:12.5px;color:var(--ink)"><span class="badge b-purple">P3</span>Desktop Sync Client</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="footer-inner">
+      <div class="footer-copy">CloudVault Competitive Analysis · Frontend Framework v1.0 · April 2026 · Built with Claude AI</div>
+      <div class="footer-chips">
+        <span class="footer-chip">React 18</span>
+        <span class="footer-chip">TypeScript</span>
+        <span class="footer-chip">Capacitor 6</span>
+        <span class="footer-chip">E2E Encrypted</span>
+        <span class="footer-chip">✦ Claude AI</span>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+// ———— DATA ————
+const Y='yes', N='no', P='partial', PAID='paid', AI='ai';
+
+const android = {
+  sync:[
+    {f:'Background file sync',        v:[Y,  Y, Y, Y, P, Y, Y]},
+    {f:'Auto camera backup',           v:[Y,  Y, Y, Y, Y, Y, Y]},
+    {f:'Selective sync',               v:[P,  Y, Y, Y, P, Y, Y]},
+    {f:'SD card backup',               v:[N,  Y, Y, P, N, P, N]},
+    {f:'Real-time sync',               v:[Y,  Y, Y, Y, P, Y, P]},
+    {f:'Bandwidth throttling',         v:[N,  N, P, Y, N, Y, N]},
+    {f:'Delta sync (block-level)',     v:[N,  N, N, Y, N, N, N]},
+  ],
+  sharing:[
+    {f:'Share files/folders',          v:[Y,  Y, Y, Y, Y, Y, Y]},
+    {f:'Link expiry dates',            v:[Y,  P, P, PAID,Y,Y,Y]},
+    {f:'Password-protected links',     v:[Y,  N, P, PAID,Y,Y,Y]},
+    {f:'Download count limit',         v:[Y,  N, N, PAID,N,N,Y]},
+    {f:'View-only sharing',            v:[Y,  Y, Y, Y, Y, Y, Y]},
+    {f:'Team / workspace',             v:[N,  Y, Y, Y, P, P, Y]},
+    {f:'Real-time collaboration',      v:[N,  Y, Y, P, N, N, P]},
+  ],
+  security:[
+    {f:'End-to-end encryption',        v:[Y,  N, N, N, Y, Y, Y]},
+    {f:'Zero-knowledge encryption',    v:[Y,  N, N, N, Y, Y, Y]},
+    {f:'Two-factor auth (TOTP)',       v:[Y,  Y, Y, Y, Y, Y, Y]},
+    {f:'Hardware key (FIDO2)',         v:[N,  Y, Y, Y, Y, N, Y]},
+    {f:'In-app biometric lock',        v:[Y,  Y, Y, Y, Y, Y, Y]},
+    {f:'Encrypted vault / folder',     v:[Y,  N, N, P, Y, Y, Y]},
+    {f:'Visible encryption indicator', v:[AI, N, N, N, N, N, N]},
+    {f:'Swiss / EU data centers',      v:[P,  N, N, N, Y, N, Y]},
+    {f:'Open source client',           v:[N,  N, N, N, Y, N, N]},
+  ],
+  platform:[
+    {f:'Material You design',          v:[N,  Y, P, N, N, N, N]},
+    {f:'Android widget',               v:[N,  Y, Y, P, N, N, N]},
+    {f:'Quick Settings tile',          v:[N,  Y, Y, N, N, N, N]},
+    {f:'App lock / PIN',               v:[Y,  Y, Y, Y, Y, Y, Y]},
+    {f:'Split-screen support',         v:[N,  Y, Y, P, N, P, N]},
+    {f:'Google/Samsung integration',   v:[N,  Y, P, N, N, N, N]},
+    {f:'System Files app integration', v:[P,  Y, Y, Y, P, P, P]},
+  ],
+  offline:[
+    {f:'Offline access',               v:[Y,  Y, Y, Y, Y, Y, Y]},
+    {f:'Offline editing (docs)',       v:[N,  Y, Y, P, N, N, N]},
+    {f:'Offline media playback',       v:[P,  Y, Y, Y, P, Y, N]},
+    {f:'In-app document viewer',       v:[Y,  Y, Y, Y, Y, Y, Y]},
+    {f:'In-app PDF editor',            v:[N,  P, P, N, N, N, N]},
+    {f:'Document scanner + OCR',       v:[N,  Y, Y, N, N, N, N]},
+  ],
+  ai_exclusive:[
+    {f:'AI Vault Assistant (Claude)',   v:[AI, N, N, N, N, N, N]},
+    {f:'AI document summarisation',    v:[AI, N, N, N, N, N, N]},
+    {f:'AI auto-tagging',              v:[AI, N, N, N, N, N, N]},
+    {f:'AI semantic search (vector)',  v:[AI, N, N, N, N, N, N]},
+    {f:'AI vault insights dashboard',  v:[AI, N, N, N, N, N, N]},
+    {f:'AI version diff summary',      v:[AI, N, N, N, N, N, N]},
+  ],
+};
+
+const web = {
+  sync:[
+    {f:'Drag-and-drop upload',         v:[Y,  Y, Y, Y, Y, Y, Y]},
+    {f:'Folder upload',                v:[P,  Y, Y, Y, Y, Y, Y]},
+    {f:'Bulk download',                v:[P,  Y, Y, Y, Y, Y, Y]},
+    {f:'Resume interrupted uploads',   v:[Y,  Y, Y, Y, P, Y, P]},
+    {f:'Version history',              v:[Y,  Y, Y, Y, Y, Y, Y]},
+    {f:'AI version diff summary',      v:[AI, N, N, N, N, N, N]},
+    {f:'Deleted file recovery (Trash)',v:[Y,  Y, Y, Y, Y, Y, Y]},
+  ],
+  sharing:[
+    {f:'Public link sharing',          v:[Y,  Y, Y, Y, Y, Y, Y]},
+    {f:'Password-protected links',     v:[Y,  N, P, PAID,Y,Y,Y]},
+    {f:'Link expiry dates',            v:[Y,  P, P, PAID,Y,Y,Y]},
+    {f:'Download count limit',         v:[Y,  N, N, PAID,N,N,Y]},
+    {f:'Privacy report on share',      v:[AI, N, N, N, N, N, N]},
+    {f:'Real-time co-editing',         v:[N,  Y, Y, P, N, N, N]},
+    {f:'Comments on files',            v:[N,  Y, Y, Y, N, N, P]},
+    {f:'Team / org management',        v:[N,  Y, Y, Y, P, P, Y]},
+    {f:'Email invitations',            v:[P,  Y, Y, Y, Y, Y, Y]},
+  ],
+  security:[
+    {f:'End-to-end encryption',        v:[Y,  N, N, N, Y, Y, Y]},
+    {f:'Zero-knowledge encryption',    v:[Y,  N, N, N, Y, Y, Y]},
+    {f:'Two-factor auth (TOTP)',       v:[Y,  Y, Y, Y, Y, Y, Y]},
+    {f:'Hardware key (FIDO2)',         v:[N,  Y, Y, Y, Y, N, Y]},
+    {f:'Audit logs',                   v:[Y,  P, P, PAID,N,N,Y]},
+    {f:'Visible encryption indicator', v:[AI, N, N, N, N, N, N]},
+    {f:'IP access restrictions',       v:[N,  N, N, N, N, N, Y]},
+    {f:'GDPR compliance',              v:[P,  Y, Y, Y, Y, Y, Y]},
+    {f:'HIPAA compliance',             v:[N,  P, P, N, N, N, Y]},
+  ],
+  platform:[
+    {f:'Built-in doc editor',          v:[N,  Y, Y, N, N, N, N]},
+    {f:'Office suite integration',     v:[N,  Y, Y, Y, N, N, N]},
+    {f:'Media preview (img / vid)',    v:[Y,  Y, Y, Y, Y, Y, Y]},
+    {f:'PDF preview',                  v:[Y,  Y, Y, Y, Y, Y, Y]},
+    {f:'AI semantic search',           v:[AI, N, N, N, N, N, N]},
+    {f:'Full-text keyword search',     v:[Y,  Y, Y, Y, P, P, P]},
+    {f:'Cost-per-file display',        v:[AI, N, N, N, N, N, N]},
+    {f:'Developer API',                v:[P,  Y, Y, Y, Y, Y, Y]},
+    {f:'Zapier / Make automation',     v:[N,  Y, Y, Y, N, N, P]},
+    {f:'Third-party integrations',     v:[P,  Y, Y, Y, N, N, N]},
+  ],
+  offline:[
+    {f:'Offline mode (cached)',        v:[P,  P, P, P, N, P, N]},
+    {f:'Progressive web app (PWA)',    v:[Y,  P, P, N, N, N, N]},
+    {f:'Desktop app (Mac/Win)',        v:[N,  Y, Y, Y, Y, Y, Y]},
+    {f:'Linux client',                 v:[N,  P, N, Y, Y, Y, Y]},
+  ],
+};
+
+const catLabels = {
+  sync:'Sync & Backup',
+  sharing:'Sharing & Collaboration',
+  security:'Security & Privacy',
+  platform:'Platform & Ecosystem',
+  offline:'Offline & Desktop',
+  ai_exclusive:'AI-Exclusive Features ✦',
+};
+
+function renderCell(v) {
+  if (v===Y) return '<span class="yes-i">✓</span>';
+  if (v===N) return '<span class="no-i">✗</span>';
+  if (v===P) return '<span class="part-i">◑</span>';
+  if (v===PAID) return '<span class="badge b-amber">Paid</span>';
+  if (v===AI)   return '<span class="badge b-gold">✦ Yes</span>';
+  if (v&&v.t)   return '<span class="val-v">'+v.t+'</span>';
+  return '—';
+}
+
+let currentTab = 'android';
+
+function renderTable() {
+  const src = currentTab==='android' ? android : web;
+  const body = document.getElementById('tableBody');
+  let html = '';
+  for (const cat in src) {
+    const rows = src[cat];
+    if (!rows||!rows.length) continue;
+    const catLabel = catLabels[cat]||cat;
+    html += `<tr class="cat-row"><td colspan="8">${catLabel}</td></tr>`;
+    rows.forEach(row => {
+      const isAI = row.v[0]===AI;
+      html += `<tr${isAI?" style='background:rgba(201,168,76,.04)'":''}><td class="feat-col">${row.f}${isAI?'<span class="ex-badge">AI ONLY</span>':''}</td>`;
+      row.v.forEach((v, i) => {
+        const cls = i===0 ? ' class="cv-col"' : '';
+        html += `<td${cls}>${renderCell(v)}</td>`;
+      });
+      html += '</tr>';
+    });
+  }
+  body.innerHTML = html;
+}
+
+function switchTab(tab, btn) {
+  currentTab = tab;
+  document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderTable();
+}
+
+renderTable();
+
+// ———— CHART ————
+const categories = ['Sync & Backup','Sharing','Security','Platform','Offline'];
+const scores = {
+  CloudVault:  [64, 68, 73, 48, 60],
+  'Google Drive': [80, 88, 50, 91, 78],
+  OneDrive:    [78, 84, 52, 88, 76],
+  Dropbox:     [84, 66, 35, 62, 56],
+  'Proton Drive': [55, 54, 94, 28, 38],
+  MEGA:        [77, 52, 79, 30, 54],
+  Tresorit:    [64, 82, 100, 35, 42],
+};
+const colors = ['#007aff','#4285F4','#0078D4','#0061FF','#6D4AFF','#D32F2F','#4a5568'];
+const borderColors = colors;
+
+const datasets = Object.entries(scores).map(([name, data], i) => ({
+  label: name,
+  data,
+  backgroundColor: colors[i]+'33',
+  borderColor: colors[i],
+  borderWidth: name==='CloudVault' ? 2.5 : 1.5,
+  pointBackgroundColor: colors[i],
+  pointRadius: name==='CloudVault' ? 5 : 3,
+  pointHoverRadius: 6,
+  fill: false,
+  tension: 0.1,
+}));
+
+// Grouped bar chart
+const ctx = document.getElementById('overviewChart').getContext('2d');
+new Chart(ctx, {
+  type: 'bar',
+  data: {
+    labels: categories,
+    datasets: Object.entries(scores).map(([name, data], i) => ({
+      label: name,
+      data,
+      backgroundColor: colors[i]+(name==='CloudVault'?'cc':'55'),
+      borderColor: colors[i],
+      borderWidth: name==='CloudVault' ? 2 : 0,
+      borderRadius: 3,
+    }))
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: {
+        callbacks: {
+          label: ctx => ` ${ctx.dataset.label}: ${ctx.parsed.y}%`
+        }
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        max: 105,
+        ticks: {
+          callback: v => v+'%',
+          color: '#888',
+          font: { size: 11 }
+        },
+        grid: { color: 'rgba(0,0,0,0.05)' }
+      },
+      x: {
+        ticks: { color: '#555', font: { size: 11 }, autoSkip: false },
+        grid: { display: false }
+      }
+    }
+  }
+});
+</script>
+</body>
+</html>

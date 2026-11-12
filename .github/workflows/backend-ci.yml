@@ -1,0 +1,100 @@
+name: Backend Core CI
+
+on:
+  push:
+    branches: [main, develop]
+    paths:
+      - 'backend/**'
+      - 'packages/crypto-spec/**'
+      - '.github/workflows/backend-ci.yml'
+  pull_request:
+    branches: [main, develop]
+    paths:
+      - 'backend/**'
+      - 'packages/crypto-spec/**'
+      - '.github/workflows/backend-ci.yml'
+
+jobs:
+  backend-test:
+    name: Backend Lint, TypeCheck, Migrations & Integration Tests
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:15-alpine
+        env:
+          POSTGRES_USER: cloudvault
+          POSTGRES_PASSWORD: cloudvault_dev_password
+          POSTGRES_DB: cloudvault_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 5
+
+      minio:
+        image: minio/minio:latest
+        env:
+          MINIO_ROOT_USER: minioadmin
+          MINIO_ROOT_PASSWORD: minioadmin
+        ports:
+          - 9000:9000
+          - 9001:9001
+        options: >-
+          server /data
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 20 LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+
+      - name: Verify package-lock.json is committed and up to date
+        run: npm ci
+
+      - name: Security Audit (Fail on High / Critical)
+        run: npm audit --audit-level=high
+
+      - name: Build Crypto Spec Dependency
+        run: npm run build:crypto
+
+      - name: Backend Typecheck & Build
+        run: npm run build:backend
+
+      - name: Setup MinIO Test Bucket
+        run: |
+          docker run --rm --network host minio/mc:latest \
+            alias set local http://127.0.0.1:9000 minioadmin minioadmin
+          docker run --rm --network host minio/mc:latest \
+            mb --ignore-existing local/cloudvault-storage
+
+      - name: Run TypeORM Migration Up / Down / Up Verification
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_USER: cloudvault
+          DB_PASSWORD: cloudvault_dev_password
+          DB_NAME: cloudvault_db
+          S3_ENDPOINT: http://127.0.0.1:9000
+        run: |
+          npm run db:migrate
+          npm run --workspace=@cloudvault/backend db:migrate:revert
+          npm run db:migrate
+          npm run db:seed
+
+      - name: Run Backend Vitest Suite
+        env:
+          DB_HOST: localhost
+          DB_PORT: 5432
+          DB_USER: cloudvault
+          DB_PASSWORD: cloudvault_dev_password
+          DB_NAME: cloudvault_db
+          S3_ENDPOINT: http://127.0.0.1:9000
+        run: npm run test:backend
+

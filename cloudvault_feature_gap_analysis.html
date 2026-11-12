@@ -1,0 +1,304 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.wrap{padding:1.5rem 0}
+.kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1.5rem}
+.kpi{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:1rem;text-align:center}
+.kpi-num{font-size:28px;font-weight:500;line-height:1.1}
+.kpi-lbl{font-size:12px;color:var(--color-text-secondary);margin-top:4px}
+.kpi-num.blue{color:#185FA5}.kpi-num.teal{color:#0F6E56}.kpi-num.amber{color:#854F0B}.kpi-num.red{color:#A32D2D}
+.tabs{display:flex;gap:6px;margin-bottom:1rem;border-bottom:0.5px solid var(--color-border-tertiary);padding-bottom:0}
+.tab{padding:8px 16px;font-size:13px;cursor:pointer;border:none;background:none;color:var(--color-text-secondary);border-bottom:2px solid transparent;margin-bottom:-0.5px}
+.tab.active{color:#185FA5;border-bottom-color:#185FA5;font-weight:500}
+.panel{display:none}.panel.active{display:block}
+.section-label{font-size:11px;font-weight:500;color:var(--color-text-secondary);text-transform:uppercase;letter-spacing:.06em;margin:1.2rem 0 .6rem}
+.feat-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:10px}
+.feat-card{background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);padding:14px 16px;border-left-width:3px}
+.feat-card.core{border-left-color:#185FA5}
+.feat-card.ai{border-left-color:#7F77DD}
+.feat-card.gap-crit{border-left-color:#A32D2D}
+.feat-card.gap-mod{border-left-color:#854F0B}
+.feat-card.gap-low{border-left-color:#888780}
+.feat-card.planned{border-left-color:#0F6E56}
+.feat-card.new{border-left-color:#D85A30;background:var(--color-background-info)}
+.fc-top{display:flex;align-items:flex-start;justify-content:space-between;gap:8px;margin-bottom:6px}
+.fc-name{font-size:13px;font-weight:500;color:var(--color-text-primary);line-height:1.35}
+.badge{font-size:10px;padding:2px 8px;border-radius:20px;white-space:nowrap;flex-shrink:0}
+.badge.core{background:#E6F1FB;color:#185FA5}
+.badge.ai{background:#EEEDFE;color:#534AB7}
+.badge.gap-crit{background:#FCEBEB;color:#A32D2D}
+.badge.gap-mod{background:#FAEEDA;color:#854F0B}
+.badge.gap-low{background:#F1EFE8;color:#5F5E5A}
+.badge.planned{background:#EAF3DE;color:#3B6D11}
+.badge.new-idea{background:#FAECE7;color:#993C1D;font-weight:500}
+.fc-desc{font-size:12px;color:var(--color-text-secondary);line-height:1.5}
+.comp-table{width:100%;border-collapse:collapse;font-size:12px}
+.comp-table th{text-align:left;padding:8px 10px;font-size:11px;font-weight:500;color:var(--color-text-secondary);border-bottom:0.5px solid var(--color-border-tertiary)}
+.comp-table td{padding:8px 10px;border-bottom:0.5px solid var(--color-border-tertiary);color:var(--color-text-primary)}
+.comp-table tr:last-child td{border-bottom:none}
+.comp-table tr:hover td{background:var(--color-background-secondary)}
+.tick{color:#0F6E56;font-size:14px}.cross{color:#A32D2D;font-size:14px}.partial{color:#854F0B;font-size:14px}
+.cv-col{font-weight:500;color:#185FA5}
+.roadmap-list{list-style:none}
+.roadmap-list li{display:flex;gap:12px;padding:12px;margin-bottom:8px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);align-items:flex-start}
+.phase-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:500;flex-shrink:0}
+.p0{background:#FCEBEB;color:#A32D2D}.p1{background:#FAEEDA;color:#854F0B}.p2{background:#E6F1FB;color:#185FA5}.p3{background:#EAF3DE;color:#3B6D11}.pstar{background:#EEEDFE;color:#534AB7}
+.rl-title{font-size:13px;font-weight:500;color:var(--color-text-primary);margin-bottom:3px}
+.rl-desc{font-size:12px;color:var(--color-text-secondary);line-height:1.45}
+.chart-wrap{position:relative;width:100%;height:240px;margin:1rem 0}
+.legend-row{display:flex;flex-wrap:wrap;gap:12px;margin-bottom:8px;font-size:12px;color:var(--color-text-secondary)}
+.leg-item{display:flex;align-items:center;gap:5px}
+.leg-sq{width:10px;height:10px;border-radius:2px;flex-shrink:0}
+</style>
+<div class="wrap">
+<h2 style="sr-only">CloudVault competitive feature analysis and gap report</h2>
+
+<div class="kpi-row">
+  <div class="kpi"><div class="kpi-num blue">50+</div><div class="kpi-lbl">Features mapped</div></div>
+  <div class="kpi"><div class="kpi-num teal">18</div><div class="kpi-lbl">AI-exclusive features</div></div>
+  <div class="kpi"><div class="kpi-num amber">4</div><div class="kpi-lbl">Critical gaps (P0)</div></div>
+  <div class="kpi"><div class="kpi-num red">12</div><div class="kpi-lbl">New ideas to lead market</div></div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('gaps')">Critical gaps</button>
+  <button class="tab" onclick="showTab('competitor')">Competitor matrix</button>
+  <button class="tab" onclick="showTab('new')">New features to add</button>
+  <button class="tab" onclick="showTab('roadmap')">Build roadmap</button>
+  <button class="tab" onclick="showTab('chart')">Feature coverage</button>
+</div>
+
+<div id="panel-gaps" class="panel active">
+  <div class="section-label">P0 — Critical gaps (build immediately)</div>
+  <div class="feat-grid">
+    <div class="feat-card gap-crit">
+      <div class="fc-top"><div class="fc-name">Real-time collaborative editing</div><span class="badge gap-crit">P0 · Critical</span></div>
+      <div class="fc-desc">Every major competitor (Google Drive, OneDrive, Dropbox) supports live co-editing. Without it, CloudVault cannot serve teams at all. This is the single most important gap.</div>
+    </div>
+    <div class="feat-card gap-crit">
+      <div class="fc-top"><div class="fc-name">Built-in document editor</div><span class="badge gap-crit">P0 · Critical</span></div>
+      <div class="fc-desc">Google Docs-style editor with rich text, tables, and inline comments. Proton Docs (launched Dec 2025) now offers E2EE editing. CloudVault must match this baseline.</div>
+    </div>
+    <div class="feat-card gap-crit">
+      <div class="fc-top"><div class="fc-name">Team spaces & RBAC</div><span class="badge gap-crit">P0 · Critical</span></div>
+      <div class="fc-desc">No competitor lacks this. Owner / Admin / Editor / Viewer / Guest roles are table stakes for any B2B use case. All revenue growth depends on this screen being built.</div>
+    </div>
+    <div class="feat-card gap-crit">
+      <div class="fc-top"><div class="fc-name">Third-party integrations hub</div><span class="badge gap-crit">P0 · Critical</span></div>
+      <div class="fc-desc">Dropbox integrates with 1,500+ apps. Box offers SOC-certified integrations. Even a Zapier/webhook layer would unblock dozens of enterprise workflows immediately.</div>
+    </div>
+  </div>
+
+  <div class="section-label">P2 — Moderate gaps (months 1–3)</div>
+  <div class="feat-grid">
+    <div class="feat-card gap-mod">
+      <div class="fc-top"><div class="fc-name">FIDO2 / YubiKey (WebAuthn)</div><span class="badge gap-mod">P2 · Moderate</span></div>
+      <div class="fc-desc">Hardware 2FA is a security differentiator — especially alongside ZKE. Tresorit and Proton both offer it. High-value for enterprise and security-conscious users.</div>
+    </div>
+    <div class="feat-card gap-mod">
+      <div class="fc-top"><div class="fc-name">Document scanner with OCR</div><span class="badge gap-mod">P2 · Moderate</span></div>
+      <div class="fc-desc">Mobile-only scan-to-cloud feature. Dropbox has it. Makes CloudVault the capture point for physical documents. Pairs perfectly with AI auto-tagging.</div>
+    </div>
+    <div class="feat-card gap-mod">
+      <div class="fc-top"><div class="fc-name">Offline document editing</div><span class="badge gap-mod">P2 · Moderate</span></div>
+      <div class="fc-desc">Google Drive and OneDrive both support offline edits with sync-on-reconnect. Critical for mobile users in low-connectivity environments like India.</div>
+    </div>
+    <div class="feat-card gap-mod">
+      <div class="fc-top"><div class="fc-name">HIPAA / GDPR compliance center</div><span class="badge gap-mod">P2 · Moderate</span></div>
+      <div class="fc-desc">Tresorit is HIPAA/SOC 2/ISO 27001 certified. Box offers compliance on its base business plan. Without this, CloudVault cannot enter healthcare or EU regulated markets.</div>
+    </div>
+    <div class="feat-card gap-mod">
+      <div class="fc-top"><div class="fc-name">Zapier / Webhook automation</div><span class="badge gap-mod">P2 · Moderate</span></div>
+      <div class="fc-desc">Dropbox has native Zapier integration. Webhooks allow upload-triggered workflows (e.g., auto-send invoice to accounting). Low build effort, high B2B value.</div>
+    </div>
+    <div class="feat-card gap-mod">
+      <div class="fc-top"><div class="fc-name">Android homescreen widget</div><span class="badge gap-mod">P2 · Moderate</span></div>
+      <div class="fc-desc">Android 12+ Material You widget for quick file access. Google Drive has it. Strong engagement booster, especially in Android-dominant markets like India.</div>
+    </div>
+  </div>
+
+  <div class="section-label">P3 — Low gaps (months 3–6)</div>
+  <div class="feat-grid">
+    <div class="feat-card gap-low">
+      <div class="fc-top"><div class="fc-name">Delta / block-level sync</div><span class="badge gap-low">P3 · Low</span></div>
+      <div class="fc-desc">Dropbox's #1 technical differentiator — only changed file blocks are uploaded. Saves bandwidth dramatically on large files. Expected by power users.</div>
+    </div>
+    <div class="feat-card gap-low">
+      <div class="fc-top"><div class="fc-name">Desktop sync client (Electron)</div><span class="badge gap-low">P3 · Low</span></div>
+      <div class="fc-desc">File system integration on Windows/macOS. Dropbox and OneDrive both live in the OS file explorer. Without it, CloudVault is web/mobile only — limiting power users.</div>
+    </div>
+    <div class="feat-card gap-low">
+      <div class="fc-top"><div class="fc-name">File comments & annotations</div><span class="badge gap-low">P3 · Low</span></div>
+      <div class="fc-desc">Inline comments on file preview. Google Drive and Dropbox both support @-mention threads. Required for design review workflows.</div>
+    </div>
+  </div>
+</div>
+
+<div id="panel-competitor" class="panel">
+  <div class="section-label">Feature-by-feature matrix vs top competitors</div>
+  <table class="comp-table">
+    <thead>
+      <tr>
+        <th style="min-width:180px">Feature</th>
+        <th class="cv-col">CloudVault</th>
+        <th>Google Drive</th>
+        <th>Dropbox</th>
+        <th>OneDrive</th>
+        <th>Proton Drive</th>
+        <th>Tresorit</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td style="font-weight:500;color:var(--color-text-secondary);font-size:11px;padding-top:14px" colspan="7">Security & encryption</td></tr>
+      <tr><td>Zero-knowledge E2EE</td><td class="cv-col tick">&#10003;</td><td class="cross">&#10007;</td><td class="cross">&#10007;</td><td class="cross">&#10007;</td><td class="tick">&#10003;</td><td class="tick">&#10003;</td></tr>
+      <tr><td>Encrypted metadata (filenames)</td><td class="cv-col tick">&#10003;</td><td class="cross">&#10007;</td><td class="cross">&#10007;</td><td class="cross">&#10007;</td><td class="tick">&#10003;</td><td class="partial">~</td></tr>
+      <tr><td>TOTP two-factor auth</td><td class="cv-col tick">&#10003;</td><td class="tick">&#10003;</td><td class="tick">&#10003;</td><td class="tick">&#10003;</td><td class="tick">&#10003;</td><td class="tick">&#10003;</td></tr>
+      <tr><td>FIDO2 / YubiKey</td><td class="cv-col partial">Gap</td><td class="tick">&#10003;</td><td class="tick">&#10003;</td><td class="tick">&#10003;</td><td class="tick">&#10003;</td><td class="tick">&#10003;</td></tr>
+      <tr><td>HIPAA / GDPR compliance</td><td class="cv-col partial">Gap</td><td class="partial">Paid</td><td class="tick">&#10003;</td><td class="tick">&#10003;</td><td class="tick">&#10003;</td><td class="tick">&#10003;</td></tr>
+      <tr><td>Password-protected share links</td><td class="cv-col tick">&#10003;</td><td class="partial">Paid</td><td class="tick">&#10003;</td><td class="tick">&#10003;</td><td class="tick">&#10003;</td><td class="tick">&#10003;</td></tr>
+      <tr><td>Link expiry dates</td><td class="cv-col tick">&#10003;</td><td class="partial">Paid</td><td class="tick">&#10003;</td><td class="tick">&#10003;</td><td class="tick">&#10003;</td><td class="tick">&#10003;</td></tr>
+      <tr><td style="font-weight:500;color:var(--color-text-secondary);font-size:11px;padding-top:14px" colspan="7">Collaboration & editing</td></tr>
+      <tr><td>Real-time co-editing</td><td class="cv-col cross">Gap (P0)</td><td class="tick">&#10003;</td><td class="tick">&#10003;</td><td class="tick">&#10003;</td><td class="tick">&#10003;</td><td class="cross">&#10007;</td></tr>
+      <tr><td>Built-in document editor</td><td class="cv-col cross">Gap (P0)</td><td class="tick">&#10003;</td><td class="partial">Via Office</td><td class="tick">&#10003;</td><td class="tick">&#10003;</td><td class="cross">&#10007;</td></tr>
+      <tr><td>Team spaces / RBAC</td><td class="cv-col cross">Gap (P0)</td><td class="tick">&#10003;</td><td class="tick">&#10003;</td><td class="tick">&#10003;</td><td class="tick">&#10003;</td><td class="tick">&#10003;</td></tr>
+      <tr><td>File comments & @mentions</td><td class="cv-col partial">Gap</td><td class="tick">&#10003;</td><td class="tick">&#10003;</td><td class="tick">&#10003;</td><td class="cross">&#10007;</td><td class="cross">&#10007;</td></tr>
+      <tr><td>File request (external upload)</td><td class="cv-col cross">&#10007;</td><td class="cross">&#10007;</td><td class="tick">&#10003;</td><td class="cross">&#10007;</td><td class="cross">&#10007;</td><td class="tick">&#10003;</td></tr>
+      <tr><td style="font-weight:500;color:var(--color-text-secondary);font-size:11px;padding-top:14px" colspan="7">AI features</td></tr>
+      <tr><td>AI semantic / vector search</td><td class="cv-col tick">&#10003;</td><td class="partial">Basic</td><td class="partial">Dash AI</td><td class="partial">Copilot</td><td class="cross">&#10007;</td><td class="cross">&#10007;</td></tr>
+      <tr><td>AI auto-tagging & organisation</td><td class="cv-col tick">&#10003;</td><td class="cross">&#10007;</td><td class="partial">Dropbox AI</td><td class="partial">Copilot</td><td class="cross">&#10007;</td><td class="cross">&#10007;</td></tr>
+      <tr><td>AI cost / storage insights</td><td class="cv-col tick">&#10003;</td><td class="cross">&#10007;</td><td class="cross">&#10007;</td><td class="cross">&#10007;</td><td class="cross">&#10007;</td><td class="cross">&#10007;</td></tr>
+      <tr><td>AI version diff summary</td><td class="cv-col tick">&#10003;</td><td class="cross">&#10007;</td><td class="cross">&#10007;</td><td class="cross">&#10007;</td><td class="cross">&#10007;</td><td class="cross">&#10007;</td></tr>
+      <tr><td>Private AI (zero-knowledge)</td><td class="cv-col partial">Planned</td><td class="cross">&#10007;</td><td class="cross">&#10007;</td><td class="cross">&#10007;</td><td class="partial">Lumo (2026)</td><td class="cross">&#10007;</td></tr>
+      <tr><td style="font-weight:500;color:var(--color-text-secondary);font-size:11px;padding-top:14px" colspan="7">Sync & storage</td></tr>
+      <tr><td>Block-level / delta sync</td><td class="cv-col partial">Gap</td><td class="cross">&#10007;</td><td class="tick">&#10003;</td><td class="tick">&#10003;</td><td class="cross">&#10007;</td><td class="tick">&#10003;</td></tr>
+      <tr><td>Offline editing</td><td class="cv-col partial">Gap</td><td class="tick">&#10003;</td><td class="tick">&#10003;</td><td class="tick">&#10003;</td><td class="cross">&#10007;</td><td class="partial">Limited</td></tr>
+      <tr><td>Desktop sync client</td><td class="cv-col partial">Gap</td><td class="tick">&#10003;</td><td class="tick">&#10003;</td><td class="tick">&#10003;</td><td class="partial">CLI only</td><td class="tick">&#10003;</td></tr>
+      <tr><td>Lifetime plan option</td><td class="cv-col cross">&#10007;</td><td class="cross">&#10007;</td><td class="cross">&#10007;</td><td class="cross">&#10007;</td><td class="cross">&#10007;</td><td class="cross">&#10007;</td></tr>
+    </tbody>
+  </table>
+  <div style="font-size:11px;color:var(--color-text-secondary);margin-top:8px">&#10003; = available &nbsp; &#10007; = not available &nbsp; ~ = partial</div>
+</div>
+
+<div id="panel-new" class="panel">
+  <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:1rem;line-height:1.6">These 12 features are <strong>not offered by any major competitor</strong> in their current form. Shipping even 3–4 of these would give CloudVault a category-defining edge.</div>
+  <div class="feat-grid">
+    <div class="feat-card new">
+      <div class="fc-top"><div class="fc-name">Private E2EE AI assistant</div><span class="badge new-idea">No competitor has this</span></div>
+      <div class="fc-desc">An AI that analyses your files without ever decrypting them server-side. Uses on-device inference or homomorphic-style processing. Proton just launched Lumo but it's still server-side. First mover advantage is real.</div>
+    </div>
+    <div class="feat-card new">
+      <div class="fc-top"><div class="fc-name">Lifetime storage plans</div><span class="badge new-idea">No big competitor offers</span></div>
+      <div class="fc-desc">pCloud and Internxt offer lifetime plans (one-time payment for 500GB–2TB). Google, Dropbox, OneDrive, Proton, Tresorit — none do. Huge conversion driver for Indian price-sensitive market. Generates upfront cash.</div>
+    </div>
+    <div class="feat-card new">
+      <div class="fc-top"><div class="fc-name">AI predictive storage tiering</div><span class="badge new-idea">Unique to CloudVault</span></div>
+      <div class="fc-desc">Auto-move cold files to archival tier with one-click restore. AI learns access patterns and proactively shows "You could save ₹340/mo by archiving these 47 files." CloudVault already has cost insight — extend it to automation.</div>
+    </div>
+    <div class="feat-card new">
+      <div class="fc-top"><div class="fc-name">AI-powered ransomware shield</div><span class="badge new-idea">Cutting edge in 2026</span></div>
+      <div class="fc-desc">Monitor upload patterns for mass-encryption anomalies (ransomware signature). Freeze sync and alert user before vault is poisoned. Proton and Tresorit have passive ransomware resistance via E2EE; active detection is a step beyond.</div>
+    </div>
+    <div class="feat-card new">
+      <div class="fc-top"><div class="fc-name">Secure file request portal</div><span class="badge new-idea">Only Dropbox & Tresorit</span></div>
+      <div class="fc-desc">Allow anyone to submit files to your CloudVault without having an account — and with E2EE throughout the transfer. Tresorit has file requests but not E2EE during submission. A major differentiator for legal, medical, HR use cases.</div>
+    </div>
+    <div class="feat-card new">
+      <div class="fc-top"><div class="fc-name">Encrypted eSignature</div><span class="badge new-idea">Dropbox Sign — but no E2EE</span></div>
+      <div class="fc-desc">Dropbox Sign and DocuSign handle signatures but without zero-knowledge encryption. CloudVault could offer the world's first E2EE eSignature — all signature metadata encrypted client-side. Massive legal sector opportunity.</div>
+    </div>
+    <div class="feat-card new">
+      <div class="fc-top"><div class="fc-name">Multi-cloud backup vault</div><span class="badge new-idea">No consumer product offers</span></div>
+      <div class="fc-desc">Connect Google Drive, Dropbox, or OneDrive to CloudVault and E2EE-backup everything into one encrypted vault. Users who don't trust Big Tech can use CloudVault as an encrypted layer on top. Huge privacy play.</div>
+    </div>
+    <div class="feat-card new">
+      <div class="fc-top"><div class="fc-name">AI legal & contract analyser</div><span class="badge new-idea">Unique AI vertical</span></div>
+      <div class="fc-desc">Scan uploaded PDFs and contracts for key clauses, risk flags, expiry dates, and obligations. Store summaries alongside the encrypted file. Zero-knowledge — the AI runs on the decrypted file locally, never the server.</div>
+    </div>
+    <div class="feat-card new">
+      <div class="fc-top"><div class="fc-name">Data sovereignty controls</div><span class="badge new-idea">Enterprise differentiator</span></div>
+      <div class="fc-desc">Let users and enterprises choose exactly which country their encrypted data is stored in (India, EU, US). With tightening data localisation laws (India DPDP Act, EU AI Act), this is a compliance advantage no consumer cloud storage offers.</div>
+    </div>
+    <div class="feat-card new">
+      <div class="fc-top"><div class="fc-name">Self-hosted / hybrid deployment</div><span class="badge new-idea">Nextcloud territory</span></div>
+      <div class="fc-desc">Offer CloudVault on-prem for enterprises (like Nextcloud but with a polished UX and built-in AI). IT can run it on their own infra. Major enterprise deal-closer for banks, hospitals, and government bodies in India.</div>
+    </div>
+    <div class="feat-card new">
+      <div class="fc-top"><div class="fc-name">Encrypted video streaming</div><span class="badge new-idea">MEGA does partial</span></div>
+      <div class="fc-desc">Stream E2EE video files without decrypting to a temporary file first. MEGA has basic encrypted video but it's slow and buggy. A smooth, YouTube-quality encrypted preview would be a genuine first and a huge media use-case win.</div>
+    </div>
+    <div class="feat-card new">
+      <div class="fc-top"><div class="fc-name">Agentic file organisation agent</div><span class="badge new-idea">2026 AI frontier</span></div>
+      <div class="fc-desc">Let users describe a rule in plain English ("move all invoices from last quarter into Finance/2026/Q1 and rename them by date") and an AI agent executes it across the vault. No competitor has an agentic file management layer.</div>
+    </div>
+  </div>
+</div>
+
+<div id="panel-roadmap" class="panel">
+  <div style="font-size:13px;color:var(--color-text-secondary);margin-bottom:1rem;line-height:1.6">Recommended build order combining gaps from the document and new features above.</div>
+  <ul class="roadmap-list">
+    <li><div class="phase-dot p0">P0</div><div><div class="rl-title">Immediate — unblock B2B (months 0–1)</div><div class="rl-desc">Team Spaces + RBAC &nbsp;·&nbsp; Built-in document editor &nbsp;·&nbsp; Real-time collaboration &nbsp;·&nbsp; Third-party integrations API + Zapier &nbsp;·&nbsp; Secure file request portal</div></div></li>
+    <li><div class="phase-dot p1">P1</div><div><div class="rl-title">Phase 1 — security & compliance (months 1–3)</div><div class="rl-desc">FIDO2/YubiKey WebAuthn &nbsp;·&nbsp; HIPAA/GDPR compliance centre &nbsp;·&nbsp; IP access restrictions &nbsp;·&nbsp; AI ransomware shield &nbsp;·&nbsp; Data sovereignty controls &nbsp;·&nbsp; Document scanner with OCR</div></div></li>
+    <li><div class="phase-dot p2">P2</div><div><div class="rl-title">Phase 2 — sync & platform (months 3–6)</div><div class="rl-desc">Block-level delta sync &nbsp;·&nbsp; Desktop sync client (Electron) &nbsp;·&nbsp; Offline document editing &nbsp;·&nbsp; Android homescreen widget (Material You) &nbsp;·&nbsp; Lifetime storage plans &nbsp;·&nbsp; Bandwidth throttle controls</div></div></li>
+    <li><div class="phase-dot pstar">P★</div><div><div class="rl-title">Phase 3 — differentiation (months 6–12)</div><div class="rl-desc">Private E2EE AI assistant (on-device) &nbsp;·&nbsp; AI predictive storage tiering &nbsp;·&nbsp; AI legal & contract analyser &nbsp;·&nbsp; Encrypted eSignature &nbsp;·&nbsp; Encrypted video streaming &nbsp;·&nbsp; AI duplicate detection</div></div></li>
+    <li><div class="phase-dot p3">P3</div><div><div class="rl-title">Phase 4 — enterprise & moonshots (year 2)</div><div class="rl-desc">Self-hosted / hybrid deployment &nbsp;·&nbsp; Multi-cloud encrypted backup &nbsp;·&nbsp; Agentic file organisation agent &nbsp;·&nbsp; AI collaborative annotations &nbsp;·&nbsp; SD card backup (Android) &nbsp;·&nbsp; AI smart folder rules</div></div></li>
+  </ul>
+</div>
+
+<div id="panel-chart" class="panel">
+  <div class="legend-row">
+    <span class="leg-item"><span class="leg-sq" style="background:#185FA5"></span>CloudVault</span>
+    <span class="leg-item"><span class="leg-sq" style="background:#0F6E56"></span>Google Drive</span>
+    <span class="leg-item"><span class="leg-sq" style="background:#854F0B"></span>Dropbox</span>
+    <span class="leg-item"><span class="leg-sq" style="background:#888780"></span>OneDrive</span>
+    <span class="leg-item"><span class="leg-sq" style="background:#534AB7"></span>Proton Drive</span>
+    <span class="leg-item"><span class="leg-sq" style="background:#D85A30"></span>Tresorit</span>
+  </div>
+  <div class="chart-wrap"><canvas id="radarChart" role="img" aria-label="Radar chart comparing CloudVault and 5 competitors across 6 feature categories. CloudVault leads on AI features and security but trails on collaboration and sync.">CloudVault scores: Security 85, AI features 80, Collaboration 30, Sync 55, Mobile 70, Integrations 20. Competitors score higher in Collaboration, Sync, and Integrations.</canvas></div>
+  <div class="section-label">Category coverage score (0–100)</div>
+  <div class="chart-wrap" style="height:280px"><canvas id="barChart" role="img" aria-label="Bar chart showing feature coverage per category for 6 platforms.">CloudVault trails significantly in collaboration, integrations, and sync.</canvas></div>
+</div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<script>
+function showTab(name){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));
+  event.target.classList.add('active');
+  document.getElementById('panel-'+name).classList.add('active');
+  if(name==='chart') initCharts();
+}
+var chartsInited=false;
+function initCharts(){
+  if(chartsInited)return;chartsInited=true;
+  const cats=['Security','AI features','Collaboration','Sync & storage','Mobile','Integrations'];
+  const data={
+    'CloudVault':[85,80,30,55,72,20],
+    'Google Drive':[50,65,95,70,85,75],
+    'Dropbox':[60,55,85,95,80,90],
+    'OneDrive':[65,60,90,90,75,85],
+    'Proton Drive':[95,30,60,45,65,25],
+    'Tresorit':[95,15,55,70,60,30]
+  };
+  const colors=['#185FA5','#0F6E56','#854F0B','#888780','#534AB7','#D85A30'];
+  const names=Object.keys(data);
+  new Chart(document.getElementById('radarChart'),{
+    type:'radar',
+    data:{
+      labels:cats,
+      datasets:names.map((n,i)=>({label:n,data:data[n],borderColor:colors[i],backgroundColor:colors[i]+'22',pointBackgroundColor:colors[i],pointRadius:3,borderWidth:1.5}))
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{r:{min:0,max:100,ticks:{stepSize:25,font:{size:10}},pointLabels:{font:{size:11}}}}}
+  });
+  new Chart(document.getElementById('barChart'),{
+    type:'bar',
+    data:{
+      labels:cats,
+      datasets:names.map((n,i)=>({label:n,data:data[n],backgroundColor:colors[i]+'CC',borderRadius:3}))
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{ticks:{font:{size:11}}},y:{min:0,max:100,ticks:{stepSize:25}}}}
+  });
+}
+</script>

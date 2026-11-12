@@ -1,0 +1,2261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CloudVault — Screen Solution Report</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Outfit:wght@300;400;500;600;700&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #0b0d14;
+  --ink2: #1c2035;
+  --ink3: #2e3452;
+  --mist: #f4f5fa;
+  --mist2: #eaecf5;
+  --mist3: #dde0ef;
+  --white: #ffffff;
+  --blue: #2054e8;
+  --blue-l: #4472ff;
+  --blue-s: rgba(32,84,232,0.08);
+  --teal: #0ea878;
+  --teal-s: rgba(14,168,120,0.08);
+  --amber: #d97706;
+  --amber-s: rgba(217,119,6,0.08);
+  --red: #dc2626;
+  --red-s: rgba(220,38,38,0.08);
+  --purple: #7c3aed;
+  --purple-s: rgba(124,58,237,0.08);
+  --cyan: #0891b2;
+  --cyan-s: rgba(8,145,178,0.08);
+  --border: rgba(11,13,20,0.08);
+  --border2: rgba(11,13,20,0.14);
+  --r: 10px;
+  --r2: 16px;
+  --r3: 22px;
+  --shadow: 0 2px 12px rgba(11,13,20,0.08), 0 0 0 1px rgba(11,13,20,0.05);
+  --shadow2: 0 8px 32px rgba(11,13,20,0.12), 0 0 0 1px rgba(11,13,20,0.06);
+  --font-h: 'Playfair Display', serif;
+  --font-b: 'Outfit', sans-serif;
+  --font-m: 'Fira Code', monospace;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  font-family: var(--font-b);
+  background: var(--mist);
+  color: var(--ink);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* SCROLLBAR */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--mist); }
+::-webkit-scrollbar-thumb { background: var(--mist3); border-radius: 3px; }
+
+/* TOPBAR */
+.topbar {
+  background: var(--white);
+  border-bottom: 1px solid var(--border2);
+  padding: 0 40px;
+  height: 58px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 200;
+  box-shadow: 0 1px 0 var(--border);
+}
+.tb-brand { display: flex; align-items: center; gap: 10px; }
+.tb-logo {
+  width: 34px; height: 34px;
+  background: linear-gradient(135deg, var(--blue), var(--teal));
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 17px;
+}
+.tb-name { font-family: var(--font-h); font-size: 16px; font-weight: 700; color: var(--ink); }
+.tb-sub { font-size: 11px; color: var(--ink3); margin-left: 14px; font-family: var(--font-m); background: var(--mist2); padding: 3px 10px; border-radius: 20px; border: 1px solid var(--border2); }
+.tb-nav { display: flex; gap: 2px; }
+.tb-btn {
+  padding: 7px 16px;
+  font-size: 12.5px;
+  border-radius: 7px;
+  cursor: pointer;
+  border: none;
+  background: transparent;
+  color: var(--ink3);
+  font-family: var(--font-b);
+  font-weight: 500;
+  transition: all .15s;
+}
+.tb-btn:hover, .tb-btn.active { background: var(--blue-s); color: var(--blue); }
+
+/* HERO */
+.hero {
+  background: var(--white);
+  border-bottom: 1px solid var(--border2);
+  padding: 64px 40px 56px;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse 55% 70% at 95% 50%, rgba(32,84,232,0.04) 0%, transparent 60%),
+    radial-gradient(ellipse 45% 60% at 5% 60%, rgba(14,168,120,0.04) 0%, transparent 60%);
+  pointer-events: none;
+}
+.hero-inner { max-width: 1120px; margin: 0 auto; }
+.hero-eyebrow {
+  display: inline-flex; align-items: center; gap: 7px;
+  font-family: var(--font-m); font-size: 11px;
+  color: var(--blue);
+  background: var(--blue-s);
+  border: 1px solid rgba(32,84,232,0.18);
+  padding: 5px 14px; border-radius: 20px;
+  margin-bottom: 22px;
+}
+.hero-dot { width: 6px; height: 6px; background: var(--blue); border-radius: 50%; animation: blink 2.5s infinite; }
+@keyframes blink { 0%,100%{opacity:1}50%{opacity:.25} }
+.hero h1 {
+  font-family: var(--font-h);
+  font-size: clamp(38px, 5vw, 68px);
+  font-weight: 900;
+  line-height: 1.0;
+  letter-spacing: -.02em;
+  margin-bottom: 18px;
+  color: var(--ink);
+}
+.hero h1 em { font-style: italic; color: var(--blue); }
+.hero-desc { font-size: 16px; color: var(--ink3); max-width: 600px; line-height: 1.75; margin-bottom: 40px; }
+.hero-stats {
+  display: flex; gap: 0;
+  border: 1px solid var(--border2);
+  border-radius: var(--r2);
+  background: var(--white);
+  overflow: hidden;
+  display: inline-flex;
+  box-shadow: var(--shadow);
+}
+.hstat {
+  padding: 18px 28px;
+  border-right: 1px solid var(--border);
+  text-align: center;
+}
+.hstat:last-child { border-right: none; }
+.hstat-num { font-family: var(--font-h); font-size: 28px; font-weight: 700; }
+.hstat-num.b { color: var(--blue); }
+.hstat-num.t { color: var(--teal); }
+.hstat-num.a { color: var(--amber); }
+.hstat-num.r { color: var(--red); }
+.hstat-label { font-size: 11px; color: var(--ink3); margin-top: 2px; text-transform: uppercase; letter-spacing: .06em; font-weight: 500; }
+
+/* LAYOUT */
+.layout { display: flex; min-height: calc(100vh - 58px); }
+.sidebar {
+  width: 248px;
+  flex-shrink: 0;
+  background: var(--white);
+  border-right: 1px solid var(--border2);
+  padding: 24px 0;
+  position: sticky;
+  top: 58px;
+  height: calc(100vh - 58px);
+  overflow-y: auto;
+}
+.main { flex: 1; padding: 36px 40px; max-width: 900px; }
+
+.sb-group { margin-bottom: 8px; }
+.sb-group-label {
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--ink3);
+  padding: 0 20px;
+  margin-bottom: 4px;
+  margin-top: 12px;
+  opacity: .6;
+}
+.sb-item {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  padding: 8px 20px;
+  font-size: 13.5px;
+  font-weight: 500;
+  color: var(--ink3);
+  cursor: pointer;
+  transition: all .15s;
+  border-radius: 0;
+  text-decoration: none;
+}
+.sb-item:hover { background: var(--mist); color: var(--ink); }
+.sb-item.active { background: var(--blue-s); color: var(--blue); font-weight: 600; }
+.sb-icon { font-size: 15px; width: 20px; text-align: center; }
+.sb-count {
+  margin-left: auto;
+  font-family: var(--font-m);
+  font-size: 10px;
+  background: var(--mist2);
+  border: 1px solid var(--border2);
+  color: var(--ink3);
+  padding: 1px 7px;
+  border-radius: 10px;
+}
+.sb-count.urgent { background: var(--red-s); color: var(--red); border-color: rgba(220,38,38,0.2); }
+
+/* SECTION */
+.section { margin-bottom: 52px; }
+.section-eyebrow {
+  font-family: var(--font-m);
+  font-size: 10.5px;
+  color: var(--blue);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  margin-bottom: 5px;
+}
+.section-title {
+  font-family: var(--font-h);
+  font-size: clamp(22px, 3vw, 32px);
+  font-weight: 700;
+  letter-spacing: -.01em;
+  margin-bottom: 8px;
+  color: var(--ink);
+  line-height: 1.15;
+}
+.section-desc { font-size: 14px; color: var(--ink3); max-width: 640px; line-height: 1.75; margin-bottom: 28px; }
+
+.divider { height: 1px; background: var(--border2); margin: 48px 0; }
+
+/* PLATFORM BADGE */
+.platform-row { display: flex; align-items: center; gap: 8px; margin-bottom: 28px; flex-wrap: wrap; }
+.plat {
+  display: flex; align-items: center; gap: 6px;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all .2s;
+  border: 2px solid transparent;
+}
+.plat-web { background: var(--blue-s); color: var(--blue); border-color: rgba(32,84,232,0.2); }
+.plat-mob { background: var(--teal-s); color: var(--teal); border-color: rgba(14,168,120,0.2); }
+.plat-note { font-size: 12.5px; color: var(--ink3); margin-left: 6px; }
+
+/* SCREEN BLOCK */
+.screen-block {
+  background: var(--white);
+  border: 1px solid var(--border2);
+  border-radius: var(--r3);
+  margin-bottom: 20px;
+  overflow: hidden;
+  box-shadow: var(--shadow);
+  transition: box-shadow .2s;
+}
+.screen-block:hover { box-shadow: var(--shadow2); }
+.sb-head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 22px 26px;
+  cursor: pointer;
+  transition: background .12s;
+  border-bottom: 1px solid transparent;
+}
+.screen-block.open .sb-head { border-bottom-color: var(--border); }
+.sb-head:hover { background: var(--mist); }
+.sb-num {
+  width: 36px; height: 36px;
+  border-radius: 9px;
+  display: flex; align-items: center; justify-content: center;
+  font-family: var(--font-m);
+  font-size: 12px;
+  font-weight: 500;
+  flex-shrink: 0;
+}
+.sn-blue { background: var(--blue-s); color: var(--blue); }
+.sn-teal { background: var(--teal-s); color: var(--teal); }
+.sn-amber { background: var(--amber-s); color: var(--amber); }
+.sn-purple { background: var(--purple-s); color: var(--purple); }
+.sn-cyan { background: var(--cyan-s); color: var(--cyan); }
+.sn-red { background: var(--red-s); color: var(--red); }
+.sb-meta { flex: 1; }
+.sb-screen-name {
+  font-family: var(--font-b);
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--ink);
+  margin-bottom: 2px;
+}
+.sb-screen-sub { font-size: 12px; color: var(--ink3); }
+.sb-tags { display: flex; gap: 5px; flex-wrap: wrap; }
+.tag {
+  font-size: 10.5px;
+  padding: 3px 9px;
+  border-radius: 6px;
+  font-weight: 600;
+  font-family: var(--font-m);
+  letter-spacing: .02em;
+}
+.tag-web { background: var(--blue-s); color: var(--blue); }
+.tag-mob { background: var(--teal-s); color: var(--teal); }
+.tag-ai { background: var(--purple-s); color: var(--purple); }
+.tag-sec { background: var(--red-s); color: var(--red); }
+.tag-crit { background: var(--amber-s); color: var(--amber); }
+.sb-arrow { font-size: 11px; color: var(--ink3); transition: transform .2s; flex-shrink: 0; }
+.screen-block.open .sb-arrow { transform: rotate(180deg); }
+
+.sb-body { max-height: 0; overflow: hidden; transition: max-height .5s cubic-bezier(0.4,0,0.2,1); }
+.screen-block.open .sb-body { max-height: 3000px; }
+.sb-content { padding: 26px 28px; }
+
+/* FEATURE LIST INSIDE SCREEN */
+.feat-group { margin-bottom: 22px; }
+.fg-title {
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  color: var(--ink3);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.fg-title::after { content: ''; flex: 1; height: 1px; background: var(--border); }
+.feat-list { display: flex; flex-direction: column; gap: 8px; }
+.feat-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: var(--r);
+  border: 1px solid var(--border);
+  background: var(--mist);
+  transition: border-color .15s, background .15s;
+}
+.feat-item:hover { background: var(--white); border-color: var(--border2); }
+.fi-icon {
+  width: 30px; height: 30px;
+  border-radius: 7px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px;
+  flex-shrink: 0;
+}
+.fi-content { flex: 1; }
+.fi-name { font-size: 13.5px; font-weight: 600; color: var(--ink); margin-bottom: 2px; }
+.fi-desc { font-size: 12px; color: var(--ink3); line-height: 1.6; }
+.fi-badge-row { display: flex; gap: 5px; margin-top: 6px; flex-wrap: wrap; }
+.fi-badge {
+  font-size: 9.5px;
+  padding: 2px 7px;
+  border-radius: 5px;
+  font-weight: 700;
+  font-family: var(--font-m);
+  letter-spacing: .03em;
+}
+.fib-ai { background: var(--purple-s); color: var(--purple); }
+.fib-core { background: var(--blue-s); color: var(--blue); }
+.fib-sec { background: var(--red-s); color: var(--red); }
+.fib-gap { background: var(--amber-s); color: var(--amber); border: 1px solid rgba(217,119,6,0.2); }
+.fib-plan { background: var(--cyan-s); color: var(--cyan); }
+.fib-mob { background: var(--teal-s); color: var(--teal); }
+.fib-ent { background: rgba(124,58,237,0.08); color: var(--purple); }
+
+/* WIREFRAME SKETCH */
+.wireframe {
+  background: var(--mist2);
+  border: 1.5px dashed var(--mist3);
+  border-radius: var(--r2);
+  padding: 20px;
+  margin: 16px 0;
+  position: relative;
+  font-family: var(--font-m);
+  font-size: 11px;
+  color: var(--ink3);
+}
+.wf-label {
+  position: absolute;
+  top: -9px;
+  left: 14px;
+  background: var(--mist2);
+  padding: 0 7px;
+  font-size: 10px;
+  color: var(--ink3);
+  font-weight: 500;
+}
+.wf-row { display: flex; gap: 8px; margin-bottom: 8px; align-items: stretch; }
+.wf-box {
+  border: 1.5px solid var(--mist3);
+  border-radius: 7px;
+  background: var(--white);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 8px 12px;
+  font-size: 11px;
+  color: var(--ink3);
+  text-align: center;
+  line-height: 1.4;
+}
+.wf-nav { height: 40px; flex: 1; }
+.wf-sidebar { width: 140px; min-height: 120px; }
+.wf-content { flex: 1; min-height: 120px; }
+.wf-fab {
+  width: 40px; height: 40px;
+  border-radius: 50%;
+  background: var(--blue-s);
+  border: 1.5px solid rgba(32,84,232,0.3);
+  color: var(--blue);
+  font-size: 18px;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+}
+.wf-bottom-bar { height: 40px; flex: 1; }
+.wf-highlight { background: var(--blue-s); border-color: rgba(32,84,232,0.3); color: var(--blue); }
+.wf-highlight-teal { background: var(--teal-s); border-color: rgba(14,168,120,0.3); color: var(--teal); }
+.wf-highlight-amber { background: var(--amber-s); border-color: rgba(217,119,6,0.3); color: var(--amber); }
+.wf-highlight-purple { background: var(--purple-s); border-color: rgba(124,58,237,0.3); color: var(--purple); }
+
+/* NOTE CALLOUT */
+.note-box {
+  display: flex;
+  gap: 10px;
+  padding: 12px 16px;
+  border-radius: var(--r);
+  font-size: 12.5px;
+  line-height: 1.65;
+  margin: 14px 0;
+}
+.note-box.nb-blue { background: var(--blue-s); border: 1px solid rgba(32,84,232,0.15); color: var(--ink); }
+.note-box.nb-amber { background: var(--amber-s); border: 1px solid rgba(217,119,6,0.18); color: var(--ink); }
+.note-box.nb-teal { background: var(--teal-s); border: 1px solid rgba(14,168,120,0.18); color: var(--ink); }
+.note-box.nb-red { background: var(--red-s); border: 1px solid rgba(220,38,38,0.15); color: var(--ink); }
+.note-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+.note-text strong { font-weight: 600; color: var(--ink); }
+
+/* PRIORITY LABEL */
+.priority-row { display: flex; align-items: center; gap: 8px; margin-top: 12px; }
+.pr-label { font-size: 11px; color: var(--ink3); }
+.pr-badge {
+  font-size: 10px;
+  padding: 2px 9px;
+  border-radius: 5px;
+  font-weight: 700;
+  font-family: var(--font-m);
+}
+.prb-crit { background: var(--red-s); color: var(--red); }
+.prb-high { background: var(--amber-s); color: var(--amber); }
+.prb-med { background: var(--blue-s); color: var(--blue); }
+.prb-low { background: var(--teal-s); color: var(--teal); }
+.prb-plan { background: var(--purple-s); color: var(--purple); }
+
+/* GRID 2 */
+.grid2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 14px; }
+.grid3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+@media (max-width: 768px) {
+  .grid2, .grid3 { grid-template-columns: 1fr; }
+  .sidebar { display: none; }
+  .main { padding: 24px 20px; }
+  .hero { padding: 40px 20px; }
+  .topbar { padding: 0 20px; }
+  .hero-stats { flex-direction: column; gap: 0; }
+  .hstat { border-right: none; border-bottom: 1px solid var(--border); }
+}
+
+/* SUMMARY TABLE */
+.sum-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+.sum-table th {
+  text-align: left;
+  padding: 10px 14px;
+  font-size: 10.5px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: .08em;
+  color: var(--ink3);
+  background: var(--mist2);
+  border-bottom: 1px solid var(--border2);
+}
+.sum-table td {
+  padding: 11px 14px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: top;
+  line-height: 1.5;
+}
+.sum-table tr:last-child td { border-bottom: none; }
+.sum-table tr:hover td { background: var(--mist); }
+.tbl-screen { font-weight: 600; color: var(--ink); }
+.tbl-count { font-family: var(--font-m); font-size: 12px; color: var(--blue); }
+
+/* PRINT  */
+@media print {
+  .topbar, .sidebar { display: none; }
+  .main { padding: 0; max-width: 100%; }
+  .sb-body { max-height: none !important; }
+  .sb-arrow { display: none; }
+  body { background: white; }
+}
+
+/* INTRO BLOCK */
+.intro-card {
+  background: linear-gradient(135deg, rgba(32,84,232,0.05), rgba(14,168,120,0.05));
+  border: 1px solid var(--border2);
+  border-radius: var(--r3);
+  padding: 28px;
+  margin-bottom: 32px;
+}
+.intro-card p { font-size: 14px; color: var(--ink3); line-height: 1.8; }
+.intro-card p + p { margin-top: 10px; }
+.intro-card strong { color: var(--ink); font-weight: 600; }
+
+/* CHIP LEGEND */
+.legend { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 24px; }
+.leg-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--ink3); }
+.leg-dot { width: 10px; height: 10px; border-radius: 3px; flex-shrink: 0; }
+
+/* STICKY OFFSET FIX */
+[id] { scroll-margin-top: 80px; }
+</style>
+</head>
+<body>
+
+<!-- TOP BAR -->
+<div class="topbar">
+  <div class="tb-brand">
+    <div class="tb-logo">☁️</div>
+    <span class="tb-name">CloudVault</span>
+    <span class="tb-sub">Screen Solution Report · April 2026</span>
+  </div>
+  <div class="tb-nav">
+    <button class="tb-btn active" onclick="showTab('web')">🖥 Web</button>
+    <button class="tb-btn" onclick="showTab('mobile')">📱 Mobile</button>
+    <button class="tb-btn" onclick="showTab('summary')">📋 Summary</button>
+  </div>
+</div>
+
+<!-- HERO -->
+<div class="hero" id="top">
+  <div class="hero-inner">
+    <div class="hero-eyebrow"><div class="hero-dot"></div> Full Platform UX Architecture</div>
+    <h1>What Goes Where —<br><em>Web & Mobile</em></h1>
+    <p class="hero-desc">A screen-by-screen breakdown of every CloudVault feature, placed precisely where it belongs — across 11 web screens and 10 mobile screens. 50+ features mapped to their exact location.</p>
+    <div class="hero-stats">
+      <div class="hstat"><div class="hstat-num b">11</div><div class="hstat-label">Web Screens</div></div>
+      <div class="hstat"><div class="hstat-num t">10</div><div class="hstat-label">Mobile Screens</div></div>
+      <div class="hstat"><div class="hstat-num a">50+</div><div class="hstat-label">Features Mapped</div></div>
+      <div class="hstat"><div class="hstat-num r">4</div><div class="hstat-label">Critical Gaps</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- MAIN LAYOUT -->
+<div class="layout">
+
+  <!-- SIDEBAR -->
+  <nav class="sidebar" id="sidebar-web">
+    <div class="sb-group-label">Web Screens</div>
+    <a class="sb-item active" href="#w1" onclick="setActive(this)"><span class="sb-icon">🔐</span> Auth & Onboarding <span class="sb-count">5</span></a>
+    <a class="sb-item" href="#w2" onclick="setActive(this)"><span class="sb-icon">🏠</span> Dashboard / Home <span class="sb-count">8</span></a>
+    <a class="sb-item" href="#w3" onclick="setActive(this)"><span class="sb-icon">📁</span> File Browser <span class="sb-count">9</span></a>
+    <a class="sb-item" href="#w4" onclick="setActive(this)"><span class="sb-icon">👁️</span> File Preview <span class="sb-count">7</span></a>
+    <a class="sb-item" href="#w5" onclick="setActive(this)"><span class="sb-icon">✏️</span> Document Editor <span class="sb-count urgent">4</span></a>
+    <a class="sb-item" href="#w6" onclick="setActive(this)"><span class="sb-icon">🔍</span> Search Results <span class="sb-count">4</span></a>
+    <a class="sb-item" href="#w7" onclick="setActive(this)"><span class="sb-icon">🤝</span> Sharing & Collab <span class="sb-count">6</span></a>
+    <a class="sb-item" href="#w8" onclick="setActive(this)"><span class="sb-icon">🤖</span> AI Assistant <span class="sb-count">5</span></a>
+    <a class="sb-item" href="#w9" onclick="setActive(this)"><span class="sb-icon">📊</span> Insights Dashboard <span class="sb-count">5</span></a>
+    <a class="sb-item" href="#w10" onclick="setActive(this)"><span class="sb-icon">🏢</span> Team Workspace <span class="sb-count urgent">5</span></a>
+    <a class="sb-item" href="#w11" onclick="setActive(this)"><span class="sb-icon">⚙️</span> Settings <span class="sb-count">8</span></a>
+
+    <div class="sb-group-label" style="margin-top:18px">Mobile Screens</div>
+    <a class="sb-item" href="#m1" onclick="setActive(this)"><span class="sb-icon">🚀</span> Onboarding / Auth <span class="sb-count">4</span></a>
+    <a class="sb-item" href="#m2" onclick="setActive(this)"><span class="sb-icon">🏠</span> Home / Recents <span class="sb-count">7</span></a>
+    <a class="sb-item" href="#m3" onclick="setActive(this)"><span class="sb-icon">📂</span> File Browser <span class="sb-count">6</span></a>
+    <a class="sb-item" href="#m4" onclick="setActive(this)"><span class="sb-icon">📄</span> File Preview <span class="sb-count">6</span></a>
+    <a class="sb-item" href="#m5" onclick="setActive(this)"><span class="sb-icon">📷</span> Scanner / Upload <span class="sb-count urgent">4</span></a>
+    <a class="sb-item" href="#m6" onclick="setActive(this)"><span class="sb-icon">🤖</span> AI Assistant <span class="sb-count">4</span></a>
+    <a class="sb-item" href="#m7" onclick="setActive(this)"><span class="sb-icon">🔗</span> Share Sheet <span class="sb-count">4</span></a>
+    <a class="sb-item" href="#m8" onclick="setActive(this)"><span class="sb-icon">🔔</span> Notifications <span class="sb-count">3</span></a>
+    <a class="sb-item" href="#m9" onclick="setActive(this)"><span class="sb-icon">⚙️</span> Settings <span class="sb-count">7</span></a>
+    <a class="sb-item" href="#m10" onclick="setActive(this)"><span class="sb-icon">📦</span> Widget (External) <span class="sb-count">3</span></a>
+  </nav>
+
+  <!-- MAIN CONTENT -->
+  <main class="main">
+
+    <!-- LEGEND -->
+    <div class="legend">
+      <div class="leg-item"><div class="leg-dot" style="background:rgba(32,84,232,0.4)"></div> Core Feature</div>
+      <div class="leg-item"><div class="leg-dot" style="background:rgba(124,58,237,0.5)"></div> AI-Exclusive</div>
+      <div class="leg-item"><div class="leg-dot" style="background:rgba(217,119,6,0.5)"></div> Gap to Build</div>
+      <div class="leg-item"><div class="leg-dot" style="background:rgba(220,38,38,0.4)"></div> Security</div>
+      <div class="leg-item"><div class="leg-dot" style="background:rgba(14,168,120,0.4)"></div> Mobile-Only</div>
+      <div class="leg-item"><div class="leg-dot" style="background:rgba(8,145,178,0.4)"></div> Planned (Roadmap)</div>
+    </div>
+
+    <!-- ====================================================
+         W E B   S C R E E N S
+    ==================================================== -->
+    <div class="section">
+      <div class="section-eyebrow">01 — Web Platform</div>
+      <h2 class="section-title">Web Screens — Feature Placement</h2>
+      <p class="section-desc">Every screen in the CloudVault web app with a precise, justified list of which features live there — and why. Ordered by user journey, from first login to power-user settings.</p>
+    </div>
+
+    <!-- W1: Auth & Onboarding -->
+    <div class="screen-block open" id="w1">
+      <div class="sb-head" onclick="toggleBlock(this)">
+        <div class="sb-num sn-blue">W1</div>
+        <div class="sb-meta">
+          <div class="sb-screen-name">🔐 Auth & Onboarding</div>
+          <div class="sb-screen-sub">Login · Register · Key Setup · Two-Factor Authentication</div>
+        </div>
+        <div class="sb-tags">
+          <span class="tag tag-web">Web</span>
+          <span class="tag tag-sec">Security</span>
+        </div>
+        <span class="sb-arrow">▾</span>
+      </div>
+      <div class="sb-body">
+        <div class="sb-content">
+          <div class="wireframe">
+            <span class="wf-label">Web · Auth Screen Layout</span>
+            <div class="wf-row"><div class="wf-box wf-nav wf-highlight">CloudVault Logo + Brand Header</div></div>
+            <div class="wf-row">
+              <div class="wf-box" style="flex:1; min-height:220px; flex-direction:column; gap:10px; display:flex; align-items:center; justify-content:center;">
+                <div style="font-size:13px; font-weight:600; color:var(--ink);">Email / Password</div>
+                <div style="font-size:11px; color:var(--ink3)">Zero-Knowledge Key Derivation Notice</div>
+                <div style="font-size:11px; background:var(--blue-s); padding:4px 10px; border-radius:6px; color:var(--blue)">FIDO2 / YubiKey Option</div>
+                <div style="font-size:11px; background:var(--amber-s); padding:4px 10px; border-radius:6px; color:var(--amber)">2FA TOTP Code</div>
+              </div>
+              <div class="wf-box wf-highlight-teal" style="width:220px; min-height:220px; font-size:11px;">
+                Why CloudVault?<br><br>
+                ✓ E2E Encrypted<br>
+                ✓ Zero-Knowledge<br>
+                ✓ AI-Powered<br>
+              </div>
+            </div>
+          </div>
+          <div class="feat-group">
+            <div class="fg-title">Authentication Features</div>
+            <div class="feat-list">
+              <div class="feat-item">
+                <div class="fi-icon fi-blue">🔐</div>
+                <div class="fi-content">
+                  <div class="fi-name">Email + Password Login</div>
+                  <div class="fi-desc">Standard auth with Argon2id password hashing. Master password derives the Zero-Knowledge encryption key client-side — never sent to server.</div>
+                  <div class="fi-badge-row"><span class="fi-badge fib-core">CORE</span><span class="fi-badge fib-sec">SECURITY</span></div>
+                </div>
+              </div>
+              <div class="feat-item">
+                <div class="fi-icon fi-blue">📱</div>
+                <div class="fi-content">
+                  <div class="fi-name">TOTP Two-Factor Authentication</div>
+                  <div class="fi-desc">Time-based one-time password via Authenticator apps (Google, Authy). Shown as a second step post-password entry.</div>
+                  <div class="fi-badge-row"><span class="fi-badge fib-core">CORE</span></div>
+                </div>
+              </div>
+              <div class="feat-item">
+                <div class="fi-icon fi-amber">🔑</div>
+                <div class="fi-content">
+                  <div class="fi-name">FIDO2 / YubiKey Authentication</div>
+                  <div class="fi-desc">Physical hardware security key as 2FA via WebAuthn API. Users enroll their YubiKey once in Settings, then tap it to log in. Must be an option on this screen.</div>
+                  <div class="fi-badge-row"><span class="fi-badge fib-gap">GAP · MODERATE</span><span class="fi-badge fib-sec">SECURITY</span></div>
+                </div>
+              </div>
+              <div class="feat-item">
+                <div class="fi-icon fi-blue">🗝️</div>
+                <div class="fi-content">
+                  <div class="fi-name">Zero-Knowledge Key Setup Notice</div>
+                  <div class="fi-desc">On first register, clearly explain: "Your password is your encryption key. If you forget it, your files cannot be recovered." Show a key backup download step.</div>
+                  <div class="fi-badge-row"><span class="fi-badge fib-sec">SECURITY</span><span class="fi-badge fib-core">CORE</span></div>
+                </div>
+              </div>
+              <div class="feat-item">
+                <div class="fi-icon fi-blue">🌐</div>
+                <div class="fi-content">
+                  <div class="fi-name">SSO / Social Login (Google, Microsoft)</div>
+                  <div class="fi-desc">OAuth 2.0 single sign-on for enterprise and consumer convenience. Important: ZKE must still be maintained — derive key from a server-stored salt, not just OAuth token.</div>
+                  <div class="fi-badge-row"><span class="fi-badge fib-core">CORE</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="priority-row"><span class="pr-label">Build Priority:</span><span class="pr-badge prb-high">FIDO2/YubiKey is Moderate Gap</span></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- W2: Dashboard -->
+    <div class="screen-block" id="w2">
+      <div class="sb-head" onclick="toggleBlock(this)">
+        <div class="sb-num sn-teal">W2</div>
+        <div class="sb-meta">
+          <div class="sb-screen-name">🏠 Dashboard / Home</div>
+          <div class="sb-screen-sub">First screen after login — recent files, AI highlights, usage, and quick actions</div>
+        </div>
+        <div class="sb-tags">
+          <span class="tag tag-web">Web</span>
+          <span class="tag tag-ai">AI</span>
+        </div>
+        <span class="sb-arrow">▾</span>
+      </div>
+      <div class="sb-body">
+        <div class="sb-content">
+          <div class="wireframe">
+            <span class="wf-label">Web · Dashboard Layout</span>
+            <div class="wf-row">
+              <div class="wf-box wf-sidebar">Left Sidebar<br>Nav + Folders</div>
+              <div class="wf-box wf-content" style="flex-direction:column; gap:8px; display:flex;">
+                <div class="wf-box wf-highlight" style="height:44px">AI Vault Assistant — Ask anything about your files…</div>
+                <div style="display:flex; gap:8px; flex:1">
+                  <div class="wf-box" style="flex:2; min-height:90px; font-size:11px">Recent Files Grid</div>
+                  <div class="wf-box wf-highlight-teal" style="flex:1; font-size:11px">AI Insights<br>Weekly Summary</div>
+                </div>
+                <div style="display:flex; gap:8px">
+                  <div class="wf-box" style="flex:1; height:48px; font-size:11px">Storage Usage Bar</div>
+                  <div class="wf-box wf-highlight-purple" style="flex:1; height:48px; font-size:11px; background:var(--purple-s); border-color:rgba(124,58,237,0.3); color:var(--purple)">AI Auto-Tags Activity</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="feat-group">
+            <div class="fg-title">Dashboard Features</div>
+            <div class="feat-list">
+              <div class="feat-item">
+                <div class="fi-icon fi-blue">💬</div>
+                <div class="fi-content">
+                  <div class="fi-name">AI Vault Assistant — Persistent Search Bar</div>
+                  <div class="fi-desc">Pinned at the top of the dashboard. Acts as the primary entry point: natural-language queries like "find the invoice from last month" or "who shared with me this week." Claude interprets intent and navigates/acts on the vault.</div>
+                  <div class="fi-badge-row"><span class="fi-badge fib-ai">AI-EXCLUSIVE</span></div>
+                </div>
+              </div>
+              <div class="feat-item">
+                <div class="fi-icon fi-teal">📊</div>
+                <div class="fi-content">
+                  <div class="fi-name">AI Vault Insights Widget</div>
+                  <div class="fi-desc">A compact sidebar card showing this week's AI-generated highlights: "3 files you haven't opened in 90 days", "2 duplicate candidates found", "₹23/month could be saved." Links to full Insights Dashboard (W9).</div>
+                  <div class="fi-badge-row"><span class="fi-badge fib-ai">AI-EXCLUSIVE</span></div>
+                </div>
+              </div>
+              <div class="feat-item">
+                <div class="fi-icon fi-blue">🕐</div>
+                <div class="fi-content">
+                  <div class="fi-name">Recent Files + Quick Access</div>
+                  <div class="fi-desc">Grid/list of recently opened and recently uploaded files. Clicking opens File Preview (W4). Includes "shared with me" and "starred" tabs for fast navigation.</div>
+                  <div class="fi-badge-row"><span class="fi-badge fib-core">CORE</span></div>
+                </div>
+              </div>
+              <div class="feat-item">
+                <div class="fi-icon fi-purple">🏷️</div>
+                <div class="fi-content">
+                  <div class="fi-name">AI Auto-Tag Activity Feed</div>
+                  <div class="fi-desc">A small feed showing recent AI tagging actions: "Uploaded 'contract_v2.pdf' → Tagged as Contract, Legal · Suggested: /Legal/2026." Users can confirm or dismiss.</div>
+                  <div class="fi-badge-row"><span class="fi-badge fib-ai">AI-EXCLUSIVE</span></div>
+                </div>
+              </div>
+              <div class="feat-item">
+                <div class="fi-icon fi-blue">💾</div>
+                <div class="fi-content">
+                  <div class="fi-name">Storage Usage + Cost Display</div>
+                  <div class="fi-desc">Visual bar showing GB used / total, with breakdown by file type (Photos, Videos, Documents). Shows current monthly cost and allows upgrade from here. Powered by Cost-Per-File AI feature.</div>
+                  <div class="fi-badge-row"><span class="fi-badge fib-ai">AI-EXCLUSIVE</span><span class="fi-badge fib-core">CORE</span></div>
+                </div>
+              </div>
+              <div class="feat-item">
+                <div class="fi-icon fi-teal">🔗</div>
+                <div class="fi-content">
+                  <div class="fi-name">Active Shared Links Summary</div>
+                  <div class="fi-desc">Shows how many share links are currently active, how many have been accessed, and flags any expiring soon. Quick link to Sharing panel (W7).</div>
+                  <div class="fi-badge-row"><span class="fi-badge fib-core">CORE</span></div>
+                </div>
+              </div>
+              <div class="feat-item">
+                <div class="fi-icon fi-blue">🏢</div>
+                <div class="fi-content">
+                  <div class="fi-name">Team Space Quick Access (if in org)</div>
+                  <div class="fi-desc">If user is part of a Team Workspace, shows team spaces they have access to with recent activity. Links to Team Workspace screen (W10).</div>
+                  <div class="fi-badge-row"><span class="fi-badge fib-gap">GAP · CRITICAL</span></div>
+                </div>
+              </div>
+              <div class="feat-item">
+                <div class="fi-icon fi-blue">🔔</div>
+                <div class="fi-content">
+                  <div class="fi-name">Notification Bell + Activity Feed</div>
+                  <div class="fi-desc">Top-right bell icon shows: file share invites, @mentions in comments, version updates, and AI-detected anomalies. Inline expandable panel, not a full page.</div>
+                  <div class="fi-badge-row"><span class="fi-badge fib-core">CORE</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- W3: File Browser -->
+    <div class="screen-block" id="w3">
+      <div class="sb-head" onclick="toggleBlock(this)">
+        <div class="sb-num sn-amber">W3</div>
+        <div class="sb-meta">
+          <div class="sb-screen-name">📁 File Browser</div>
+          <div class="sb-screen-sub">My Drive · All Files · Folders · Filter · Sort · Upload</div>
+        </div>
+        <div class="sb-tags">
+          <span class="tag tag-web">Web</span>
+          <span class="tag tag-ai">AI</span>
+        </div>
+        <span class="sb-arrow">▾</span>
+      </div>
+      <div class="sb-body">
+        <div class="sb-content">
+          <div class="feat-group">
+            <div class="fg-title">File Management & Core Browser</div>
+            <div class="feat-list">
+              <div class="feat-item">
+                <div class="fi-icon fi-blue">📁</div>
+                <div class="fi-content">
+                  <div class="fi-name">Folder Tree & Breadcrumb Navigation</div>
+                  <div class="fi-desc">Left sidebar folder tree with expand/collapse. Top breadcrumb trail for deep navigation. Right-click context menu: Rename, Move, Share, Delete, Lock.</div>
+                  <div class="fi-badge-row"><span class="fi-badge fib-core">CORE</span></div>
+                </div>
+              </div>
+              <div class="feat-item">
+                <div class="fi-icon fi-blue">⬆️</div>
+                <div class="fi-content">
+                  <div class="fi-name">Multi-File Upload with Drag & Drop</div>
+                  <div class="fi-desc">Drag files from desktop. Multi-select upload. Chunked upload for large files (resumable). Progress bar per file. Auto-triggers AI Auto-Tagging on each upload.</div>
+                  <div class="fi-badge-row"><span class="fi-badge fib-core">CORE</span></div>
+                </div>
+              </div>
+              <div class="feat-item">
+                <div class="fi-icon fi-purple">🏷️</div>
+                <div class="fi-content">
+                  <div class="fi-name">AI Tags as Visible Chips on File Cards</div>
+                  <div class="fi-desc">Every file card shows its AI-assigned tags (Invoice, Contract, Photo, etc.) as coloured chips. Clickable chips filter the entire view. Tags are editable — user can correct AI.</div>
+                  <div class="fi-badge-row"><span class="fi-badge fib-ai">AI-EXCLUSIVE</span></div>
+                </div>
+              </div>
+              <div class="feat-item">
+                <div class="fi-icon fi-teal">🔐</div>
+                <div class="fi-content">
+                  <div class="fi-name">Encryption Status Indicator (Per File)</div>
+                  <div class="fi-desc">Every file card shows a padlock icon: "E2E Encrypted" or "Server Encrypted." Hover shows cryptographic proof details (AES-256-GCM, SHA-256 hash, key derivation). A unique CloudVault trust signal.</div>
+                  <div class="fi-badge-row"><span class="fi-badge fib-sec">SECURITY</span><span class="fi-badge fib-ai">AI-EXCLUSIVE</span></div>
+                </div>
+              </div>
+              <div class="feat-item">
+                <div class="fi-icon fi-purple">💰</div>
+                <div class="fi-content">
+                  <div class="fi-name">Cost-Per-File Display</div>
+                  <div class="fi-desc">Each file card optionally shows its monthly storage cost in local currency (₹0.04/month). Toggle in View Settings. Helps users make deletion decisions. Unique CloudVault AI feature.</div>
+                  <div class="fi-badge-row"><span class="fi-badge fib-ai">AI-EXCLUSIVE</span></div>
+                </div>
+              </div>
+              <div class="feat-item">
+                <div class="fi-icon fi-blue">🔎</div>
+                <div class="fi-content">
+                  <div class="fi-name">Filter, Sort & View Controls</div>
+                  <div class="fi-desc">Filter by: file type, tag, date range, size, shared status, encryption type. Sort by: name, date, size, last accessed, cost. Toggle grid/list/compact views.</div>
+                  <div class="fi-badge-row"><span class="fi-badge fib-core">CORE</span></div>
+                </div>
+              </div>
+              <div class="feat-item">
+                <div class="fi-icon fi-amber">⚡</div>
+                <div class="fi-content">
+                  <div class="fi-name">Zapier / Webhook Trigger Indicator</div>
+                  <div class="fi-desc">A subtle bolt icon on folders that have active automation rules. Clicking shows: "3 automations active for this folder." Accessible from right-click menu > Automations.</div>
+                  <div class="fi-badge-row"><span class="fi-badge fib-gap">GAP · MODERATE</span></div>
+                </div>
+              </div>
+              <div class="feat-item">
+                <div class="fi-icon fi-cyan">🤖</div>
+                <div class="fi-content">
+                  <div class="fi-name">AI Smart Folder Rules Indicator (Planned)</div>
+                  <div class="fi-desc">Folders with active AI rules show a "⚙ Rule Active" badge. Files auto-moved by Claude show a small "AI" chip and a log: "Moved here automatically — Rule: Finance Invoices".</div>
+                  <div class="fi-badge-row"><span class="fi-badge fib-plan">PLANNED P3</span></div>
+                </div>
+              </div>
+              <div class="feat-item">
+                <div class="fi-icon fi-teal">💬</div>
+                <div class="fi-content">
+                  <div class="fi-name">File Comments Count Badge</div>
+                  <div class="fi-desc">File cards show a comment count if any unresolved comments exist. Clicking opens the File Preview with the comment panel open.</div>
+                  <div class="fi-badge-row"><span class="fi-badge fib-gap">GAP · LOW</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="note-box nb-blue">
+            <span class="note-icon">💡</span>
+            <div class="note-text"><strong>Design Tip:</strong> The AI tags + cost display + encryption indicators are all unique visual signals that no competitor shows on the file browser. These should be immediately visible — they're CloudVault's identity. Don't hide them behind hover states.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- W4: File Preview -->
+    <div class="screen-block" id="w4">
+      <div class="sb-head" onclick="toggleBlock(this)">
+        <div class="sb-num sn-blue">W4</div>
+        <div class="sb-meta">
+          <div class="sb-screen-name">👁️ File Preview / Viewer</div>
+          <div class="sb-screen-sub">Click any file → opens in-app preview with AI sidebar, version history, comments</div>
+        </div>
+        <div class="sb-tags">
+          <span class="tag tag-web">Web</span>
+          <span class="tag tag-ai">AI</span>
+        </div>
+        <span class="sb-arrow">▾</span>
+      </div>
+      <div class="sb-body">
+        <div class="sb-content">
+          <div class="wireframe">
+            <span class="wf-label">Web · File Preview Layout</span>
+            <div class="wf-row">
+              <div class="wf-box wf-nav wf-highlight">Top Bar: File Name · Version · Share · Download · Open in Editor</div>
+            </div>
+            <div class="wf-row" style="min-height:160px">
+              <div class="wf-box" style="flex:2; min-height:160px; font-size:11px; align-items:flex-start; justify-content:flex-start; padding:12px;">Document / Image / PDF / Video Preview</div>
+              <div class="wf-box wf-highlight-purple" style="width:200px; font-size:11px; flex-direction:column; gap:6px; padding:10px; align-items:flex-start; display:flex;">
+                <span>✦ AI Sidebar</span>
+                <span>→ Summarize</span>
+                <span>→ Ask Claude</span>
+                <span>→ Version Diff</span>
+                <span>→ Comments (3)</span>
+                <span>→ Privacy Report</span>
+              </div>
+            </div>
+          </div>
+          <div class="feat-list">
+            <div class="feat-item">
+              <div class="fi-icon fi-purple">📝</div>
+              <div class="fi-content">
+                <div class="fi-name">AI Document Summarization</div>
+                <div class="fi-desc">Primary AI action in the right sidebar. One click streams a TL;DR (3 bullets), Executive Summary, or Key Clauses extraction. Cached 24hrs. Available for PDFs, Word, Presentations, and plain text.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-ai">AI-EXCLUSIVE</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-blue">📅</div>
+              <div class="fi-content">
+                <div class="fi-name">AI Version Diff Summary</div>
+                <div class="fi-desc">In the Version History panel, each version shows an AI-written diff summary: "Added Section 4 on payment terms. Changed total from ₹50,000 to ₹65,000." Far more useful than raw timestamps.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-ai">AI-EXCLUSIVE</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-teal">🔗</div>
+              <div class="fi-content">
+                <div class="fi-name">Privacy Report on Shared Links</div>
+                <div class="fi-desc">In the Share panel, a "Privacy Report" section shows: encryption status, ZKE confirmation, link expiry, download count. Also visible to link recipients before downloading.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-ai">AI-EXCLUSIVE</span><span class="fi-badge fib-sec">SECURITY</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-teal">💬</div>
+              <div class="fi-content">
+                <div class="fi-name">File Comments & Threaded Annotations</div>
+                <div class="fi-desc">Right panel shows all comment threads. Users can @mention teammates, resolve threads, react with emoji. AI can summarize open comments: "3 unresolved review points."</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-gap">GAP · LOW</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-teal">🔐</div>
+              <div class="fi-content">
+                <div class="fi-name">Full Encryption Proof Panel</div>
+                <div class="fi-desc">Clicking the padlock icon opens a detailed cryptographic proof: Algorithm, Key derivation method, SHA-256 file hash, timestamp of encryption, Zero-Knowledge badge.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-sec">SECURITY</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-cyan">👥</div>
+              <div class="fi-content">
+                <div class="fi-name">AI Collaborative Annotations (Planned)</div>
+                <div class="fi-desc">For shared files: a shared AI sidebar where both the owner and recipient can highlight text and ask Claude questions together. Annotations persist and are exportable as a summary report.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-plan">PLANNED P3</span><span class="fi-badge fib-ai">AI-EXCLUSIVE</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-blue">📌</div>
+              <div class="fi-content">
+                <div class="fi-name">Version History Panel</div>
+                <div class="fi-desc">Side panel listing all saved versions with timestamps, uploader, and file size. "Restore" button archives current and promotes selected version. Free: 30 days, Pro: unlimited.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-core">CORE</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- W5: Document Editor -->
+    <div class="screen-block" id="w5">
+      <div class="sb-head" onclick="toggleBlock(this)">
+        <div class="sb-num sn-red">W5</div>
+        <div class="sb-meta">
+          <div class="sb-screen-name">✏️ Document Editor</div>
+          <div class="sb-screen-sub">Built-in rich text + markdown + code editor — this entire screen is a CRITICAL GAP</div>
+        </div>
+        <div class="sb-tags">
+          <span class="tag tag-web">Web</span>
+          <span class="tag tag-crit">CRITICAL GAP</span>
+        </div>
+        <span class="sb-arrow">▾</span>
+      </div>
+      <div class="sb-body">
+        <div class="sb-content">
+          <div class="note-box nb-amber">
+            <span class="note-icon">⚠️</span>
+            <div class="note-text"><strong>This entire screen needs to be built.</strong> Currently CloudVault has no in-app editor. Google Drive (Docs), OneDrive (Office Online) both have this. Without it, users must download → edit elsewhere → re-upload — a critical workflow failure.</div>
+          </div>
+          <div class="feat-list">
+            <div class="feat-item">
+              <div class="fi-icon fi-amber">📄</div>
+              <div class="fi-content">
+                <div class="fi-name">Rich Text Editor (Tiptap)</div>
+                <div class="fi-desc">Full document editing with headings, bold/italic/underline, tables, bullet lists, numbered lists, inline images, and code blocks. Saves as structured JSON for easy encryption and AI processing.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-gap">GAP · CRITICAL</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-amber">✏️</div>
+              <div class="fi-content">
+                <div class="fi-name">Real-Time Collaborative Editing</div>
+                <div class="fi-desc">Multi-user simultaneous editing with live cursors (coloured per user), presence avatars showing who's viewing, @mention comment threads, and Accept/Reject change tracking. Built on Y.js CRDT + WebSocket.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-gap">GAP · CRITICAL</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-amber">📝</div>
+              <div class="fi-content">
+                <div class="fi-name">Markdown Editor with Live Preview</div>
+                <div class="fi-desc">Side-by-side or toggle view: raw Markdown input on left, rendered preview on right. Saves as .md files. Syntax highlighting for code blocks.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-gap">GAP · CRITICAL</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-amber">💻</div>
+              <div class="fi-content">
+                <div class="fi-name">Code Editor (Monaco)</div>
+                <div class="fi-desc">For .js, .py, .ts, .json, and other code files — embeds Monaco Editor (same engine as VS Code). Syntax highlighting, line numbers, find/replace.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-gap">GAP · CRITICAL</span></div>
+              </div>
+            </div>
+          </div>
+          <div class="note-box nb-teal">
+            <span class="note-icon">🛠️</span>
+            <div class="note-text"><strong>Build Stack:</strong> Tiptap v2 + Y.js (CRDT) + Hocuspocus WebSocket server + Monaco Editor for code files. Also add offline edit queue with IndexedDB + Y.js CRDT merge for the Offline Editing feature (Moderate Gap).</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- W6: Search -->
+    <div class="screen-block" id="w6">
+      <div class="sb-head" onclick="toggleBlock(this)">
+        <div class="sb-num sn-purple">W6</div>
+        <div class="sb-meta">
+          <div class="sb-screen-name">🔍 Search Results</div>
+          <div class="sb-screen-sub">Semantic AI search · Filters · Natural language queries · Instant results</div>
+        </div>
+        <div class="sb-tags">
+          <span class="tag tag-web">Web</span>
+          <span class="tag tag-ai">AI</span>
+        </div>
+        <span class="sb-arrow">▾</span>
+      </div>
+      <div class="sb-body">
+        <div class="sb-content">
+          <div class="feat-list">
+            <div class="feat-item">
+              <div class="fi-icon fi-purple">🧠</div>
+              <div class="fi-content">
+                <div class="fi-name">AI Semantic Search (Vector)</div>
+                <div class="fi-desc">Search by meaning, not just filename. Queries are embedded (text-embedding-3-small) and matched to pre-embedded file content via pgvector cosine similarity. "The Dubai trip plans" finds 'itinerary_final_v3.pdf' even if the query words aren't in the title.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-ai">AI-EXCLUSIVE</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-blue">⚡</div>
+              <div class="fi-content">
+                <div class="fi-name">Filename + Full-Text Search (Traditional)</div>
+                <div class="fi-desc">Standard keyword search across filenames, extracted text content, folder names, and tags. Shows exact match highlights. Runs in parallel with semantic search; results are merged and ranked.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-core">CORE</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-purple">🏷️</div>
+              <div class="fi-content">
+                <div class="fi-name">Filter by AI Tags</div>
+                <div class="fi-desc">Search results can be filtered by AI-assigned tag categories (Invoice, Contract, Photo, etc.). Clickable chips at the top of results. Dramatically narrows large vaults.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-ai">AI-EXCLUSIVE</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-blue">📁</div>
+              <div class="fi-content">
+                <div class="fi-name">Natural Language File Actions from Search</div>
+                <div class="fi-desc">If the AI Vault Assistant is used to search, action buttons appear inline on results: "Share this file," "Summarize," "Move to folder." No need to navigate away.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-ai">AI-EXCLUSIVE</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- W7: Sharing & Collaboration -->
+    <div class="screen-block" id="w7">
+      <div class="sb-head" onclick="toggleBlock(this)">
+        <div class="sb-num sn-teal">W7</div>
+        <div class="sb-meta">
+          <div class="sb-screen-name">🤝 Sharing & Collaboration Panel</div>
+          <div class="sb-screen-sub">Share links · Permissions · Comments · Expiry · Privacy proof · Collaboration</div>
+        </div>
+        <div class="sb-tags">
+          <span class="tag tag-web">Web</span>
+          <span class="tag tag-ai">AI</span>
+        </div>
+        <span class="sb-arrow">▾</span>
+      </div>
+      <div class="sb-body">
+        <div class="sb-content">
+          <div class="feat-list">
+            <div class="feat-item">
+              <div class="fi-icon fi-blue">🔗</div>
+              <div class="fi-content">
+                <div class="fi-name">Password-Protected Share Links</div>
+                <div class="fi-desc">Generate links with optional password, expiry date, and download limit. UI shows: link URL, copy button, password field toggle, expiry date picker, download count limit. Password stored as bcrypt hash.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-core">CORE</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-teal">🛡️</div>
+              <div class="fi-content">
+                <div class="fi-name">Privacy Report Preview (Before Sharing)</div>
+                <div class="fi-desc">When creating a share link, a "Privacy Report" preview shows the sender: what the recipient will see (encryption status, ZKE badge, your IP country, expiry). Builds sender confidence.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-ai">AI-EXCLUSIVE</span><span class="fi-badge fib-sec">SECURITY</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-blue">👥</div>
+              <div class="fi-content">
+                <div class="fi-name">People-Based Sharing with Role Selection</div>
+                <div class="fi-desc">Share directly to a CloudVault user email with a role: Editor (can edit), Viewer (read-only), Commenter (comment only). For Team Workspace users, share to entire teams.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-core">CORE</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-teal">💬</div>
+              <div class="fi-content">
+                <div class="fi-name">Comment Threads Panel</div>
+                <div class="fi-desc">Full threaded comment view. Resolve/unresolve threads. @mention with autocomplete (shows team members). Emoji reactions. Claude can summarize all open threads.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-gap">GAP · LOW</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-blue">📋</div>
+              <div class="fi-content">
+                <div class="fi-name">Share Link Audit Log</div>
+                <div class="fi-desc">For each active share link: who accessed it, from which country (IP geolocation), timestamp, and number of downloads. Shows in a table below the link settings.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-core">CORE</span><span class="fi-badge fib-sec">SECURITY</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-amber">⚡</div>
+              <div class="fi-content">
+                <div class="fi-name">Automation Trigger on Share (Zapier/Webhook)</div>
+                <div class="fi-desc">Option to trigger a webhook or Zapier automation when this file is shared. E.g., "When shared → Send email via Gmail → Create Asana task." Configured from an Automations panel accessible here.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-gap">GAP · MODERATE</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- W8: AI Assistant -->
+    <div class="screen-block" id="w8">
+      <div class="sb-head" onclick="toggleBlock(this)">
+        <div class="sb-num sn-purple">W8</div>
+        <div class="sb-meta">
+          <div class="sb-screen-name">🤖 AI Vault Assistant (Full Screen)</div>
+          <div class="sb-screen-sub">Claude-powered conversational interface for the entire vault</div>
+        </div>
+        <div class="sb-tags">
+          <span class="tag tag-web">Web</span>
+          <span class="tag tag-ai">AI-Exclusive</span>
+        </div>
+        <span class="sb-arrow">▾</span>
+      </div>
+      <div class="sb-body">
+        <div class="sb-content">
+          <div class="note-box nb-blue">
+            <span class="note-icon">✦</span>
+            <div class="note-text"><strong>This is CloudVault's biggest differentiation.</strong> A full-screen Claude-powered chat interface that lets users talk to their entire vault — no competitor offers this. Position it prominently in the nav.</div>
+          </div>
+          <div class="feat-list">
+            <div class="feat-item">
+              <div class="fi-icon fi-purple">💬</div>
+              <div class="fi-content">
+                <div class="fi-name">Multi-Turn Conversation Interface</div>
+                <div class="fi-desc">Chat interface (like Claude.ai) where users ask about their vault. Conversation history is maintained in-session. "Find the invoice from last month" → "Now share it with Priya" — context is preserved between messages.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-ai">AI-EXCLUSIVE</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-purple">⚡</div>
+              <div class="fi-content">
+                <div class="fi-name">Action Execution (not just answers)</div>
+                <div class="fi-desc">Claude doesn't just answer — it acts. "Create a folder called Projects 2026 and move all files tagged #project into it" → shows a confirmation card with the proposed action → one-click execute.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-ai">AI-EXCLUSIVE</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-purple">📊</div>
+              <div class="fi-content">
+                <div class="fi-name">Vault Query Capabilities</div>
+                <div class="fi-desc">Examples: "Find all PDFs larger than 50MB not opened in 6 months." "Who has access to the Q4 report?" "What changed between v3 and v4 of the contract?" "How much am I spending on video storage?"</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-ai">AI-EXCLUSIVE</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-cyan">🤖</div>
+              <div class="fi-content">
+                <div class="fi-name">Smart Folder Rule Configuration (Planned)</div>
+                <div class="fi-desc">Users configure AI Smart Folder Rules via natural language in this same chat interface: "Automatically move all invoices to /Finance/2026." Rules are shown in a side panel for review and toggling.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-plan">PLANNED P3</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-cyan">🗂️</div>
+              <div class="fi-content">
+                <div class="fi-name">AI Duplicate Detection Results (Planned)</div>
+                <div class="fi-desc">Weekly scan results are surfaced here: "Found 47 near-duplicate files. Keeping originals, archiving duplicates would save ₹38/month." Review Groups are shown as cards for user approval.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-plan">PLANNED P3</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- W9: Insights Dashboard -->
+    <div class="screen-block" id="w9">
+      <div class="sb-head" onclick="toggleBlock(this)">
+        <div class="sb-num sn-amber">W9</div>
+        <div class="sb-meta">
+          <div class="sb-screen-name">📊 AI Vault Insights Dashboard</div>
+          <div class="sb-screen-sub">Storage analytics · AI-generated report · Cost breakdown · Duplicate scan</div>
+        </div>
+        <div class="sb-tags">
+          <span class="tag tag-web">Web</span>
+          <span class="tag tag-ai">AI-Exclusive</span>
+        </div>
+        <span class="sb-arrow">▾</span>
+      </div>
+      <div class="sb-body">
+        <div class="sb-content">
+          <div class="feat-list">
+            <div class="feat-item">
+              <div class="fi-icon fi-purple">📊</div>
+              <div class="fi-content">
+                <div class="fi-name">AI Weekly Vault Report</div>
+                <div class="fi-desc">Claude-generated natural-language weekly summary: storage trends, most-accessed files, files not opened in 90+ days, duplicate candidates, category cost breakdown. Readable, not just charts.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-ai">AI-EXCLUSIVE</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-amber">💰</div>
+              <div class="fi-content">
+                <div class="fi-name">Storage Cost Breakdown by Category</div>
+                <div class="fi-desc">Pie/bar chart: "Photos: ₹45/month · Videos: ₹120/month · Documents: ₹12/month." One-click action cards: "Archive these 8 videos and save ₹40/month." Unique CloudVault feature.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-ai">AI-EXCLUSIVE</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-teal">📈</div>
+              <div class="fi-content">
+                <div class="fi-name">Storage Usage Trend Chart</div>
+                <div class="fi-desc">Line chart of storage used over time (last 12 months). Highlights sudden jumps. Projected storage full date if trend continues. Helps users plan upgrades before running out.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-core">CORE</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-cyan">🗂️</div>
+              <div class="fi-content">
+                <div class="fi-name">AI Duplicate Detection Panel (Planned)</div>
+                <div class="fi-desc">Full list of "Review Groups" — sets of near-duplicate files grouped for user review. Shows: projected savings, file names, sizes. User picks which to keep; others are archived/deleted.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-plan">PLANNED P3</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-blue">🔁</div>
+              <div class="fi-content">
+                <div class="fi-name">Sync & Upload Activity Log</div>
+                <div class="fi-desc">Full history of all sync events, uploads, downloads, share link accesses, and failed operations. Filterable by date range and event type. Searchable.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-core">CORE</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- W10: Team Workspace -->
+    <div class="screen-block" id="w10">
+      <div class="sb-head" onclick="toggleBlock(this)">
+        <div class="sb-num sn-red">W10</div>
+        <div class="sb-meta">
+          <div class="sb-screen-name">🏢 Team Spaces & Workspace</div>
+          <div class="sb-screen-sub">Organization management · RBAC · Admin panel · Team billing — this entire screen is a CRITICAL GAP</div>
+        </div>
+        <div class="sb-tags">
+          <span class="tag tag-web">Web</span>
+          <span class="tag tag-crit">CRITICAL GAP</span>
+        </div>
+        <span class="sb-arrow">▾</span>
+      </div>
+      <div class="sb-body">
+        <div class="sb-content">
+          <div class="note-box nb-amber">
+            <span class="note-icon">⚠️</span>
+            <div class="note-text"><strong>Entire screen to be built.</strong> Every single competitor — Google, OneDrive, Dropbox, Proton, MEGA, Tresorit — has team workspaces. Without it, CloudVault cannot be used by businesses or teams at all.</div>
+          </div>
+          <div class="feat-list">
+            <div class="feat-item">
+              <div class="fi-icon fi-amber">🏢</div>
+              <div class="fi-content">
+                <div class="fi-name">Team Space Creation & Management</div>
+                <div class="fi-desc">Create named team spaces (e.g., "Design Team," "Finance"). Each space has its own folder structure, members, and permissions. Admin can create, archive, or delete spaces. Shared quota across the org.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-gap">GAP · CRITICAL</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-amber">👥</div>
+              <div class="fi-content">
+                <div class="fi-name">RBAC: Owner / Admin / Editor / Viewer / Guest</div>
+                <div class="fi-desc">Role-based access control with 5 roles. Owner: full control and billing. Admin: manage members, view audit logs. Editor: upload/edit/share. Viewer: read-only. Guest: limited external access via invite link.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-gap">GAP · CRITICAL</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-amber">📋</div>
+              <div class="fi-content">
+                <div class="fi-name">Org Admin Panel</div>
+                <div class="fi-desc">Separate admin view: member directory, usage per member, invite/remove members, view audit logs, manage integrations for the org, set IP allowlist (Enterprise), HIPAA/GDPR settings, and team billing management.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-gap">GAP · CRITICAL</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-red">🛡️</div>
+              <div class="fi-content">
+                <div class="fi-name">IP Access Restrictions (Enterprise)</div>
+                <div class="fi-desc">Admin can set an IP allowlist: only permit access from specific CIDR ranges (office network, VPN). Blocked IPs get a 403. Emergency bypass via email verification. Audit log of denied attempts.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-gap">GAP · MODERATE</span><span class="fi-badge fib-ent">ENTERPRISE</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-red">🏥</div>
+              <div class="fi-content">
+                <div class="fi-name">HIPAA / GDPR Compliance Center</div>
+                <div class="fi-desc">Dedicated compliance settings page: download BAA (HIPAA), exercise GDPR rights (export data, right to erasure), set granular consent toggles, session timeout settings, and download Data Processing Agreement (DPA).</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-gap">GAP · MODERATE</span><span class="fi-badge fib-ent">ENTERPRISE</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- W11: Settings -->
+    <div class="screen-block" id="w11">
+      <div class="sb-head" onclick="toggleBlock(this)">
+        <div class="sb-num sn-cyan">W11</div>
+        <div class="sb-meta">
+          <div class="sb-screen-name">⚙️ Settings</div>
+          <div class="sb-screen-sub">Account · Security · Integrations · Sync · Billing · Developer</div>
+        </div>
+        <div class="sb-tags">
+          <span class="tag tag-web">Web</span>
+          <span class="tag tag-sec">Security</span>
+        </div>
+        <span class="sb-arrow">▾</span>
+      </div>
+      <div class="sb-body">
+        <div class="sb-content">
+          <div class="grid2">
+            <div>
+              <div class="fg-title">Account & Security Tab</div>
+              <div class="feat-list">
+                <div class="feat-item">
+                  <div class="fi-icon fi-blue">🔑</div>
+                  <div class="fi-content">
+                    <div class="fi-name">FIDO2 / YubiKey Enrollment</div>
+                    <div class="fi-desc">Register hardware security keys. Supports multiple keys (primary + backup). Shows enrolled keys with last-used date.</div>
+                    <div class="fi-badge-row"><span class="fi-badge fib-gap">GAP · MODERATE</span></div>
+                  </div>
+                </div>
+                <div class="feat-item">
+                  <div class="fi-icon fi-teal">🔐</div>
+                  <div class="fi-content">
+                    <div class="fi-name">TOTP 2FA Setup / Backup Codes</div>
+                    <div class="fi-desc">QR code for Authenticator app setup. Download backup codes. Disable 2FA (requires password confirmation).</div>
+                    <div class="fi-badge-row"><span class="fi-badge fib-core">CORE</span></div>
+                  </div>
+                </div>
+                <div class="feat-item">
+                  <div class="fi-icon fi-teal">🗝️</div>
+                  <div class="fi-content">
+                    <div class="fi-name">Encryption Key Management</div>
+                    <div class="fi-desc">Download encrypted key backup. Change master password (re-encrypts all FEKs). View ZKE status.</div>
+                    <div class="fi-badge-row"><span class="fi-badge fib-sec">SECURITY</span></div>
+                  </div>
+                </div>
+                <div class="feat-item">
+                  <div class="fi-icon fi-blue">📋</div>
+                  <div class="fi-content">
+                    <div class="fi-name">Active Sessions Manager</div>
+                    <div class="fi-desc">List of all logged-in devices with IP, last active, device type. "Revoke" button per session. "Revoke all other sessions" button.</div>
+                    <div class="fi-badge-row"><span class="fi-badge fib-sec">SECURITY</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div>
+              <div class="fg-title">Integrations & Sync Tab</div>
+              <div class="feat-list">
+                <div class="feat-item">
+                  <div class="fi-icon fi-amber">🔌</div>
+                  <div class="fi-content">
+                    <div class="fi-name">Integration Hub</div>
+                    <div class="fi-desc">Connect to Zapier, Make, Slack, Notion, GitHub, Gmail. OAuth 2.0 per integration. Shows connected apps with scopes and disconnect option.</div>
+                    <div class="fi-badge-row"><span class="fi-badge fib-gap">GAP · CRITICAL</span></div>
+                  </div>
+                </div>
+                <div class="feat-item">
+                  <div class="fi-icon fi-amber">⚡</div>
+                  <div class="fi-content">
+                    <div class="fi-name">Webhook Manager</div>
+                    <div class="fi-desc">Create webhooks for file events (upload, share, delete, modify). Enter any URL. Test webhook button. Delivery log with status codes.</div>
+                    <div class="fi-badge-row"><span class="fi-badge fib-gap">GAP · MODERATE</span></div>
+                  </div>
+                </div>
+                <div class="feat-item">
+                  <div class="fi-icon fi-blue">📶</div>
+                  <div class="fi-content">
+                    <div class="fi-name">Bandwidth Throttle Controls</div>
+                    <div class="fi-desc">Set max upload speed (KB/s), max download speed. Toggle "Sync only on WiFi" and "Sync only when charging." Token bucket algorithm under the hood.</div>
+                    <div class="fi-badge-row"><span class="fi-badge fib-gap">GAP · LOW</span></div>
+                  </div>
+                </div>
+                <div class="feat-item">
+                  <div class="fi-icon fi-blue">🗝️</div>
+                  <div class="fi-content">
+                    <div class="fi-name">Developer API Keys</div>
+                    <div class="fi-desc">Generate personal API tokens for direct API access. Set scopes (read, write, share). View usage stats per key. Revoke tokens.</div>
+                    <div class="fi-badge-row"><span class="fi-badge fib-gap">GAP · MODERATE</span></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ====================================================
+         M O B I L E   S C R E E N S
+    ==================================================== -->
+    <div class="section">
+      <div class="section-eyebrow">02 — Mobile Platform</div>
+      <h2 class="section-title">Mobile Screens — Feature Placement</h2>
+      <p class="section-desc">CloudVault mobile (iOS + Android via Capacitor 6). Mobile screens are designed for one-handed use, quick access, and native device capabilities like camera scanning and background sync. Features are curated — not everything from web belongs on mobile.</p>
+    </div>
+
+    <!-- M1: Onboarding -->
+    <div class="screen-block" id="m1">
+      <div class="sb-head" onclick="toggleBlock(this)">
+        <div class="sb-num sn-teal">M1</div>
+        <div class="sb-meta">
+          <div class="sb-screen-name">🚀 Onboarding & Auth (Mobile)</div>
+          <div class="sb-screen-sub">Login · Biometrics · Zero-Knowledge Setup · Camera permission</div>
+        </div>
+        <div class="sb-tags">
+          <span class="tag tag-mob">Mobile</span>
+          <span class="tag tag-sec">Security</span>
+        </div>
+        <span class="sb-arrow">▾</span>
+      </div>
+      <div class="sb-body">
+        <div class="sb-content">
+          <div class="wireframe">
+            <span class="wf-label">Mobile · Auth Screen Layout</span>
+            <div class="wf-row" style="flex-direction:column; gap:8px; max-width:240px; margin:0 auto">
+              <div class="wf-box" style="height:120px; font-size:28px">☁️<br><span style="font-size:11px; color:var(--ink3)">CloudVault</span></div>
+              <div class="wf-box wf-highlight" style="height:42px; font-size:11px">Email Field</div>
+              <div class="wf-box wf-highlight" style="height:42px; font-size:11px">Password Field</div>
+              <div class="wf-box wf-highlight-teal" style="height:42px; font-size:11px">🤳 Biometric Login (FaceID / Fingerprint)</div>
+              <div class="wf-box" style="height:42px; font-size:11px">2FA / YubiKey NFC</div>
+            </div>
+          </div>
+          <div class="feat-list">
+            <div class="feat-item">
+              <div class="fi-icon fi-teal">🤳</div>
+              <div class="fi-content">
+                <div class="fi-name">Biometric Authentication (FaceID / Fingerprint)</div>
+                <div class="fi-desc">After first login, subsequent app opens use device biometrics. The cryptographic key stays in the device's secure enclave — biometrics are just a gate to release it, not a replacement for ZKE. Built with Capacitor Biometrics plugin.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-mob">MOBILE-FIRST</span><span class="fi-badge fib-sec">SECURITY</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-teal">🔐</div>
+              <div class="fi-content">
+                <div class="fi-name">Zero-Knowledge Key Setup (First Launch)</div>
+                <div class="fi-desc">First app launch: explain ZKE in plain language with a visual. Prompt: download key backup now. Offer a PIN fallback option for encryption key access if biometrics fail.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-sec">SECURITY</span><span class="fi-badge fib-core">CORE</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-amber">🔑</div>
+              <div class="fi-content">
+                <div class="fi-name">YubiKey NFC Login (FIDO2)</div>
+                <div class="fi-desc">For security-conscious users: tap a NFC-enabled YubiKey to the phone's NFC sensor during 2FA step. Works on Android with Capacitor NFC plugin. iOS requires Lightning/USB-C YubiKey.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-gap">GAP · MODERATE</span><span class="fi-badge fib-mob">MOBILE</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-blue">📸</div>
+              <div class="fi-content">
+                <div class="fi-name">Permission Grant Flow (Camera, Notifications, Photos)</div>
+                <div class="fi-desc">During onboarding (not abruptly at first use), request camera access (for scanner), photos access (for auto-backup), and notification permission (for sync alerts). Use contextual in-app explanation before the OS dialog.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-mob">MOBILE-FIRST</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- M2: Home -->
+    <div class="screen-block" id="m2">
+      <div class="sb-head" onclick="toggleBlock(this)">
+        <div class="sb-num sn-blue">M2</div>
+        <div class="sb-meta">
+          <div class="sb-screen-name">🏠 Home / Recents (Mobile)</div>
+          <div class="sb-screen-sub">First screen after login — recents, AI highlights, FAB, bottom nav</div>
+        </div>
+        <div class="sb-tags">
+          <span class="tag tag-mob">Mobile</span>
+          <span class="tag tag-ai">AI</span>
+        </div>
+        <span class="sb-arrow">▾</span>
+      </div>
+      <div class="sb-body">
+        <div class="sb-content">
+          <div class="wireframe">
+            <span class="wf-label">Mobile · Home Screen Layout</span>
+            <div style="max-width:260px; margin:0 auto; display:flex; flex-direction:column; gap:7px">
+              <div class="wf-box wf-nav" style="height:50px; font-size:11px">☁️ CloudVault    🔔 ⋮</div>
+              <div class="wf-box wf-highlight" style="height:40px; font-size:11px">🤖 Ask your vault anything…</div>
+              <div class="wf-box" style="height:80px; font-size:11px">Recent Files (horizontal scroll cards)</div>
+              <div class="wf-box wf-highlight-teal" style="height:50px; font-size:11px">AI Insight: "2 duplicates found · Save ₹18/mo"</div>
+              <div class="wf-box" style="height:60px; font-size:11px">Storage Bar + Quick Upload Shortcut</div>
+              <div style="display:flex; gap:5px">
+                <div class="wf-box" style="flex:1; height:58px; font-size:10px; background:var(--mist2)">🏠 Home</div>
+                <div class="wf-box" style="flex:1; height:58px; font-size:10px; background:var(--mist2)">📁 Files</div>
+                <div class="wf-fab">+</div>
+                <div class="wf-box" style="flex:1; height:58px; font-size:10px; background:var(--mist2)">🤖 AI</div>
+                <div class="wf-box" style="flex:1; height:58px; font-size:10px; background:var(--mist2)">⚙️ More</div>
+              </div>
+            </div>
+          </div>
+          <div class="feat-list">
+            <div class="feat-item">
+              <div class="fi-icon fi-purple">💬</div>
+              <div class="fi-content">
+                <div class="fi-name">AI Vault Assistant — Top Search Bar</div>
+                <div class="fi-desc">A persistent search bar that doubles as an AI query input. Tapping opens either the semantic search (quick) or the full AI Assistant screen (M6). Clear visual distinction between AI search and folder navigation.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-ai">AI-EXCLUSIVE</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-blue">🕐</div>
+              <div class="fi-content">
+                <div class="fi-name">Recent Files Horizontal Scroll Cards</div>
+                <div class="fi-desc">Horizontally scrollable file cards showing last 8 recently accessed files. Tap to preview. Long-press for context menu (Share, Lock, Move, Delete). Shows file type icon, name, and AI tag.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-core">CORE</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-teal">📊</div>
+              <div class="fi-content">
+                <div class="fi-name">AI Insights Banner Card</div>
+                <div class="fi-desc">A dismissable banner card showing the most actionable AI insight this week: "2 near-duplicate files found. Free up 1.2 GB." Tap to go to Insights (full page or bottom sheet).</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-ai">AI-EXCLUSIVE</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-teal">💾</div>
+              <div class="fi-content">
+                <div class="fi-name">Storage Usage Bar</div>
+                <div class="fi-desc">Compact progress bar showing GB used / total. Tapping opens detailed storage breakdown. "Upgrade Plan" CTA appears when usage exceeds 80%.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-core">CORE</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-blue">➕</div>
+              <div class="fi-content">
+                <div class="fi-name">Floating Action Button (FAB) — Upload</div>
+                <div class="fi-desc">Centre of the bottom nav. Expands on tap: Upload File, Take Photo, Scan Document (Scanner screen M5), Create New Document. Most critical action on mobile.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-core">CORE</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-blue">📱</div>
+              <div class="fi-content">
+                <div class="fi-name">Bottom Navigation Bar</div>
+                <div class="fi-desc">5-item tab bar: Home, Files, FAB (+), AI, More (opens drawer for Settings, Insights, Team, Notifications). Persistent across all screens. Android: material navigation rail on tablets.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-mob">MOBILE-FIRST</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-teal">🎨</div>
+              <div class="fi-content">
+                <div class="fi-name">Material You Dynamic Theming (Android)</div>
+                <div class="fi-desc">On Android 12+: app colors adapt to the user's wallpaper via Monet engine. CSS variables are dynamically set from the system color palette. Falls back to CloudVault blue on older Android / iOS.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-gap">GAP · MODERATE</span><span class="fi-badge fib-mob">ANDROID</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- M3: Mobile File Browser -->
+    <div class="screen-block" id="m3">
+      <div class="sb-head" onclick="toggleBlock(this)">
+        <div class="sb-num sn-amber">M3</div>
+        <div class="sb-meta">
+          <div class="sb-screen-name">📂 File Browser (Mobile)</div>
+          <div class="sb-screen-sub">Navigate folders · View file cards · Sort/filter · Swipe actions</div>
+        </div>
+        <div class="sb-tags">
+          <span class="tag tag-mob">Mobile</span>
+        </div>
+        <span class="sb-arrow">▾</span>
+      </div>
+      <div class="sb-body">
+        <div class="sb-content">
+          <div class="feat-list">
+            <div class="feat-item">
+              <div class="fi-icon fi-blue">👆</div>
+              <div class="fi-content">
+                <div class="fi-name">Swipe Actions on File Rows</div>
+                <div class="fi-desc">Swipe left on any file: reveals Share and Delete actions. Swipe right: reveals Lock / Mark as Favourite. This replaces the right-click context menu from web for touch interfaces.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-mob">MOBILE-FIRST</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-purple">🏷️</div>
+              <div class="fi-content">
+                <div class="fi-name">AI Tag Chips on File Cards</div>
+                <div class="fi-desc">Same as web — coloured tag chips visible on each file card. Tapping a chip filters the current folder view to that tag. On mobile, up to 2 tags are shown inline; rest are in a "+N more" indicator.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-ai">AI-EXCLUSIVE</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-teal">🔐</div>
+              <div class="fi-content">
+                <div class="fi-name">Encryption Status Dot</div>
+                <div class="fi-desc">A small coloured dot on each file card (green = E2E, yellow = server-only). Tapping shows a compact encryption proof bottom sheet. Simplified vs the web version — same trust signal, smaller footprint.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-sec">SECURITY</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-blue">📲</div>
+              <div class="fi-content">
+                <div class="fi-name">Share to Other Apps (Native Share Sheet)</div>
+                <div class="fi-desc">Long-pressing a file shows "Share" which opens the native iOS/Android share sheet. Files are temporarily decrypted and shared as standard file attachments to WhatsApp, Gmail, etc.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-mob">MOBILE-FIRST</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-blue">⬇️</div>
+              <div class="fi-content">
+                <div class="fi-name">Offline / Download for Offline Access</div>
+                <div class="fi-desc">Long-press > "Make available offline." Files are downloaded and stored in encrypted local storage. Offline indicator on file cards. Auto-sync changes when connection is restored via Y.js CRDT merge.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-gap">GAP · MODERATE</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-amber">💾</div>
+              <div class="fi-content">
+                <div class="fi-name">SD Card Backup Settings Entry Point</div>
+                <div class="fi-desc">A "Backup Source" button in the folder browser toolbar to add external SD card as a backup source. Opens the Android SAF permission picker. Only shown on Android devices with external storage detected.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-gap">GAP · LOW</span><span class="fi-badge fib-mob">ANDROID</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- M4: Mobile File Preview -->
+    <div class="screen-block" id="m4">
+      <div class="sb-head" onclick="toggleBlock(this)">
+        <div class="sb-num sn-purple">M4</div>
+        <div class="sb-meta">
+          <div class="sb-screen-name">📄 File Preview (Mobile)</div>
+          <div class="sb-screen-sub">Full-screen file viewer with bottom action bar and AI summary</div>
+        </div>
+        <div class="sb-tags">
+          <span class="tag tag-mob">Mobile</span>
+          <span class="tag tag-ai">AI</span>
+        </div>
+        <span class="sb-arrow">▾</span>
+      </div>
+      <div class="sb-body">
+        <div class="sb-content">
+          <div class="feat-list">
+            <div class="feat-item">
+              <div class="fi-icon fi-purple">📝</div>
+              <div class="fi-content">
+                <div class="fi-name">AI Summarize (Bottom Sheet)</div>
+                <div class="fi-desc">A "✦ Summarize" button in the top action bar. On tap, a bottom sheet slides up with a streaming AI summary. Three modes: TL;DR · Executive Summary · Action Items. Fits perfectly in the mobile bottom-sheet UX pattern.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-ai">AI-EXCLUSIVE</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-blue">📌</div>
+              <div class="fi-content">
+                <div class="fi-name">Version History (Bottom Sheet)</div>
+                <div class="fi-desc">Accessible from the "⋮" overflow menu → Version History. Opens a bottom sheet listing all versions. Each shows AI diff summary ("Changed payment clause") and a Restore button.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-core">CORE</span><span class="fi-badge fib-ai">AI-EXCLUSIVE</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-teal">💬</div>
+              <div class="fi-content">
+                <div class="fi-name">Comments (Bottom Sheet)</div>
+                <div class="fi-desc">Tap comments icon in action bar → bottom sheet with all comment threads. Compose new comment. @mention teammates. Resolve threads. On mobile, the full sidebar from web becomes a scrollable bottom sheet.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-gap">GAP · LOW</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-blue">📤</div>
+              <div class="fi-content">
+                <div class="fi-name">Quick Share from Preview</div>
+                <div class="fi-desc">Share icon in top bar opens a full-screen Share Sheet (see M7). Privacy report, link generation, and expiry settings are all accessible here without going back to the file browser.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-core">CORE</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-teal">🔐</div>
+              <div class="fi-content">
+                <div class="fi-name">Encryption Proof Bottom Sheet</div>
+                <div class="fi-desc">Tapping the padlock icon in the preview header opens a bottom sheet with the full encryption proof: algorithm, key derivation, file hash, and ZKE status. Same content as web, mobile-native presentation.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-sec">SECURITY</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-blue">✏️</div>
+              <div class="fi-content">
+                <div class="fi-name">"Open in Editor" for Supported Files</div>
+                <div class="fi-desc">For .md, .txt, and CloudVault-native documents: an "Edit" button opens a mobile-optimised text editor. Real-time collaboration is present if the file is shared — coloured cursor dots appear for each active user.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-gap">GAP · CRITICAL</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- M5: Scanner -->
+    <div class="screen-block" id="m5">
+      <div class="sb-head" onclick="toggleBlock(this)">
+        <div class="sb-num sn-teal">M5</div>
+        <div class="sb-meta">
+          <div class="sb-screen-name">📷 Document Scanner & Upload (Mobile)</div>
+          <div class="sb-screen-sub">Camera scan · OCR · Auto-tag · Upload — this is a mobile-first exclusive screen</div>
+        </div>
+        <div class="sb-tags">
+          <span class="tag tag-mob">Mobile-Exclusive</span>
+          <span class="tag tag-ai">AI</span>
+          <span class="tag tag-crit">GAP</span>
+        </div>
+        <span class="sb-arrow">▾</span>
+      </div>
+      <div class="sb-body">
+        <div class="sb-content">
+          <div class="note-box nb-teal">
+            <span class="note-icon">📱</span>
+            <div class="note-text"><strong>This entire screen needs to be built.</strong> Document scanning with OCR is a key differentiator on mobile — Google Drive and OneDrive both have it. CloudVault can go further by adding Claude-powered auto-tagging on the scan result.</div>
+          </div>
+          <div class="feat-list">
+            <div class="feat-item">
+              <div class="fi-icon fi-teal">📷</div>
+              <div class="fi-content">
+                <div class="fi-name">Camera Scan Mode with Auto-Edge Detection</div>
+                <div class="fi-desc">Camera preview with green overlay showing detected document edges. Auto-captures when document is fully in frame (optional). Built with ML Kit Document Scanner API on Android. Instant deskew and contrast enhancement after capture.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-gap">GAP · MODERATE</span><span class="fi-badge fib-mob">MOBILE-FIRST</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-purple">🔍</div>
+              <div class="fi-content">
+                <div class="fi-name">OCR Text Extraction + Searchable PDF</div>
+                <div class="fi-desc">After capture: OCR extracts all text from the document image. Saves as a searchable PDF (text layer behind the image). The extracted text is also stored for semantic search indexing.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-gap">GAP · MODERATE</span><span class="fi-badge fib-ai">AI-ASSISTED</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-purple">🏷️</div>
+              <div class="fi-content">
+                <div class="fi-name">Claude Auto-Tag on Scan</div>
+                <div class="fi-desc">After OCR: Claude analyses the text and assigns a category (Invoice, Receipt, Contract, Medical, ID Document) with suggested filename ("Invoice_Flipkart_₹2499_Jan2026.pdf"). User can confirm or edit before saving.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-ai">AI-EXCLUSIVE</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-blue">📚</div>
+              <div class="fi-content">
+                <div class="fi-name">Multi-Page Scan (Batch Mode)</div>
+                <div class="fi-desc">"Add another page" button after each scan. All pages compile into a single PDF. Page reordering via drag-and-drop before saving. Useful for scanning multi-page contracts or receipts.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-mob">MOBILE-FIRST</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- M6: AI Assistant Mobile -->
+    <div class="screen-block" id="m6">
+      <div class="sb-head" onclick="toggleBlock(this)">
+        <div class="sb-num sn-purple">M6</div>
+        <div class="sb-meta">
+          <div class="sb-screen-name">🤖 AI Assistant (Mobile)</div>
+          <div class="sb-screen-sub">Full-screen chat with your vault — accessible via bottom nav "AI" tab</div>
+        </div>
+        <div class="sb-tags">
+          <span class="tag tag-mob">Mobile</span>
+          <span class="tag tag-ai">AI-Exclusive</span>
+        </div>
+        <span class="sb-arrow">▾</span>
+      </div>
+      <div class="sb-body">
+        <div class="sb-content">
+          <div class="feat-list">
+            <div class="feat-item">
+              <div class="fi-icon fi-purple">💬</div>
+              <div class="fi-content">
+                <div class="fi-name">Chat Interface (Same Claude Capabilities as Web)</div>
+                <div class="fi-desc">Full conversational AI chat. Same query capabilities as web (W8). Mobile-optimised keyboard handling: compose bar at bottom, messages scroll upward. Voice input button for hands-free queries.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-ai">AI-EXCLUSIVE</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-purple">⚡</div>
+              <div class="fi-content">
+                <div class="fi-name">Quick Prompt Chips</div>
+                <div class="fi-desc">Above the input bar, a horizontal scroll of suggested prompts: "Summarize last upload · Find large files · What needs review · Recent shared files." Tapping inserts the prompt.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-ai">AI-EXCLUSIVE</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-purple">📄</div>
+              <div class="fi-content">
+                <div class="fi-name">In-Chat File Result Cards</div>
+                <div class="fi-desc">When Claude returns file results, they appear as tappable file cards inline in the chat. Tap card → opens File Preview (M4). Swipe card → quick share. Long-press → file action menu.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-ai">AI-EXCLUSIVE</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-purple">🎤</div>
+              <div class="fi-content">
+                <div class="fi-name">Voice Input for Vault Queries</div>
+                <div class="fi-desc">Microphone button in the compose bar. Speech-to-text converts spoken query to text and sends to Claude. Particularly useful for scanning mode: "Save this as an invoice from last week."</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-mob">MOBILE-FIRST</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- M7: Share Sheet -->
+    <div class="screen-block" id="m7">
+      <div class="sb-head" onclick="toggleBlock(this)">
+        <div class="sb-num sn-teal">M7</div>
+        <div class="sb-meta">
+          <div class="sb-screen-name">🔗 Share Sheet (Mobile)</div>
+          <div class="sb-screen-sub">Generate links · Set expiry · Privacy report · Share to apps</div>
+        </div>
+        <div class="sb-tags">
+          <span class="tag tag-mob">Mobile</span>
+          <span class="tag tag-sec">Security</span>
+        </div>
+        <span class="sb-arrow">▾</span>
+      </div>
+      <div class="sb-body">
+        <div class="sb-content">
+          <div class="feat-list">
+            <div class="feat-item">
+              <div class="fi-icon fi-blue">🔗</div>
+              <div class="fi-content">
+                <div class="fi-name">Share Link Generator with Expiry Wheel</div>
+                <div class="fi-desc">A full-screen modal sheet with: generated link, one-tap copy, password toggle, expiry picker (Today / 7 days / 30 days / Custom), download limit stepper. "Create Link" CTA at the bottom.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-core">CORE</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-teal">🛡️</div>
+              <div class="fi-content">
+                <div class="fi-name">Privacy Report Card (Mobile)</div>
+                <div class="fi-desc">Compact card below the link: "✓ E2E Encrypted · ✓ Zero-Knowledge · Expires in 7 days." Visual green trust indicators. Tapping expands full proof details. Reassures the sender before sharing.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-ai">AI-EXCLUSIVE</span><span class="fi-badge fib-sec">SECURITY</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-blue">📤</div>
+              <div class="fi-content">
+                <div class="fi-name">Share via Native System Share Sheet</div>
+                <div class="fi-desc">"Share via…" button at the bottom opens the native iOS/Android share sheet with the CloudVault link, allowing users to send via WhatsApp, iMessage, Gmail, Telegram, etc. without copying manually.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-mob">MOBILE-FIRST</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-teal">🔗</div>
+              <div class="fi-content">
+                <div class="fi-name">Manage Existing Links</div>
+                <div class="fi-desc">A "Manage Links" tab in the share sheet showing all active links for this file: access count, expiry status, and individual revoke buttons. Consistent with web share audit log.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-core">CORE</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- M8: Notifications -->
+    <div class="screen-block" id="m8">
+      <div class="sb-head" onclick="toggleBlock(this)">
+        <div class="sb-num sn-amber">M8</div>
+        <div class="sb-meta">
+          <div class="sb-screen-name">🔔 Notifications (Mobile)</div>
+          <div class="sb-screen-sub">Push notifications · Sync alerts · @mentions · AI insights</div>
+        </div>
+        <div class="sb-tags">
+          <span class="tag tag-mob">Mobile</span>
+        </div>
+        <span class="sb-arrow">▾</span>
+      </div>
+      <div class="sb-body">
+        <div class="sb-content">
+          <div class="feat-list">
+            <div class="feat-item">
+              <div class="fi-icon fi-blue">📱</div>
+              <div class="fi-content">
+                <div class="fi-name">Push Notifications via Web Push (VAPID)</div>
+                <div class="fi-desc">Native push for: ✓ File shared with you · ✓ @mention in a comment · ✓ Sync complete · ✓ Share link accessed · ✓ AI auto-tagging done. Tapping a notification deep-links directly to the relevant file or screen.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-core">CORE</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-teal">🔄</div>
+              <div class="fi-content">
+                <div class="fi-name">Background Sync Status Notification</div>
+                <div class="fi-desc">Android-only: a persistent "CloudVault syncing…" notification in the notification shade when background sync is in progress. Uses WorkManager + foreground service. Shows files synced count and progress.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-mob">ANDROID</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-purple">🤖</div>
+              <div class="fi-content">
+                <div class="fi-name">AI Weekly Digest Notification</div>
+                <div class="fi-desc">Every Monday: a push notification "Your vault this week: 3 new files · 2 duplicates found · Save ₹18/month." Tapping opens the AI Insights view (bottom sheet or screen).</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-ai">AI-EXCLUSIVE</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- M9: Mobile Settings -->
+    <div class="screen-block" id="m9">
+      <div class="sb-head" onclick="toggleBlock(this)">
+        <div class="sb-num sn-cyan">M9</div>
+        <div class="sb-meta">
+          <div class="sb-screen-name">⚙️ Settings (Mobile)</div>
+          <div class="sb-screen-sub">Account · Security · Sync · Camera Backup · Auto-backup · Bandwidth · Appearance</div>
+        </div>
+        <div class="sb-tags">
+          <span class="tag tag-mob">Mobile</span>
+          <span class="tag tag-sec">Security</span>
+        </div>
+        <span class="sb-arrow">▾</span>
+      </div>
+      <div class="sb-body">
+        <div class="sb-content">
+          <div class="grid2">
+            <div class="feat-list">
+              <div class="feat-item">
+                <div class="fi-icon fi-teal">📸</div>
+                <div class="fi-content">
+                  <div class="fi-name">Camera Auto-Backup Settings</div>
+                  <div class="fi-desc">Toggle auto-backup of camera roll. Select: backup new photos only, or full camera roll. Set: WiFi only / any network, backup while charging only. Photo quality option (original vs compressed).</div>
+                  <div class="fi-badge-row"><span class="fi-badge fib-mob">MOBILE-FIRST</span></div>
+                </div>
+              </div>
+              <div class="feat-item">
+                <div class="fi-icon fi-teal">🤳</div>
+                <div class="fi-content">
+                  <div class="fi-name">Biometric Lock Settings</div>
+                  <div class="fi-desc">Enable/disable FaceID or fingerprint for app unlock. Set auto-lock timer (immediately, 1 min, 5 min, etc.). Require biometrics to view individual files (extra layer for sensitive docs).</div>
+                  <div class="fi-badge-row"><span class="fi-badge fib-sec">SECURITY</span><span class="fi-badge fib-mob">MOBILE</span></div>
+                </div>
+              </div>
+              <div class="feat-item">
+                <div class="fi-icon fi-amber">📶</div>
+                <div class="fi-content">
+                  <div class="fi-name">Bandwidth Throttle Controls</div>
+                  <div class="fi-desc">Max upload/download speed (KB/s). Sync only on WiFi. Sync only when charging. Token bucket algorithm controls bandwidth usage for background sync.</div>
+                  <div class="fi-badge-row"><span class="fi-badge fib-gap">GAP · LOW</span></div>
+                </div>
+              </div>
+              <div class="feat-item">
+                <div class="fi-icon fi-teal">🎨</div>
+                <div class="fi-content">
+                  <div class="fi-name">Material You / Theme Settings</div>
+                  <div class="fi-desc">Toggle Dynamic Color (Android 12+), manual color theme selection (Blue / Teal / Default), Dark / Light / System appearance mode.</div>
+                  <div class="fi-badge-row"><span class="fi-badge fib-gap">GAP · MODERATE</span><span class="fi-badge fib-mob">ANDROID</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="feat-list">
+              <div class="feat-item">
+                <div class="fi-icon fi-amber">💾</div>
+                <div class="fi-content">
+                  <div class="fi-name">SD Card Backup Source</div>
+                  <div class="fi-desc">Add external SD card as a monitored backup source. Uses Android SAF to request persistent permission. WorkManager scans for new files every 15 min and queues uploads.</div>
+                  <div class="fi-badge-row"><span class="fi-badge fib-gap">GAP · LOW</span><span class="fi-badge fib-mob">ANDROID</span></div>
+                </div>
+              </div>
+              <div class="feat-item">
+                <div class="fi-icon fi-teal">🔐</div>
+                <div class="fi-content">
+                  <div class="fi-name">2FA & Security Keys</div>
+                  <div class="fi-desc">TOTP setup (QR code). FIDO2/YubiKey NFC enrollment. Backup codes download. Active sessions list with remote revoke. Same security options as web Settings (W11), adapted for mobile.</div>
+                  <div class="fi-badge-row"><span class="fi-badge fib-sec">SECURITY</span></div>
+                </div>
+              </div>
+              <div class="feat-item">
+                <div class="fi-icon fi-blue">🔔</div>
+                <div class="fi-content">
+                  <div class="fi-name">Notification Preferences</div>
+                  <div class="fi-desc">Toggle individual notification types: share alerts, @mentions, sync complete, AI weekly digest, team invites. Set "Do Not Disturb" schedule. Notification channel management on Android.</div>
+                  <div class="fi-badge-row"><span class="fi-badge fib-mob">MOBILE-FIRST</span></div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- M10: Widget -->
+    <div class="screen-block" id="m10">
+      <div class="sb-head" onclick="toggleBlock(this)">
+        <div class="sb-num sn-teal">M10</div>
+        <div class="sb-meta">
+          <div class="sb-screen-name">📦 Android Homescreen Widget + Quick Tile</div>
+          <div class="sb-screen-sub">External homescreen component — outside the app but part of the experience</div>
+        </div>
+        <div class="sb-tags">
+          <span class="tag tag-mob">Android</span>
+          <span class="tag tag-crit">GAP</span>
+        </div>
+        <span class="sb-arrow">▾</span>
+      </div>
+      <div class="sb-body">
+        <div class="sb-content">
+          <div class="note-box nb-teal">
+            <span class="note-icon">📱</span>
+            <div class="note-text"><strong>This is an Android homescreen widget</strong> — it exists outside the app, on the device's home screen. Google Drive and OneDrive both have widgets. It's a key mobile engagement driver.</div>
+          </div>
+          <div class="feat-list">
+            <div class="feat-item">
+              <div class="fi-icon fi-teal">📱</div>
+              <div class="fi-content">
+                <div class="fi-name">Homescreen Widget — Recent Files</div>
+                <div class="fi-desc">Shows last 5 recently accessed files in a scrollable list. Tapping any file deep-links into the CloudVault app at the File Preview. Shows: file icon, name, and AI tag. Also shows a compact storage usage bar.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-gap">GAP · MODERATE</span><span class="fi-badge fib-mob">ANDROID</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-teal">⬆️</div>
+              <div class="fi-content">
+                <div class="fi-name">Homescreen Widget — Quick Upload Button</div>
+                <div class="fi-desc">A "+" button on the widget opens the camera or file picker directly, bypassing the app's navigation entirely. Files upload to the default "Quick Uploads" folder with AI auto-tagging applied.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-gap">GAP · MODERATE</span><span class="fi-badge fib-mob">ANDROID</span></div>
+              </div>
+            </div>
+            <div class="feat-item">
+              <div class="fi-icon fi-teal">⚡</div>
+              <div class="fi-content">
+                <div class="fi-name">Quick Settings Tile</div>
+                <div class="fi-desc">A CloudVault tile in the Android Quick Settings panel (pull-down shade). Tapping instantly uploads the last photo taken to CloudVault. Uses TileService API. Toggleable by user in Android Quick Settings editor.</div>
+                <div class="fi-badge-row"><span class="fi-badge fib-gap">GAP · MODERATE</span><span class="fi-badge fib-mob">ANDROID</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ====================================================
+         S U M M A R Y   T A B L E
+    ==================================================== -->
+    <div class="section">
+      <div class="section-eyebrow">03 — Full Reference</div>
+      <h2 class="section-title">Complete Feature → Screen Mapping</h2>
+      <p class="section-desc">Every CloudVault feature listed with its primary screen, platform, and build status for quick reference during development.</p>
+    </div>
+
+    <div style="background:var(--white); border:1px solid var(--border2); border-radius:var(--r2); overflow:hidden; box-shadow:var(--shadow); overflow-x:auto;">
+      <table class="sum-table">
+        <thead>
+          <tr>
+            <th>Feature</th>
+            <th>Primary Screen(s)</th>
+            <th>Platform</th>
+            <th>Status</th>
+            <th>Priority</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td class="tbl-screen">AI Vault Assistant</td><td>W2 Dashboard, W8 AI Screen, M2 Home, M6 AI</td><td>All</td><td><span class="fi-badge fib-ai">AI-EXCLUSIVE</span></td><td><span class="pr-badge prb-high">P1</span></td></tr>
+          <tr><td class="tbl-screen">AI Document Summarization</td><td>W4 File Preview, M4 File Preview</td><td>All</td><td><span class="fi-badge fib-ai">AI-EXCLUSIVE</span></td><td><span class="pr-badge prb-high">P1</span></td></tr>
+          <tr><td class="tbl-screen">AI Auto-Tagging & Organisation</td><td>W3 File Browser, W2 Dashboard, M3 Files</td><td>All</td><td><span class="fi-badge fib-ai">AI-EXCLUSIVE</span></td><td><span class="pr-badge prb-high">P1</span></td></tr>
+          <tr><td class="tbl-screen">AI Semantic Search (Vector)</td><td>W6 Search, M2 Home Search Bar</td><td>All</td><td><span class="fi-badge fib-ai">AI-EXCLUSIVE</span></td><td><span class="pr-badge prb-high">P1</span></td></tr>
+          <tr><td class="tbl-screen">AI Version Diff Summary</td><td>W4 File Preview (Version Panel), M4</td><td>All</td><td><span class="fi-badge fib-ai">AI-EXCLUSIVE</span></td><td><span class="pr-badge prb-med">P2</span></td></tr>
+          <tr><td class="tbl-screen">AI Vault Insights Dashboard</td><td>W9 Insights, W2 Dashboard Widget, M2 Home Card</td><td>All</td><td><span class="fi-badge fib-ai">AI-EXCLUSIVE</span></td><td><span class="pr-badge prb-high">P1</span></td></tr>
+          <tr><td class="tbl-screen">AI Smart Folder Rules</td><td>W8 AI Assistant, W3 File Browser</td><td>All</td><td><span class="fi-badge fib-plan">PLANNED P3</span></td><td><span class="pr-badge prb-low">P3</span></td></tr>
+          <tr><td class="tbl-screen">AI Duplicate Detection</td><td>W8 AI Screen, W9 Insights Dashboard</td><td>All</td><td><span class="fi-badge fib-plan">PLANNED P3</span></td><td><span class="pr-badge prb-low">P3</span></td></tr>
+          <tr><td class="tbl-screen">AI Collaborative Annotations</td><td>W4 File Preview (Sidebar)</td><td>Web</td><td><span class="fi-badge fib-plan">PLANNED P3</span></td><td><span class="pr-badge prb-low">P3</span></td></tr>
+          <tr><td class="tbl-screen">End-to-End Encryption (E2EE)</td><td>W1 Auth (key setup), W3/W4 (indicators), All</td><td>All</td><td><span class="fi-badge fib-core">CORE</span></td><td><span class="pr-badge prb-high">P1</span></td></tr>
+          <tr><td class="tbl-screen">Zero-Knowledge Encryption</td><td>W1 Auth, M1 Onboarding, W11 Settings</td><td>All</td><td><span class="fi-badge fib-sec">SECURITY</span></td><td><span class="pr-badge prb-high">P1</span></td></tr>
+          <tr><td class="tbl-screen">Visible Encryption Indicator</td><td>W3 File Browser, W4 Preview, M3 Files, M4</td><td>All</td><td><span class="fi-badge fib-ai">AI-EXCLUSIVE</span></td><td><span class="pr-badge prb-high">P1</span></td></tr>
+          <tr><td class="tbl-screen">FIDO2 / YubiKey (WebAuthn)</td><td>W1 Auth, W11 Settings, M1 Auth, M9 Settings</td><td>All</td><td><span class="fi-badge fib-gap">GAP · MODERATE</span></td><td><span class="pr-badge prb-med">P2</span></td></tr>
+          <tr><td class="tbl-screen">TOTP Two-Factor Auth</td><td>W1 Auth, W11 Settings, M1 Auth, M9 Settings</td><td>All</td><td><span class="fi-badge fib-core">CORE</span></td><td><span class="pr-badge prb-high">P1</span></td></tr>
+          <tr><td class="tbl-screen">Real-Time Collaborative Editing</td><td>W5 Document Editor, M4 Preview (limited)</td><td>Web-primary</td><td><span class="fi-badge fib-gap">GAP · CRITICAL</span></td><td><span class="pr-badge prb-crit">P0</span></td></tr>
+          <tr><td class="tbl-screen">Built-In Document Editor</td><td>W5 Document Editor, M4 (limited)</td><td>Web-primary</td><td><span class="fi-badge fib-gap">GAP · CRITICAL</span></td><td><span class="pr-badge prb-crit">P0</span></td></tr>
+          <tr><td class="tbl-screen">Third-Party App Integrations</td><td>W11 Settings > Integration Hub</td><td>Web</td><td><span class="fi-badge fib-gap">GAP · CRITICAL</span></td><td><span class="pr-badge prb-crit">P0</span></td></tr>
+          <tr><td class="tbl-screen">Team Spaces & RBAC</td><td>W10 Team Workspace, W2 Dashboard</td><td>Web</td><td><span class="fi-badge fib-gap">GAP · CRITICAL</span></td><td><span class="pr-badge prb-crit">P0</span></td></tr>
+          <tr><td class="tbl-screen">Zapier / Webhook Automation</td><td>W11 Settings, W7 Sharing, W3 File Browser</td><td>Web</td><td><span class="fi-badge fib-gap">GAP · MODERATE</span></td><td><span class="pr-badge prb-med">P2</span></td></tr>
+          <tr><td class="tbl-screen">Document Scanner with OCR</td><td>M5 Scanner (dedicated screen)</td><td>Mobile-only</td><td><span class="fi-badge fib-gap">GAP · MODERATE</span></td><td><span class="pr-badge prb-med">P2</span></td></tr>
+          <tr><td class="tbl-screen">Android Homescreen Widget</td><td>M10 Widget (external to app)</td><td>Android-only</td><td><span class="fi-badge fib-gap">GAP · MODERATE</span></td><td><span class="pr-badge prb-med">P2</span></td></tr>
+          <tr><td class="tbl-screen">Material You Dynamic Theming</td><td>M2 Home, M9 Settings > Theme</td><td>Android 12+</td><td><span class="fi-badge fib-gap">GAP · MODERATE</span></td><td><span class="pr-badge prb-med">P2</span></td></tr>
+          <tr><td class="tbl-screen">Offline Document Editing</td><td>W5 Editor, M3 Files (offline indicator)</td><td>All</td><td><span class="fi-badge fib-gap">GAP · MODERATE</span></td><td><span class="pr-badge prb-med">P2</span></td></tr>
+          <tr><td class="tbl-screen">IP Access Restrictions</td><td>W10 Team > Admin Panel</td><td>Web/Enterprise</td><td><span class="fi-badge fib-gap">GAP · MODERATE</span></td><td><span class="pr-badge prb-med">P2</span></td></tr>
+          <tr><td class="tbl-screen">HIPAA / GDPR Compliance Center</td><td>W10 Team > Compliance Tab</td><td>Web/Enterprise</td><td><span class="fi-badge fib-gap">GAP · MODERATE</span></td><td><span class="pr-badge prb-med">P2</span></td></tr>
+          <tr><td class="tbl-screen">Password-Protected Share Links</td><td>W7 Sharing, W4 Preview, M7 Share Sheet</td><td>All</td><td><span class="fi-badge fib-core">CORE</span></td><td><span class="pr-badge prb-high">P1</span></td></tr>
+          <tr><td class="tbl-screen">Privacy Report on Share Links</td><td>W7 Sharing, W4 Preview, M7 Share Sheet</td><td>All</td><td><span class="fi-badge fib-ai">AI-EXCLUSIVE</span></td><td><span class="pr-badge prb-high">P1</span></td></tr>
+          <tr><td class="tbl-screen">File Comments & Annotations</td><td>W7 Sharing, W4 Preview, M4 (bottom sheet)</td><td>All</td><td><span class="fi-badge fib-gap">GAP · LOW</span></td><td><span class="pr-badge prb-low">P3</span></td></tr>
+          <tr><td class="tbl-screen">File Version History</td><td>W4 File Preview, M4 (bottom sheet)</td><td>All</td><td><span class="fi-badge fib-core">CORE</span></td><td><span class="pr-badge prb-high">P1</span></td></tr>
+          <tr><td class="tbl-screen">Background File Sync</td><td>M2 Home (status), M8 Notifications, M9 Settings</td><td>Android</td><td><span class="fi-badge fib-core">CORE</span></td><td><span class="pr-badge prb-high">P1</span></td></tr>
+          <tr><td class="tbl-screen">Biometric App Lock</td><td>M1 Auth, M9 Settings</td><td>Mobile</td><td><span class="fi-badge fib-mob">MOBILE</span></td><td><span class="pr-badge prb-high">P1</span></td></tr>
+          <tr><td class="tbl-screen">Camera Auto-Backup</td><td>M2 Home (status), M9 Settings</td><td>Mobile</td><td><span class="fi-badge fib-mob">MOBILE</span></td><td><span class="pr-badge prb-high">P1</span></td></tr>
+          <tr><td class="tbl-screen">Cost-Per-File Display</td><td>W3 File Browser, W9 Insights, M3 Files</td><td>All</td><td><span class="fi-badge fib-ai">AI-EXCLUSIVE</span></td><td><span class="pr-badge prb-med">P2</span></td></tr>
+          <tr><td class="tbl-screen">Delta / Block-Level Sync</td><td>W11 Settings (under the hood), M9 Settings</td><td>All</td><td><span class="fi-badge fib-gap">GAP · LOW</span></td><td><span class="pr-badge prb-low">P3</span></td></tr>
+          <tr><td class="tbl-screen">SD Card Backup (Android)</td><td>M3 Files, M9 Settings</td><td>Android</td><td><span class="fi-badge fib-gap">GAP · LOW</span></td><td><span class="pr-badge prb-low">P3</span></td></tr>
+          <tr><td class="tbl-screen">Bandwidth Throttle Controls</td><td>W11 Settings, M9 Settings</td><td>All</td><td><span class="fi-badge fib-gap">GAP · LOW</span></td><td><span class="pr-badge prb-low">P3</span></td></tr>
+          <tr><td class="tbl-screen">Desktop Sync Client (Electron)</td><td>Stand-alone desktop app</td><td>Desktop</td><td><span class="fi-badge fib-gap">GAP · LOW</span></td><td><span class="pr-badge prb-low">P3</span></td></tr>
+          <tr><td class="tbl-screen">Progressive Web App (PWA)</td><td>Web (install prompt + manifest)</td><td>Web</td><td><span class="fi-badge fib-core">CORE</span></td><td><span class="pr-badge prb-high">P1</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <!-- CLOSING NOTE -->
+    <div style="margin-top:48px; background:linear-gradient(135deg, rgba(32,84,232,0.05), rgba(14,168,120,0.05)); border:1px solid var(--border2); border-radius:var(--r3); padding:32px; margin-bottom:48px;">
+      <div style="font-family:var(--font-h); font-size:20px; font-weight:700; margin-bottom:12px; color:var(--ink)">Build Order Recommendation</div>
+      <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap:14px;">
+        <div style="background:var(--white); border:1px solid var(--red-s); border-left:3px solid var(--red); border-radius:var(--r); padding:16px;">
+          <div style="font-weight:700; color:var(--red); margin-bottom:6px; font-size:13px;">🔴 Phase 0 — Immediate (Critical Gaps)</div>
+          <div style="font-size:12px; color:var(--ink3); line-height:1.7">Team Spaces + RBAC · Built-in Doc Editor · Real-time Collaboration · Third-party Integrations (API + Zapier)</div>
+        </div>
+        <div style="background:var(--white); border:1px solid var(--amber-s); border-left:3px solid var(--amber); border-radius:var(--r); padding:16px;">
+          <div style="font-weight:700; color:var(--amber); margin-bottom:6px; font-size:13px;">🟡 Phase 1 — Months 1–3 (Moderate Gaps)</div>
+          <div style="font-size:12px; color:var(--ink3); line-height:1.7">FIDO2/YubiKey · Document Scanner/OCR · Offline Editing · Webhooks/Zapier · Android Widget · Material You</div>
+        </div>
+        <div style="background:var(--white); border:1px solid var(--blue-s); border-left:3px solid var(--blue); border-radius:var(--r); padding:16px;">
+          <div style="font-weight:700; color:var(--blue); margin-bottom:6px; font-size:13px;">🔵 Phase 2 — Months 3–6 (Low Gaps)</div>
+          <div style="font-size:12px; color:var(--ink3); line-height:1.7">Delta Sync · SD Card Backup · Bandwidth Throttle · File Comments · Desktop Sync Client</div>
+        </div>
+        <div style="background:var(--white); border:1px solid var(--purple-s); border-left:3px solid var(--purple); border-radius:var(--r); padding:16px;">
+          <div style="font-weight:700; color:var(--purple); margin-bottom:6px; font-size:13px;">✦ Phase 3 — Months 6–12 (Roadmap)</div>
+          <div style="font-size:12px; color:var(--ink3); line-height:1.7">AI Smart Folder Rules · AI Duplicate Detection · AI Collaborative Annotations · GDPR Compliance Centre</div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<script>
+function toggleBlock(headerEl) {
+  const block = headerEl.closest('.screen-block');
+  block.classList.toggle('open');
+}
+
+function setActive(linkEl) {
+  document.querySelectorAll('.sb-item').forEach(a => a.classList.remove('active'));
+  linkEl.classList.add('active');
+}
+
+function showTab(name) {
+  document.querySelectorAll('.tb-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+  if (name === 'web') {
+    document.getElementById('w1')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } else if (name === 'mobile') {
+    document.getElementById('m1')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  } else if (name === 'summary') {
+    document.querySelector('.sum-table')?.closest('div').scrollIntoView({ behavior: 'smooth', block: 'start' });
+  }
+}
+
+// Auto-open first block
+document.querySelector('.screen-block')?.classList.add('open');
+
+// Sidebar active on scroll
+const sections = document.querySelectorAll('[id^="w"],[id^="m"]');
+const sidebarLinks = document.querySelectorAll('.sb-item');
+window.addEventListener('scroll', () => {
+  let current = '';
+  sections.forEach(section => {
+    const top = section.getBoundingClientRect().top;
+    if (top < 160) current = section.id;
+  });
+  sidebarLinks.forEach(link => {
+    link.classList.remove('active');
+    if (link.getAttribute('href') === '#' + current) {
+      link.classList.add('active');
+    }
+  });
+}, { passive: true });
+</script>
+</body>
+</html>

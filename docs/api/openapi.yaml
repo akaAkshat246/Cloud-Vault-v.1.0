@@ -1,0 +1,335 @@
+openapi: 3.1.0
+info:
+  title: CloudVault API Specification
+  version: 1.0.0
+  description: |
+    Single Source of Truth for the CloudVault Zero-Knowledge E2EE Storage Backend API.
+    All binary payloads are encrypted client-side and transferred directly to S3 via presigned multipart URLs.
+servers:
+  - url: http://localhost:4000
+    description: Local Development Server
+  - url: https://api.cloudvault.app
+    description: Production API Gateway
+
+paths:
+  /health:
+    get:
+      summary: Liveness Probe
+      description: Returns 200 OK if the backend Node.js process is active and running.
+      responses:
+        '200':
+          description: Service is alive
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  timestamp:
+                    type: string
+                    format: date-time
+                  uptime:
+                    type: integer
+                    example: 3600
+
+  /ready:
+    get:
+      summary: Readiness Probe
+      description: Checks database and object storage connectivity.
+      responses:
+        '200':
+          description: All critical dependencies are healthy and ready
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ready
+                  timestamp:
+                    type: string
+                    format: date-time
+                  checks:
+                    type: object
+                    properties:
+                      database:
+                        type: string
+                        example: ok
+                      storage:
+                        type: string
+                        example: ok
+        '503':
+          description: One or more critical subsystems (DB, S3) are degraded or down
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: degraded
+                  checks:
+                    type: object
+
+  /api/v1/auth/prelogin:
+    post:
+      summary: Anti-User Enumeration Pre-Login
+      description: Returns KDF parameters and salt. For unknown emails, returns deterministic fake salt matching real response shape and timing.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email]
+              properties:
+                email:
+                  type: string
+                  format: email
+      responses:
+        '200':
+          description: KDF parameters and salt
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  kdf_version:
+                    type: string
+                    example: "1.0"
+                  kdf_params:
+                    type: object
+                    properties:
+                      m:
+                        type: integer
+                        example: 65536
+                      t:
+                        type: integer
+                        example: 3
+                      p:
+                        type: integer
+                        example: 1
+                  salt:
+                    type: string
+                    example: "0102030405060708090a0b0c0d0e0f10"
+
+  /api/v1/auth/register:
+    post:
+      summary: User Registration
+      description: Registers new account with client-derived AuthKey hash and wrapped Master Key blobs.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required:
+                - email
+                - authKey
+                - salt
+                - encrypted_master_key
+                - master_key_nonce
+                - encrypted_recovery_master_key
+                - recovery_master_key_nonce
+              properties:
+                email:
+                  type: string
+                  format: email
+                authKey:
+                  type: string
+                  minLength: 64
+                  maxLength: 64
+                  description: 32 bytes derived from password in hex
+                salt:
+                  type: string
+                  minLength: 32
+                  maxLength: 32
+                  description: 16 bytes random salt in hex
+                kdf_version:
+                  type: string
+                  default: "1.0"
+                kdf_params:
+                  type: object
+                encrypted_master_key:
+                  type: string
+                master_key_nonce:
+                  type: string
+                encrypted_recovery_master_key:
+                  type: string
+                recovery_master_key_nonce:
+                  type: string
+      responses:
+        '201':
+          description: User registered successfully
+        '409':
+          description: Email already registered
+
+  /api/v1/auth/login:
+    post:
+      summary: User Login
+      description: Verifies client-derived AuthKey, returns wrapped MasterKey blobs, 15-min JWT access token, and sets 7-day httpOnly refresh cookie.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, authKey]
+              properties:
+                email:
+                  type: string
+                  format: email
+                authKey:
+                  type: string
+                deviceName:
+                  type: string
+      responses:
+        '200':
+          description: Login successful
+          headers:
+            Set-Cookie:
+              schema:
+                type: string
+                example: cv_refresh_token=...; HttpOnly; Secure; SameSite=Strict
+        '401':
+          description: Invalid email or credentials
+        '429':
+          description: Account temporarily locked due to multiple failed attempts
+
+  /api/v1/auth/refresh:
+    post:
+      summary: Refresh Access Token
+      description: Rotates refresh token in family and issues new 15-min access token. Automatic family revocation on reuse detection.
+      responses:
+        '200':
+          description: Token rotated successfully
+        '401':
+          description: Invalid, expired, or reused token
+
+  /api/v1/auth/logout:
+    post:
+      summary: Logout Current Session
+      description: Revokes the caller's refresh token and clears cookie.
+      responses:
+        '200':
+          description: Logged out successfully
+
+  /api/v1/auth/logout-all:
+    post:
+      summary: Logout All Sessions
+      description: Revokes all refresh tokens and sessions for authenticated user.
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: All sessions revoked
+
+  /api/v1/auth/sessions:
+    get:
+      summary: List Active User Sessions
+      description: Returns active devices and sessions for authenticated user.
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Active sessions list
+
+  /api/v1/auth/recovery/confirm:
+    post:
+      summary: Confirm Emergency Recovery Kit Challenge
+      description: Client confirms that the user successfully passed the 4-word random challenge response.
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Recovery kit confirmed
+
+  /api/v1/auth/change-password:
+    post:
+      summary: Change Password
+      description: Re-wraps Master Key with new KEK. Zero file re-encryption required.
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: Password changed successfully
+
+  /api/v1/auth/recovery/unlock:
+    post:
+      summary: Forgot Password Path A (Recovery Unlock)
+      description: Vault recovered client-side using 24-word phrase; uploads new password credentials.
+      responses:
+        '200':
+          description: Vault unlocked and password updated
+
+  /api/v1/auth/account-reset:
+    post:
+      summary: Forgot Password Path B (Account Reset)
+      description: Cryptographic data loss when phrase is lost. Marks files orphaned with 30-day grace period.
+      responses:
+        '200':
+          description: Account reset initiated
+
+  /api/v1/auth/me:
+    get:
+      summary: Get User Profile & Quota
+      security:
+        - BearerAuth: []
+      responses:
+        '200':
+          description: User profile and storage statistics
+
+  /api/v1/files/upload/init:
+    post:
+      summary: Initialize Multipart Upload (Milestone M4)
+      description: Checks quota and returns S3 uploadId and presigned part URLs.
+      responses:
+        '501':
+          description: Not Implemented (M4)
+
+  /api/v1/files/upload/complete:
+    post:
+      summary: Finalize Multipart Upload (Milestone M4)
+      description: Verifies S3 parts and records file metadata in database.
+      responses:
+        '501':
+          description: Not Implemented (M4)
+
+  /api/v1/shares/{token}:
+    get:
+      summary: Access Public Share Link (Milestone M7)
+      description: Returns ciphertext download URL for recipient decryption.
+      responses:
+        '501':
+          description: Not Implemented (M7)
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    ErrorEnvelope:
+      type: object
+      required:
+        - error
+      properties:
+        error:
+          type: object
+          required:
+            - code
+            - message
+          properties:
+            code:
+              type: string
+              example: NOT_FOUND
+            message:
+              type: string
+              example: Resource not found
+            details:
+              type: object

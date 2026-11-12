@@ -1,0 +1,197 @@
+{
+  "format_version": 1,
+  "specification": "CloudVault Cryptographic Specification v1.0",
+  "created_at": "2026-11-12T15:10:38.319Z",
+  "kdf": {
+    "description": "Argon2id (m=64MiB, t=3, p=1) + HKDF-SHA256 Dual-Key Derivation",
+    "password": "CorrectHorseBatteryStaple2026!",
+    "salt_hex": "0102030405060708090a0b0c0d0e0f10",
+    "params": {
+      "algorithm": "argon2id",
+      "version": "1.0",
+      "memory_kib": 65536,
+      "iterations": 3,
+      "parallelism": 1,
+      "key_length": 64
+    },
+    "raw_prk_hex": "bf50c1d1d4922e4c842e1a9ae12e280f0c882d5e9e360ebb6daa6211366597ac86710222fb98ac24e2a248e2fb03ab5b2ceb5e92981fd7ffb8907f9d07c94111",
+    "auth_key_hex": "a5ed3a2be0fb3187fe4c63bc641af5b700686267788c83a4342724286284c619",
+    "kek_hex": "4e9e59a9f30c3c7ad916d32a19a236e2b376c43a41590119687ed6e289d54d2f"
+  },
+  "master_key_wrap": {
+    "description": "Master Key Envelope Wrapping using KEK (AES-256-GCM)",
+    "kek_hex": "4e9e59a9f30c3c7ad916d32a19a236e2b376c43a41590119687ed6e289d54d2f",
+    "master_key_hex": "11223344556677889900aabbccddeeff11223344556677889900aabbccddeeff",
+    "wrap_iv_hex": "a1b2c3d4e5f60718293a4b5c",
+    "aad_string": "cloudvault-master-key-wrap-v1",
+    "payload": {
+      "v": 1,
+      "iv": "obLD1OX2BxgpOktc",
+      "tag": "K92JN0r6kfzFLxaeMBSNKA==",
+      "ct": "4dwsgyrWIFNDGbSELtnP2Ab/zCwgutKZ8IK3DC6hpak="
+    }
+  },
+  "chunks": [
+    {
+      "description": "Chunk 0 (Non-final chunk)",
+      "file_id": "c9bf9e57-1685-4c89-bafb-ff5af830be8a",
+      "chunk_index": 0,
+      "total_chunks": 2,
+      "is_final": false,
+      "aad_hex": "0001c9bf9e5716854c89bafbff5af830be8a000000000000000200",
+      "plaintext_ascii": "CloudVault Chunk 0 Plaintext Payload - Zero Knowledge Cloud Storage 2026! Multi-chunk block 0.",
+      "plaintext_hex": "436c6f75645661756c74204368756e6b203020506c61696e74657874205061796c6f6164202d205a65726f204b6e6f776c6564676520436c6f75642053746f72616765203230323621204d756c74692d6368756e6b20626c6f636b20302e",
+      "iv_hex": "102030405060708090a0b0c0",
+      "ciphertext_hex": "e29a4757b755773109b9e55fbc0fa7d4ec7d44f151f9ee8c8d0425b74b5c2ddc3e581c043b60b6ec0b553844ef7e2ebd27d9d0ff4f38475929783c115414cd2f1ac6f190dd2b2373a89f264280623ee5b9a4f4f69396ae3f363fb279af0e",
+      "tag_hex": "2812966e3f06d3effb244cdd4d3ec01e",
+      "wire_chunk_hex": "102030405060708090a0b0c0e29a4757b755773109b9e55fbc0fa7d4ec7d44f151f9ee8c8d0425b74b5c2ddc3e581c043b60b6ec0b553844ef7e2ebd27d9d0ff4f38475929783c115414cd2f1ac6f190dd2b2373a89f264280623ee5b9a4f4f69396ae3f363fb279af0e2812966e3f06d3effb244cdd4d3ec01e",
+      "wire_chunk_base64": "ECAwQFBgcICQoLDA4ppHV7dVdzEJueVfvA+n1Ox9RPFR+e6MjQQlt0tcLdw+WBwEO2C27AtVOETvfi69J9nQ/084R1kpeDwRVBTNLxrG8ZDdKyNzqJ8mQoBiPuW5pPT2k5auPzY/snmvDigSlm4/BtPv+yRM3U0+wB4="
+    },
+    {
+      "description": "Chunk 1 (Final chunk)",
+      "file_id": "c9bf9e57-1685-4c89-bafb-ff5af830be8a",
+      "chunk_index": 1,
+      "total_chunks": 2,
+      "is_final": true,
+      "aad_hex": "0001c9bf9e5716854c89bafbff5af830be8a000000010000000201",
+      "plaintext_ascii": "CloudVault Chunk 1 Plaintext Payload - Final block ending zero-knowledge stream test.",
+      "plaintext_hex": "436c6f75645661756c74204368756e6b203120506c61696e74657874205061796c6f6164202d2046696e616c20626c6f636b20656e64696e67207a65726f2d6b6e6f776c656467652073747265616d20746573742e",
+      "iv_hex": "112131415161718191a1b1c1",
+      "ciphertext_hex": "9f9de86f1100c58e27e3070ae69dbb1bf40a55c321bfe429fa4d451d9eca5d6a8b4dc9b805f452652d5c1c492e51480857575037747b0e7556b36a4d402c8afcbbb6855af5ff23f3f90308bf09cda05ec780cedc78",
+      "tag_hex": "3b16e985c1860134d6137e1b6bb32216",
+      "wire_chunk_hex": "112131415161718191a1b1c19f9de86f1100c58e27e3070ae69dbb1bf40a55c321bfe429fa4d451d9eca5d6a8b4dc9b805f452652d5c1c492e51480857575037747b0e7556b36a4d402c8afcbbb6855af5ff23f3f90308bf09cda05ec780cedc783b16e985c1860134d6137e1b6bb32216",
+      "wire_chunk_base64": "ESExQVFhcYGRobHBn53obxEAxY4n4wcK5p27G/QKVcMhv+Qp+k1FHZ7KXWqLTcm4BfRSZS1cHEkuUUgIV1dQN3R7DnVWs2pNQCyK/Lu2hVr1/yPz+QMIvwnNoF7HgM7ceDsW6YXBhgE01hN+G2uzIhY="
+    }
+  ],
+  "metadata": {
+    "description": "Client-Side Zero-Knowledge Metadata Encryption (ADR-004)",
+    "fek_hex": "f0f1f2f3f4f5f6f7f8f9fafbfcfdfeff00112233445566778899aabbccddeeff",
+    "file_id": "c9bf9e57-1685-4c89-bafb-ff5af830be8a",
+    "metadata_plaintext": {
+      "name": "tax_return_2026.pdf",
+      "mime": "application/pdf",
+      "size": 10485760,
+      "lastModified": 1773446400000
+    },
+    "iv_hex": "99887766554433221100aabb",
+    "payload": {
+      "v": 1,
+      "iv": "mYh3ZlVEMyIRAKq7",
+      "tag": "r+LIzCEVkYqFHOKxRrzohg==",
+      "ct": "dNET+jBZSiQSDBLMjtg/AvczsFTIvoxagv+wx3zfTDIpDGplKH3ctcbgqlVPE4ipB536repdE9FoBH8IRSUFIh5Zsg/6hrg4O1EqJXPl8IN+6bUMcWu5wH8qGupujGzDyERQwg=="
+    }
+  },
+  "recovery": {
+    "description": "BIP-39 24-Word Emergency Recovery Kit (ADR-007)",
+    "entropy_hex": "e4b6555129239f64724e0732d190e971e4b6555129239f64724e0732d190e971",
+    "mnemonic": "tool razor february false delay rate since science crazy milk demise toilet enter click dwarf caught panda castle near attack code silent place chief",
+    "recovery_key_hex": "080f7b949bb830868f609956692d74acb45f443b56b5aa2e2ac37e20e6122cbd",
+    "master_key_hex": "11223344556677889900aabbccddeeff11223344556677889900aabbccddeeff",
+    "wrap_iv_hex": "fedcba9876543210fedcba98",
+    "payload": {
+      "v": 1,
+      "iv": "/ty6mHZUMhD+3LqY",
+      "tag": "1s8jANx+SjcYfZL87R2rUA==",
+      "ct": "wMKnMdRTSf10wQZJgn0i1WH408M0gfXrNJo2rarq4H0="
+    }
+  },
+  "password_change": {
+    "description": "Password Change Re-keying (MasterKey unwrapped with Old KEK, re-wrapped with New KEK)",
+    "old_kek_hex": "4e9e59a9f30c3c7ad916d32a19a236e2b376c43a41590119687ed6e289d54d2f",
+    "new_password": "SuperSecretNewPassword2027#$",
+    "new_salt_hex": "a0a1a2a3a4a5a6a7a8a9aaabacadaeaf",
+    "new_auth_key_hex": "587686d678e4e5f6de77134df6978c9324accb57e4e369d16113a46acb7c4fb0",
+    "new_kek_hex": "1102c75a103d10d19d65908bd68544567015ddcac0898109594169980aed2fe4",
+    "master_key_hex": "11223344556677889900aabbccddeeff11223344556677889900aabbccddeeff",
+    "new_wrap_iv_hex": "334455667788990011223344",
+    "new_master_key_wrap_payload": {
+      "v": 1,
+      "iv": "M0RVZneImQARIjNE",
+      "tag": "1dJP+ynSXp65Hy2ArShryw==",
+      "ct": "IReQOXR77QzBqm2pDpCYl67uyyqRzuZkmJgAS2uhUPk="
+    }
+  },
+  "negative_tests": {
+    "tampered_tag": {
+      "description": "Chunk with 1 byte modified in authentication tag (must fail GCM verification)",
+      "wire_chunk_hex": "102030405060708090a0b0c0e29a4757b755773109b9e55fbc0fa7d4ec7d44f151f9ee8c8d0425b74b5c2ddc3e581c043b60b6ec0b553844ef7e2ebd27d9d0ff4f38475929783c115414cd2f1ac6f190dd2b2373a89f264280623ee5b9a4f4f69396ae3f363fb279af0e2812966e3f06d3effb244cdd4d3ec000",
+      "file_id": "c9bf9e57-1685-4c89-bafb-ff5af830be8a",
+      "chunk_index": 0,
+      "total_chunks": 2,
+      "is_final": false,
+      "expected_error": "AES-GCM decryption failed"
+    },
+    "wrong_aad_chunk_index": {
+      "description": "Chunk decrypted with wrong chunk_index in AAD (swap detection)",
+      "wire_chunk_hex": "102030405060708090a0b0c0e29a4757b755773109b9e55fbc0fa7d4ec7d44f151f9ee8c8d0425b74b5c2ddc3e581c043b60b6ec0b553844ef7e2ebd27d9d0ff4f38475929783c115414cd2f1ac6f190dd2b2373a89f264280623ee5b9a4f4f69396ae3f363fb279af0e2812966e3f06d3effb244cdd4d3ec01e",
+      "file_id": "c9bf9e57-1685-4c89-bafb-ff5af830be8a",
+      "chunk_index": 1,
+      "total_chunks": 2,
+      "is_final": false,
+      "expected_error": "AES-GCM decryption failed"
+    },
+    "wrong_file_id": {
+      "description": "Chunk decrypted with wrong file_id in AAD (cross-file chunk swap detection)",
+      "wire_chunk_hex": "102030405060708090a0b0c0e29a4757b755773109b9e55fbc0fa7d4ec7d44f151f9ee8c8d0425b74b5c2ddc3e581c043b60b6ec0b553844ef7e2ebd27d9d0ff4f38475929783c115414cd2f1ac6f190dd2b2373a89f264280623ee5b9a4f4f69396ae3f363fb279af0e2812966e3f06d3effb244cdd4d3ec01e",
+      "file_id": "00000000-0000-0000-0000-000000000000",
+      "chunk_index": 0,
+      "total_chunks": 2,
+      "is_final": false,
+      "expected_error": "AES-GCM decryption failed"
+    },
+    "tampered_ciphertext": {
+      "description": "Chunk with 1 bit modified in ciphertext body",
+      "wire_chunk_hex": "102030405060708090a0b0c0e29a47ffb755773109b9e55fbc0fa7d4ec7d44f151f9ee8c8d0425b74b5c2ddc3e581c043b60b6ec0b553844ef7e2ebd27d9d0ff4f38475929783c115414cd2f1ac6f190dd2b2373a89f264280623ee5b9a4f4f69396ae3f363fb279af0e2812966e3f06d3effb244cdd4d3ec01e",
+      "file_id": "c9bf9e57-1685-4c89-bafb-ff5af830be8a",
+      "chunk_index": 0,
+      "total_chunks": 2,
+      "is_final": false,
+      "expected_error": "AES-GCM decryption failed"
+    },
+    "truncated_chunk": {
+      "description": "Chunk truncated before end of tag",
+      "wire_chunk_hex": "102030405060708090a0b0c0e29a4757b7557731",
+      "expected_error": "Chunk too small"
+    },
+    "wrong_password_kdf": {
+      "description": "Attempting to unwrap MasterKey with KEK derived from wrong password",
+      "wrong_password": "WrongPassword999!",
+      "salt_hex": "0102030405060708090a0b0c0d0e0f10",
+      "expected_error": "AES-GCM decryption failed"
+    },
+    "wrong_format_version_aad": {
+      "description": "Chunk decrypted with wrong format_version in AAD (must fail GCM verification)",
+      "wire_chunk_hex": "102030405060708090a0b0c0e29a4757b755773109b9e55fbc0fa7d4ec7d44f151f9ee8c8d0425b74b5c2ddc3e581c043b60b6ec0b553844ef7e2ebd27d9d0ff4f38475929783c115414cd2f1ac6f190dd2b2373a89f264280623ee5b9a4f4f69396ae3f363fb279af0e2812966e3f06d3effb244cdd4d3ec01e",
+      "file_id": "c9bf9e57-1685-4c89-bafb-ff5af830be8a",
+      "format_version": 2,
+      "chunk_index": 0,
+      "total_chunks": 2,
+      "is_final": false,
+      "expected_error": "AES-GCM decryption failed"
+    },
+    "reordered_stream": {
+      "description": "Stream consumer receives chunk 1 before chunk 0 (stream order violation)",
+      "delivered_chunk_indices": [1, 0],
+      "total_chunks": 2,
+      "expected_error": "Chunk order mismatch"
+    },
+    "truncated_stream": {
+      "description": "Stream consumer encounters EOF before receiving all expected chunks",
+      "delivered_chunk_indices": [0],
+      "total_chunks": 2,
+      "expected_error": "Stream truncated before all chunks received"
+    },
+    "duplicated_chunk_stream": {
+      "description": "Stream consumer receives duplicate chunk 0",
+      "delivered_chunk_indices": [0, 0],
+      "total_chunks": 2,
+      "expected_error": "Duplicate chunk index detected"
+    },
+    "extra_chunk_stream": {
+      "description": "Stream consumer receives chunk with index exceeding total_chunks",
+      "delivered_chunk_indices": [0, 1, 2],
+      "total_chunks": 2,
+      "expected_error": "Extraneous chunk beyond total_chunks"
+    }
+  }
+}

@@ -1,0 +1,27 @@
+{
+  "name": "cloudvault",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Zero-Knowledge End-to-End Encrypted Cloud Storage Platform",
+  "workspaces": [
+    "packages/*",
+    "backend",
+    "apps/*"
+  ],
+  "scripts": {
+    "test:crypto": "npm --workspace=@cloudvault/crypto-spec test",
+    "build:crypto": "npm --workspace=@cloudvault/crypto-spec run build",
+    "test:backend": "npm --workspace=@cloudvault/backend test",
+    "build:backend": "npm --workspace=@cloudvault/backend run build",
+    "db:migrate": "npm --workspace=@cloudvault/backend run db:migrate",
+    "db:seed": "npm --workspace=@cloudvault/backend run db:seed",
+    "docker:up": "docker compose -f infra/docker/docker-compose.yml up -d",
+    "docker:down": "docker compose -f infra/docker/docker-compose.yml down"
+  },
+  "devDependencies": {
+    "typescript": "^5.7.2"
+  },
+  "dependencies": {
+    "libsodium-sumo": "^0.8.4"
+  }
+}

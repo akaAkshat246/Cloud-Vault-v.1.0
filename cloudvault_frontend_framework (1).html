@@ -1,0 +1,670 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--font-sans)}
+.fw{background:#0a0f1a;min-height:600px;color:#e2e8f0;border-radius:12px;overflow:hidden}
+.hdr{background:linear-gradient(135deg,#0f1e2e 0%,#0a1520 100%);border-bottom:1px solid #1e3a4a;padding:20px 24px 0}
+.hdr-top{display:flex;align-items:center;gap:12px;margin-bottom:16px}
+.logo{display:flex;align-items:center;gap:8px;font-size:18px;font-weight:500;color:#f1f5f9}
+.logo-icon{width:32px;height:32px;background:#0f766e;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.badge{background:#0f766e22;color:#5eead4;border:1px solid #0f766e44;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:500}
+.badge-yellow{background:#d9770622;color:#fbbf24;border-color:#d9770644}
+.stats-row{display:flex;gap:24px;padding:12px 0}
+.stat{text-align:center}
+.stat-val{font-size:20px;font-weight:500;color:#5eead4}
+.stat-lab{font-size:10px;color:#64748b;margin-top:2px}
+.tabs{display:flex;gap:2px;overflow-x:auto;scrollbar-width:none}
+.tabs::-webkit-scrollbar{display:none}
+.tab{padding:8px 14px;font-size:11px;font-weight:500;border:none;background:transparent;color:#64748b;cursor:pointer;white-space:nowrap;border-bottom:2px solid transparent;transition:all .15s}
+.tab.on{color:#5eead4;border-bottom-color:#0f766e}
+.tab:hover:not(.on){color:#94a3b8}
+.body{padding:20px 24px;overflow-y:auto;max-height:520px}
+.sec-title{font-size:13px;font-weight:500;color:#94a3b8;letter-spacing:.08em;text-transform:uppercase;margin-bottom:16px;border-bottom:1px solid #1e293b;padding-bottom:8px}
+.card{background:#111827;border:1px solid #1e293b;border-radius:10px;padding:14px 16px;margin-bottom:12px}
+.card-title{font-size:13px;font-weight:500;color:#f1f5f9;margin-bottom:6px;display:flex;align-items:center;gap:8px}
+.card-body{font-size:12px;color:#64748b;line-height:1.7}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.stack-box{background:#0a0f1a;border:1px solid #1e3a4a;border-radius:8px;padding:10px 12px}
+.stack-label{font-size:10px;color:#5eead4;font-weight:500;margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em}
+.chip{display:inline-flex;align-items:center;gap:4px;background:#1e293b;border:1px solid #334155;border-radius:6px;padding:3px 8px;font-size:11px;color:#cbd5e1;margin:2px}
+.chip-teal{background:#0f766e22;border-color:#0f766e55;color:#5eead4}
+.chip-blue{background:#0891b222;border-color:#0891b255;color:#7dd3fc}
+.chip-purple{background:#7c3aed22;border-color:#7c3aed55;color:#c4b5fd}
+.chip-orange{background:#d9770622;border-color:#d9770655;color:#fbbf24}
+.chip-red{background:#dc262622;border-color:#dc262655;color:#fca5a5}
+.chip-green{background:#16a34a22;border-color:#16a34a55;color:#86efac}
+.route-row{display:flex;align-items:center;gap:8px;padding:7px 0;border-bottom:1px solid #1a2035}
+.route-path{font-family:var(--font-mono);font-size:11px;color:#7dd3fc;min-width:240px}
+.route-desc{font-size:11px;color:#64748b;flex:1}
+.route-badge{font-size:9px;padding:2px 6px;border-radius:4px;font-weight:500}
+.rb-auth{background:#0891b222;color:#7dd3fc;border:1px solid #0891b244}
+.rb-pub{background:#16a34a22;color:#86efac;border:1px solid #16a34a44}
+.rb-lazy{background:#7c3aed22;color:#c4b5fd;border:1px solid #7c3aed44}
+.rb-proto{background:#d9770622;color:#fbbf24;border:1px solid #d9770644}
+.feat-card{background:#111827;border:1px solid #1e293b;border-radius:10px;padding:12px 14px;margin-bottom:10px}
+.feat-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.feat-name{font-size:13px;font-weight:500;color:#f1f5f9}
+.feat-sub{font-size:11px;color:#64748b;margin-top:2px}
+.prio{font-size:9px;padding:2px 7px;border-radius:10px;font-weight:500;white-space:nowrap}
+.prio-p1{background:#dc262622;color:#fca5a5;border:1px solid #dc262644}
+.prio-p2{background:#d9770622;color:#fbbf24;border:1px solid #d9770644}
+.prio-p3{background:#16a34a22;color:#86efac;border:1px solid #16a34a44}
+.feat-chips{display:flex;flex-wrap:wrap;gap:4px;margin-top:8px}
+.comp-row{display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #1a2035}
+.comp-name{font-size:11px;color:#94a3b8;width:110px;flex-shrink:0}
+.comp-bar-wrap{flex:1;background:#0a0f1a;border-radius:3px;height:6px}
+.comp-bar{height:6px;border-radius:3px}
+.comp-score{font-size:11px;color:#64748b;width:36px;text-align:right}
+.state-box{background:#0a0f1a;border:1px solid #1e3a4a;border-radius:8px;padding:12px;margin-bottom:8px}
+.state-title{font-size:11px;font-weight:500;color:#5eead4;margin-bottom:6px;font-family:var(--font-mono)}
+.state-body{font-size:11px;color:#64748b;line-height:1.8}
+.code{font-family:var(--font-mono);font-size:10px;background:#0a0f1a;border:1px solid #1e3a4a;border-radius:6px;padding:10px 12px;color:#94a3b8;line-height:1.8;overflow-x:auto}
+.kw{color:#c4b5fd}
+.str{color:#86efac}
+.fn{color:#7dd3fc}
+.cm{color:#475569}
+.perf-row{display:flex;align-items:center;gap:12px;padding:8px 0;border-bottom:1px solid #1a2035}
+.perf-icon{width:28px;height:28px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0}
+.perf-title{font-size:12px;font-weight:500;color:#f1f5f9}
+.perf-desc{font-size:11px;color:#64748b;margin-top:1px}
+.arch-layer{display:flex;align-items:stretch;gap:0;margin-bottom:6px}
+.arch-label{font-size:10px;color:#475569;width:80px;display:flex;align-items:center;flex-shrink:0;font-family:var(--font-mono)}
+.arch-content{flex:1;background:#111827;border:1px solid #1e293b;border-radius:8px;padding:8px 12px;display:flex;flex-wrap:wrap;gap:4px;align-items:center}
+.sec-row{display:flex;align-items:flex-start;gap:12px;padding:10px 0;border-bottom:1px solid #1a2035}
+.sec-icon{width:32px;height:32px;background:#0f766e22;border:1px solid #0f766e44;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px;flex-shrink:0}
+.sec-title2{font-size:12px;font-weight:500;color:#f1f5f9}
+.sec-desc{font-size:11px;color:#64748b;margin-top:2px;line-height:1.7}
+.ds-swatch{width:28px;height:28px;border-radius:6px;flex-shrink:0}
+.ds-row{display:flex;align-items:center;gap:10px;padding:5px 0}
+.ds-name{font-size:11px;color:#94a3b8;width:100px}
+.ds-hex{font-family:var(--font-mono);font-size:10px;color:#475569}
+.note{background:#0f766e11;border-left:3px solid #0f766e;border-radius:0 6px 6px 0;padding:10px 12px;font-size:11px;color:#5eead4;line-height:1.7;margin:12px 0}
+.warn{background:#d9770611;border-left:3px solid #d97706;border-radius:0 6px 6px 0;padding:10px 12px;font-size:11px;color:#fbbf24;line-height:1.7;margin:12px 0}
+</style>
+
+<div class="fw">
+<div class="hdr">
+  <div class="hdr-top">
+    <div class="logo">
+      <div class="logo-icon">☁</div>
+      CloudVault
+    </div>
+    <span class="badge">Frontend Framework v1.0</span>
+    <span class="badge badge-yellow">April 2026</span>
+  </div>
+  <div class="stats-row">
+    <div class="stat"><div class="stat-val">15</div><div class="stat-lab">Feature Modules</div></div>
+    <div class="stat"><div class="stat-val">38</div><div class="stat-lab">Route Endpoints</div></div>
+    <div class="stat"><div class="stat-val">6</div><div class="stat-lab">Competitor Sources</div></div>
+    <div class="stat"><div class="stat-val">React 18</div><div class="stat-lab">Core Stack</div></div>
+    <div class="stat"><div class="stat-val">E2E</div><div class="stat-lab">Encrypted</div></div>
+  </div>
+  <div class="tabs" id="tabs">
+    <button class="tab on" onclick="show('arch')">Architecture</button>
+    <button class="tab" onclick="show('routes')">Routes</button>
+    <button class="tab" onclick="show('features')">Features</button>
+    <button class="tab" onclick="show('components')">Components</button>
+    <button class="tab" onclick="show('state')">State</button>
+    <button class="tab" onclick="show('security')">Security</button>
+    <button class="tab" onclick="show('perf')">Performance</button>
+    <button class="tab" onclick="show('design')">Design System</button>
+    <button class="tab" onclick="show('gap')">Gap Analysis</button>
+  </div>
+</div>
+
+<div class="body">
+
+<!-- ARCHITECTURE -->
+<div id="arch">
+<p class="sec-title">Tech Stack & Architecture</p>
+<div class="arch-layer"><span class="arch-label">UI Layer</span><div class="arch-content">
+  <span class="chip chip-teal">React 18</span><span class="chip chip-teal">TypeScript 5</span><span class="chip chip-blue">Vite 5</span><span class="chip chip-purple">Tailwind CSS 3</span><span class="chip chip-blue">React Router v6</span>
+</div></div>
+<div class="arch-layer"><span class="arch-label">Data Layer</span><div class="arch-content">
+  <span class="chip chip-orange">TanStack Query v5</span><span class="chip chip-orange">Zustand 4</span><span class="chip chip-blue">Axios</span><span class="chip chip-green">Zod</span><span class="chip chip-purple">React Hook Form</span>
+</div></div>
+<div class="arch-layer"><span class="arch-label">Crypto Layer</span><div class="arch-content">
+  <span class="chip chip-red">libsodium.js</span><span class="chip chip-red">SubtleCrypto API</span><span class="chip chip-red">CryptoKey Store</span><span class="chip chip-orange">PBKDF2</span>
+</div></div>
+<div class="arch-layer"><span class="arch-label">UI Toolkit</span><div class="arch-content">
+  <span class="chip chip-purple">Radix UI Primitives</span><span class="chip chip-blue">Lucide React</span><span class="chip chip-teal">Framer Motion</span><span class="chip chip-orange">Recharts</span>
+</div></div>
+<div class="arch-layer"><span class="arch-label">File/Media</span><div class="arch-content">
+  <span class="chip chip-blue">react-dropzone</span><span class="chip chip-blue">@uppy/core</span><span class="chip chip-teal">react-pdf</span><span class="chip chip-teal">video.js</span><span class="chip chip-orange">browser-image-compression</span>
+</div></div>
+<div class="arch-layer"><span class="arch-label">Testing</span><div class="arch-content">
+  <span class="chip chip-green">Vitest</span><span class="chip chip-green">React Testing Library</span><span class="chip chip-green">Playwright</span><span class="chip chip-orange">MSW</span>
+</div></div>
+<div class="arch-layer"><span class="arch-label">Observability</span><div class="arch-content">
+  <span class="chip chip-orange">Sentry</span><span class="chip chip-teal">PostHog</span><span class="chip chip-blue">Web Vitals</span><span class="chip chip-purple">LogRocket (later)</span>
+</div></div>
+<div class="arch-layer"><span class="arch-label">DevOps</span><div class="arch-content">
+  <span class="chip chip-teal">Vercel</span><span class="chip chip-blue">GitHub Actions</span><span class="chip chip-orange">Cloudflare CDN</span><span class="chip chip-purple">Storybook</span>
+</div></div>
+
+<div class="note">
+  Architecture principle: The browser performs AES-256-GCM encryption via libsodium.js before any byte reaches the server. The React app is a zero-knowledge client — it never sends plaintext to the API.
+</div>
+
+<div class="grid2" style="margin-top:16px">
+<div class="card">
+  <div class="card-title">🗂 Folder Structure</div>
+  <div class="code">src/<br>
+  ├── <span class="kw">pages/</span>       <span class="cm"># route-level components</span><br>
+  ├── <span class="kw">features/</span>    <span class="cm"># domain modules</span><br>
+  │   ├── files/<br>
+  │   ├── auth/<br>
+  │   ├── share/<br>
+  │   └── billing/<br>
+  ├── <span class="kw">components/</span>  <span class="cm"># shared UI atoms</span><br>
+  ├── <span class="kw">hooks/</span>       <span class="cm"># custom hooks</span><br>
+  ├── <span class="kw">stores/</span>      <span class="cm"># zustand stores</span><br>
+  ├── <span class="kw">lib/</span>         <span class="cm"># api, crypto, utils</span><br>
+  ├── <span class="kw">types/</span>       <span class="cm"># global TypeScript types</span><br>
+  └── <span class="kw">styles/</span>      <span class="cm"># global CSS tokens</span></div>
+</div>
+<div class="card">
+  <div class="card-title">⚡ Build Targets</div>
+  <div class="code"><span class="cm"># vite.config.ts</span><br>
+build: {<br>
+  target: <span class="str">'es2022'</span>,<br>
+  rollupOptions: {<br>
+    output: {<br>
+      manualChunks: {<br>
+        <span class="str">'crypto'</span>: [<span class="str">'libsodium-wrappers'</span>],<br>
+        <span class="str">'charts'</span>: [<span class="str">'recharts'</span>],<br>
+        <span class="str">'pdf'</span>: [<span class="str">'react-pdf'</span>],<br>
+      }<br>
+    }<br>
+  }<br>
+}</div>
+</div>
+</div>
+</div>
+
+<!-- ROUTES -->
+<div id="routes" style="display:none">
+<p class="sec-title">Route Map — All 38 Endpoints</p>
+
+<p style="font-size:11px;color:#64748b;margin-bottom:12px">Badges: <span class="route-badge rb-auth" style="margin:0 4px">Auth</span> protected <span class="route-badge rb-pub" style="margin:0 4px">Public</span> public <span class="route-badge rb-lazy" style="margin:0 4px">Lazy</span> lazy-loaded <span class="route-badge rb-proto" style="margin:0 4px">Proto</span> roadmap</p>
+
+<div class="route-row"><span class="route-path">/</span><span class="route-desc">Landing page with pricing + CTA</span><span class="route-badge rb-pub">Public</span></div>
+<div class="route-row"><span class="route-path">/login</span><span class="route-desc">Email/password + Google OAuth + passkey</span><span class="route-badge rb-pub">Public</span></div>
+<div class="route-row"><span class="route-path">/signup</span><span class="route-desc">Registration + plan selection</span><span class="route-badge rb-pub">Public</span></div>
+<div class="route-row"><span class="route-path">/forgot-password</span><span class="route-desc">Email reset flow with OTP</span><span class="route-badge rb-pub">Public</span></div>
+<div class="route-row"><span class="route-path">/verify-email/:token</span><span class="route-desc">Email verification callback</span><span class="route-badge rb-pub">Public</span></div>
+<div class="route-row"><span class="route-path">/onboarding</span><span class="route-desc">5-step welcome wizard (first login only)</span><span class="route-badge rb-auth">Auth</span></div>
+<div class="route-row"><span class="route-path">/drive</span><span class="route-desc">File browser — root folder (default view)</span><span class="route-badge rb-auth">Auth</span></div>
+<div class="route-row"><span class="route-path">/drive/folder/:id</span><span class="route-desc">Nested folder view</span><span class="route-badge rb-auth">Auth</span></div>
+<div class="route-row"><span class="route-path">/drive/search</span><span class="route-desc">Search results with filters</span><span class="route-badge rb-auth">Auth</span></div>
+<div class="route-row"><span class="route-path">/drive/starred</span><span class="route-desc">Starred/favourited files</span><span class="route-badge rb-auth">Auth</span></div>
+<div class="route-row"><span class="route-path">/drive/recent</span><span class="route-desc">Recently accessed files</span><span class="route-badge rb-auth">Auth</span></div>
+<div class="route-row"><span class="route-path">/drive/trash</span><span class="route-desc">Deleted files (30-day recycle bin)</span><span class="route-badge rb-auth">Auth</span></div>
+<div class="route-row"><span class="route-path">/drive/shared-with-me</span><span class="route-desc">Files others shared with this user</span><span class="route-badge rb-auth">Auth</span></div>
+<div class="route-row"><span class="route-path">/drive/offline</span><span class="route-desc">Locally cached files</span><span class="route-badge rb-auth">Auth</span></div>
+<div class="route-row"><span class="route-path">/preview/:fileId</span><span class="route-desc">Full-screen file preview panel</span><span class="route-badge rb-lazy">Lazy</span></div>
+<div class="route-row"><span class="route-path">/share/:token</span><span class="route-desc">Public shared file/folder link recipient</span><span class="route-badge rb-pub">Public</span></div>
+<div class="route-row"><span class="route-path">/upload</span><span class="route-desc">Dedicated upload page (drag zone)</span><span class="route-badge rb-auth">Auth</span></div>
+<div class="route-row"><span class="route-path">/activity</span><span class="route-desc">Global file activity feed</span><span class="route-badge rb-auth">Auth</span></div>
+<div class="route-row"><span class="route-path">/versions/:fileId</span><span class="route-desc">Version history timeline for a file</span><span class="route-badge rb-auth">Auth</span></div>
+<div class="route-row"><span class="route-path">/settings</span><span class="route-desc">Settings hub (redirect to /settings/account)</span><span class="route-badge rb-auth">Auth</span></div>
+<div class="route-row"><span class="route-path">/settings/account</span><span class="route-desc">Profile, name, avatar, email change</span><span class="route-badge rb-auth">Auth</span></div>
+<div class="route-row"><span class="route-path">/settings/security</span><span class="route-desc">2FA, sessions, passkeys, trusted devices</span><span class="route-badge rb-auth">Auth</span></div>
+<div class="route-row"><span class="route-path">/settings/privacy</span><span class="route-desc">Data controls, export, account deletion</span><span class="route-badge rb-auth">Auth</span></div>
+<div class="route-row"><span class="route-path">/settings/billing</span><span class="route-desc">Plan, invoices, payment methods (Razorpay)</span><span class="route-badge rb-auth">Auth</span></div>
+<div class="route-row"><span class="route-path">/settings/notifications</span><span class="route-desc">Email + push preference toggles</span><span class="route-badge rb-auth">Auth</span></div>
+<div class="route-row"><span class="route-path">/settings/devices</span><span class="route-desc">Connected sessions, revoke access</span><span class="route-badge rb-auth">Auth</span></div>
+<div class="route-row"><span class="route-path">/settings/referral</span><span class="route-desc">Referral link + earnings + +2GB tracker</span><span class="route-badge rb-auth">Auth</span></div>
+<div class="route-row"><span class="route-path">/settings/api</span><span class="route-desc">API key management (Pro plan only)</span><span class="route-badge rb-auth">Auth</span></div>
+<div class="route-row"><span class="route-path">/upgrade</span><span class="route-desc">Plan upgrade modal with comparison table</span><span class="route-badge rb-auth">Auth</span></div>
+<div class="route-row"><span class="route-path">/upgrade/success</span><span class="route-desc">Payment success + confetti animation</span><span class="route-badge rb-auth">Auth</span></div>
+<div class="route-row"><span class="route-path">/admin</span><span class="route-desc">Admin dashboard (team plan only)</span><span class="route-badge rb-proto">Proto</span></div>
+<div class="route-row"><span class="route-path">/admin/users</span><span class="route-desc">Member management, permissions</span><span class="route-badge rb-proto">Proto</span></div>
+<div class="route-row"><span class="route-path">/admin/audit</span><span class="route-desc">Full audit log with export</span><span class="route-badge rb-proto">Proto</span></div>
+<div class="route-row"><span class="route-path">/blog</span><span class="route-desc">Privacy/security blog (SEO content hub)</span><span class="route-badge rb-pub">Public</span></div>
+<div class="route-row"><span class="route-path">/privacy</span><span class="route-desc">Privacy policy + zero-knowledge proof</span><span class="route-badge rb-pub">Public</span></div>
+<div class="route-row"><span class="route-path">/pricing</span><span class="route-desc">Pricing page (standalone)</span><span class="route-badge rb-pub">Public</span></div>
+<div class="route-row"><span class="route-path">/404</span><span class="route-desc">Not found — with quick-nav back</span><span class="route-badge rb-pub">Public</span></div>
+<div class="route-row" style="border:none"><span class="route-path">/offline</span><span class="route-desc">PWA offline fallback page</span><span class="route-badge rb-pub">Public</span></div>
+</div>
+
+<!-- FEATURES -->
+<div id="features" style="display:none">
+<p class="sec-title">Feature Modules — Competitor-Derived</p>
+<div class="warn">Priority guide: P1 = Ship with MVP (Weeks 1–6) · P2 = Launch phase (Month 1–3) · P3 = Growth phase (Month 4–12)</div>
+
+<div class="feat-card">
+  <div class="feat-header"><div><div class="feat-name">File Browser & Manager</div><div class="feat-sub">Core file management interface — grid, list, tree views</div></div><span class="prio prio-p1">P1 · MVP</span></div>
+  <div class="feat-chips">
+    <span class="chip chip-teal">Grid / List / Tree toggle</span><span class="chip chip-teal">Drag & drop reorder</span><span class="chip chip-teal">Multi-select with ⌘/Ctrl</span><span class="chip chip-blue">Sort: name, date, size, type</span><span class="chip chip-blue">Filter by: type, date range, shared</span><span class="chip chip-orange">Right-click context menu</span><span class="chip chip-orange">Breadcrumb navigation</span><span class="chip chip-purple">Keyboard shortcuts (Delete, Rename, ⌘C, ⌘V)</span>
+  </div>
+  <div style="font-size:11px;color:#475569;margin-top:8px">Derived from: Google Drive (grid/list), Dropbox (breadcrumbs), macOS Finder (keyboard shortcuts)</div>
+</div>
+
+<div class="feat-card">
+  <div class="feat-header"><div><div class="feat-name">Encrypted Upload Engine</div><div class="feat-sub">Client-side AES-256-GCM before any network call</div></div><span class="prio prio-p1">P1 · MVP</span></div>
+  <div class="feat-chips">
+    <span class="chip chip-red">AES-256-GCM in Web Worker</span><span class="chip chip-red">Chunked upload (5MB chunks)</span><span class="chip chip-teal">Progress bar per file</span><span class="chip chip-teal">Upload queue with pause/resume</span><span class="chip chip-blue">Drag-to-upload zone (full-page overlay)</span><span class="chip chip-orange">Duplicate detection (SHA-256 hash)</span><span class="chip chip-green">Retry on network failure</span>
+  </div>
+  <div style="font-size:11px;color:#475569;margin-top:8px">Derived from: MEGA (browser E2E), ProtonDrive (zero-knowledge upload), Tresorit (chunked E2E)</div>
+</div>
+
+<div class="feat-card">
+  <div class="feat-header"><div><div class="feat-name">File Preview Panel</div><div class="feat-sub">In-app preview without download — decrypt on demand</div></div><span class="prio prio-p1">P1 · MVP</span></div>
+  <div class="feat-chips">
+    <span class="chip chip-teal">Images (JPEG, PNG, WebP, HEIC)</span><span class="chip chip-teal">PDF viewer (react-pdf)</span><span class="chip chip-blue">Video playback (encrypted stream)</span><span class="chip chip-blue">Audio player</span><span class="chip chip-orange">Text/code preview with syntax highlight</span><span class="chip chip-purple">Keyboard nav: ← →</span><span class="chip chip-green">Download encrypted + plain options</span>
+  </div>
+  <div style="font-size:11px;color:#475569;margin-top:8px">Derived from: Google Drive (inline preview), Dropbox (Preview pane), MEGA (in-browser streaming)</div>
+</div>
+
+<div class="feat-card">
+  <div class="feat-header"><div><div class="feat-name">Storage Gauge & Upgrade Nudge</div><div class="feat-sub">Conversion-critical — triggers at 80% full</div></div><span class="prio prio-p1">P1 · MVP</span></div>
+  <div class="feat-chips">
+    <span class="chip chip-teal">Animated circular gauge in sidebar</span><span class="chip chip-red">80% threshold modal (upgrade CTA)</span><span class="chip chip-red">100% soft-block on upload attempt</span><span class="chip chip-orange">Storage breakdown by file type</span><span class="chip chip-blue">Free tier countdown progress bar</span>
+  </div>
+  <div style="font-size:11px;color:#475569;margin-top:8px">Derived from: Gmail storage bar, Dropbox Basic warning, Google One upgrade prompts</div>
+</div>
+
+<div class="feat-card">
+  <div class="feat-header"><div><div class="feat-name">Share & Access Controls</div><div class="feat-sub">Link sharing with E2E encryption preserved</div></div><span class="prio prio-p1">P1 · MVP</span></div>
+  <div class="feat-chips">
+    <span class="chip chip-teal">Public link generator</span><span class="chip chip-teal">Password-protected links (Pro)</span><span class="chip chip-blue">Expiry date picker</span><span class="chip chip-blue">View-only vs download permission</span><span class="chip chip-orange">QR code for share link</span><span class="chip chip-red">One-click revoke</span><span class="chip chip-purple">Email invite with access level</span>
+  </div>
+  <div style="font-size:11px;color:#475569;margin-top:8px">Derived from: Sync.com (password links), Tresorit (permission matrix), ProtonDrive (E2E share)</div>
+</div>
+
+<div class="feat-card">
+  <div class="feat-header"><div><div class="feat-name">Onboarding Wizard</div><div class="feat-sub">5-step guided welcome — drives first upload in session</div></div><span class="prio prio-p1">P1 · MVP</span></div>
+  <div class="feat-chips">
+    <span class="chip chip-teal">Step 1: Upload first file</span><span class="chip chip-teal">Step 2: Install Android app QR</span><span class="chip chip-blue">Step 3: Set up 2FA</span><span class="chip chip-blue">Step 4: Refer a friend (+2GB)</span><span class="chip chip-green">Step 5: Tour key features</span><span class="chip chip-orange">Skip at any point</span><span class="chip chip-purple">Resume on next login</span>
+  </div>
+  <div style="font-size:11px;color:#475569;margin-top:8px">Derived from: Dropbox onboarding flow, Notion welcome checklist</div>
+</div>
+
+<div class="feat-card">
+  <div class="feat-header"><div><div class="feat-name">Version History Timeline</div><div class="feat-sub">File versioning with restore — 30 days free, 1 year Pro</div></div><span class="prio prio-p2">P2 · Launch</span></div>
+  <div class="feat-chips">
+    <span class="chip chip-teal">Visual timeline slider</span><span class="chip chip-teal">Side-by-side version diff (text files)</span><span class="chip chip-blue">One-click restore</span><span class="chip chip-blue">Named versions / snapshots</span><span class="chip chip-orange">Storage cost per version shown</span>
+  </div>
+  <div style="font-size:11px;color:#475569;margin-top:8px">Derived from: Dropbox Version History, OneDrive Version Restore, Google Drive activity panel</div>
+</div>
+
+<div class="feat-card">
+  <div class="feat-header"><div><div class="feat-name">Referral System UI</div><div class="feat-sub">Dropbox-style +2GB per referral — viral growth engine</div></div><span class="prio prio-p2">P2 · Launch</span></div>
+  <div class="feat-chips">
+    <span class="chip chip-teal">Unique referral link per user</span><span class="chip chip-teal">Copy-to-clipboard + WhatsApp share</span><span class="chip chip-blue">Real-time counter (N friends referred)</span><span class="chip chip-blue">+2GB both sides on signup</span><span class="chip chip-green">Referral leaderboard (gamification)</span><span class="chip chip-orange">Social share cards (OG preview)</span>
+  </div>
+  <div style="font-size:11px;color:#475569;margin-top:8px">Derived from: Dropbox referral program (drove 60% growth), Google One family plan</div>
+</div>
+
+<div class="feat-card">
+  <div class="feat-header"><div><div class="feat-name">Encryption Transparency UI</div><div class="feat-sub">CloudVault's core differentiator — visible on every file</div></div><span class="prio prio-p2">P2 · Launch</span></div>
+  <div class="feat-chips">
+    <span class="chip chip-red">Lock badge on every encrypted file</span><span class="chip chip-red">Encryption status tooltip (algo + key)</span><span class="chip chip-teal">"How we protect your files" explainer</span><span class="chip chip-blue">Zero-knowledge badge in footer/header</span><span class="chip chip-purple">Public security audit link</span><span class="chip chip-orange">Encryption indicator in share links</span>
+  </div>
+  <div style="font-size:11px;color:#475569;margin-top:8px">Derived from: ProtonDrive (trust UI), Tresorit (zero-knowledge indicators), Sync.com (compliance badges)</div>
+</div>
+
+<div class="feat-card">
+  <div class="feat-header"><div><div class="feat-name">Activity Feed</div><div class="feat-sub">Per-file and global event log with filters</div></div><span class="prio prio-p2">P2 · Launch</span></div>
+  <div class="feat-chips">
+    <span class="chip chip-teal">Timeline: uploaded, viewed, shared, deleted</span><span class="chip chip-blue">Filter by: user, file, action type</span><span class="chip chip-orange">Per-file sidebar panel</span><span class="chip chip-purple">Real-time via WebSocket (later)</span>
+  </div>
+  <div style="font-size:11px;color:#475569;margin-top:8px">Derived from: Dropbox Activity, Box Timeline, Google Drive audit</div>
+</div>
+
+<div class="feat-card">
+  <div class="feat-header"><div><div class="feat-name">Offline Mode (PWA)</div><div class="feat-sub">Service Worker + IndexedDB for offline-first access</div></div><span class="prio prio-p2">P2 · Launch</span></div>
+  <div class="feat-chips">
+    <span class="chip chip-teal">Mark files for offline cache</span><span class="chip chip-blue">Sync queue on reconnect</span><span class="chip chip-blue">Offline indicator banner</span><span class="chip chip-orange">IndexedDB encrypted local store</span><span class="chip chip-purple">PWA install prompt (Android home screen)</span>
+  </div>
+  <div style="font-size:11px;color:#475569;margin-top:8px">Derived from: Dropbox Smart Sync, Google Drive offline mode</div>
+</div>
+
+<div class="feat-card">
+  <div class="feat-header"><div><div class="feat-name">Billing & Subscription UI</div><div class="feat-sub">Razorpay integration — ₹149 / ₹349 plans</div></div><span class="prio prio-p2">P2 · Launch</span></div>
+  <div class="feat-chips">
+    <span class="chip chip-teal">Plan comparison modal</span><span class="chip chip-teal">Razorpay checkout embed</span><span class="chip chip-blue">Invoice download (PDF)</span><span class="chip chip-blue">Cancel / downgrade flow with data retention</span><span class="chip chip-orange">Annual plan discount badge (save 33%)</span><span class="chip chip-green">UPI, cards, net banking support</span>
+  </div>
+</div>
+
+<div class="feat-card">
+  <div class="feat-header"><div><div class="feat-name">Search Engine</div><div class="feat-sub">Client-side full-text + server metadata search</div></div><span class="prio prio-p3">P3 · Growth</span></div>
+  <div class="feat-chips">
+    <span class="chip chip-teal">File name, type, date filters</span><span class="chip chip-teal">Instant results (debounced 200ms)</span><span class="chip chip-blue">Recent searches history</span><span class="chip chip-orange">Search within folder scope</span><span class="chip chip-purple">AI tagging for images (ML — later)</span>
+  </div>
+  <div style="font-size:11px;color:#475569;margin-top:8px">Derived from: Google Drive (AI search), Dropbox (full-text), MEGA (metadata search)</div>
+</div>
+
+<div class="feat-card">
+  <div class="feat-header"><div><div class="feat-name">Admin Console (Team Tier)</div><div class="feat-sub">Member management + audit logs for Team plan</div></div><span class="prio prio-p3">P3 · Growth</span></div>
+  <div class="feat-chips">
+    <span class="chip chip-teal">Invite members by email</span><span class="chip chip-blue">Role: Admin / Member / Viewer</span><span class="chip chip-blue">Storage quotas per member</span><span class="chip chip-red">Full audit log with export (CSV/PDF)</span><span class="chip chip-purple">Remote session revoke</span>
+  </div>
+  <div style="font-size:11px;color:#475569;margin-top:8px">Derived from: Tresorit Business, Box Admin Console, Dropbox Business</div>
+</div>
+
+<div class="feat-card">
+  <div class="feat-header"><div><div class="feat-name">Real-Time Collaboration (Year 2)</div><div class="feat-sub">Co-editing with E2E encryption preserved — roadmap item</div></div><span class="prio prio-p3">P3 · Year 2</span></div>
+  <div class="feat-chips">
+    <span class="chip chip-purple">Collaborative text editor (Yjs CRDT)</span><span class="chip chip-purple">Presence indicators (avatars)</span><span class="chip chip-purple">Comment threads on files</span><span class="chip chip-purple">E2E encrypted real-time sync</span>
+  </div>
+  <div style="font-size:11px;color:#475569;margin-top:8px">CloudVault's long-term moat: only product with E2E + real-time collab simultaneously</div>
+</div>
+</div>
+
+<!-- COMPONENTS -->
+<div id="components" style="display:none">
+<p class="sec-title">Component Architecture — Atomic Design</p>
+<div class="grid2">
+<div>
+<div class="card" style="margin-bottom:10px">
+  <div class="card-title">⚛ Atoms (Primitive UI)</div>
+  <div class="feat-chips" style="margin-top:4px">
+    <span class="chip">Button</span><span class="chip">IconButton</span><span class="chip">Input</span><span class="chip">Textarea</span><span class="chip">Select</span><span class="chip">Checkbox</span><span class="chip">Toggle</span><span class="chip">Badge</span><span class="chip">Avatar</span><span class="chip">Spinner</span><span class="chip">Tooltip</span><span class="chip">Divider</span><span class="chip">ProgressBar</span><span class="chip">Skeleton</span><span class="chip">Tag</span>
+  </div>
+</div>
+<div class="card" style="margin-bottom:10px">
+  <div class="card-title">🧬 Molecules (Composed)</div>
+  <div class="feat-chips" style="margin-top:4px">
+    <span class="chip">FileCard</span><span class="chip">FolderCard</span><span class="chip">SearchBar</span><span class="chip">StorageGauge</span><span class="chip">ContextMenu</span><span class="chip">BreadcrumbNav</span><span class="chip">EncryptionBadge</span><span class="chip">ShareLinkRow</span><span class="chip">PlanBadge</span><span class="chip">UserMenuDropdown</span><span class="chip">UploadDropzone</span><span class="chip">VersionHistoryItem</span>
+  </div>
+</div>
+<div class="card">
+  <div class="card-title">🏗 Organisms (Page Sections)</div>
+  <div class="feat-chips" style="margin-top:4px">
+    <span class="chip">Sidebar</span><span class="chip">TopBar</span><span class="chip">FileGrid</span><span class="chip">FileList</span><span class="chip">FileTree</span><span class="chip">UploadQueue</span><span class="chip">PreviewPanel</span><span class="chip">ShareModal</span><span class="chip">UpgradeModal</span><span class="chip">SettingsSidebar</span><span class="chip">ActivityFeed</span><span class="chip">AdminTable</span>
+  </div>
+</div>
+</div>
+<div>
+<div class="card" style="margin-bottom:10px">
+  <div class="card-title">📦 Key Component: FileCard</div>
+  <div class="code"><span class="kw">interface</span> <span class="fn">FileCardProps</span> {<br>
+  file: <span class="fn">CloudFile</span>;<br>
+  selected?: boolean;<br>
+  onSelect: (id: string) => <span class="kw">void</span>;<br>
+  onContextMenu: () => <span class="kw">void</span>;<br>
+  onPreview: () => <span class="kw">void</span>;<br>
+  view: <span class="str">'grid'</span> | <span class="str">'list'</span>;<br>
+}<br><br>
+<span class="cm">// Renders: thumbnail, name, size,</span><br>
+<span class="cm">// E2E badge, shared indicator, ★</span></div>
+</div>
+<div class="card" style="margin-bottom:10px">
+  <div class="card-title">🔒 Key Component: EncryptionBadge</div>
+  <div class="code"><span class="cm">// Shows on every file in grid/list</span><br>
+<span class="kw">const</span> <span class="fn">EncryptionBadge</span> = ({algo}) => (<br>
+  &lt;<span class="fn">Tooltip</span><br>
+    content={<span class="str">`AES-256-GCM encrypted.<br>
+    Server cannot read this file.`</span>}<br>
+  &gt;<br>
+    &lt;<span class="fn">LockIcon</span> size={12} color=<span class="str">"#5eead4"</span>/&gt;<br>
+  &lt;/<span class="fn">Tooltip</span>&gt;<br>
+);</div>
+</div>
+<div class="card">
+  <div class="card-title">⚡ Key Component: StorageGauge</div>
+  <div class="code"><span class="cm">// Sidebar widget — triggers upgrade</span><br>
+usedGB: 3.8, limitGB: 5,<br>
+pct: 76% → <span class="str">amber</span> color<br>
+pct: 80% → show <span class="fn">UpgradeModal</span><br>
+pct: 100% → block uploads,<br>
+           <span class="fn">hardUpgradeWall</span>()</div>
+</div>
+</div>
+</div>
+
+<div class="note" style="margin-top:4px">All components are built on Radix UI primitives for accessibility (ARIA roles, keyboard navigation, focus management) then styled with Tailwind. Never build modals, dropdowns, or tooltips from scratch — Radix handles the tricky browser compatibility.</div>
+</div>
+
+<!-- STATE -->
+<div id="state" style="display:none">
+<p class="sec-title">State Management — Zustand + TanStack Query</p>
+<div class="note">Rule: Server state lives in TanStack Query. Client/UI state lives in Zustand. Never mix them. The crypto key material lives in a Zustand store with sessionStorage fallback — never in React Query cache.</div>
+
+<div class="grid2">
+<div>
+<div class="state-box">
+  <div class="state-title">useFileStore (Zustand)</div>
+  <div class="state-body">
+    selectedIds: Set&lt;string&gt;<br>
+    viewMode: 'grid' | 'list' | 'tree'<br>
+    sortBy: 'name' | 'date' | 'size'<br>
+    uploadQueue: UploadJob[]<br>
+    currentFolderId: string | null<br>
+    clipboardItems: ClipboardItem[]
+  </div>
+</div>
+<div class="state-box">
+  <div class="state-title">useAuthStore (Zustand)</div>
+  <div class="state-body">
+    user: User | null<br>
+    accessToken: string | null<br>
+    plan: 'free' | 'personal' | 'pro'<br>
+    storageUsedBytes: number<br>
+    storageLimitBytes: number<br>
+    isOnboarded: boolean
+  </div>
+</div>
+<div class="state-box">
+  <div class="state-title">useCryptoStore (Zustand)</div>
+  <div class="state-body">
+    masterKey: CryptoKey | null<br>
+    derivedKeys: Map&lt;string, CryptoKey&gt;<br>
+    isUnlocked: boolean<br>
+    — never persisted to localStorage —<br>
+    — cleared on browser close —
+  </div>
+</div>
+</div>
+<div>
+<div class="state-box">
+  <div class="state-title">useFiles (TanStack Query)</div>
+  <div class="state-body">
+    queryKey: ['files', folderId]<br>
+    staleTime: 30_000<br>
+    gcTime: 300_000<br>
+    — auto-refetch on window focus —<br>
+    — optimistic updates on upload —<br>
+    — WebSocket invalidation (later) —
+  </div>
+</div>
+<div class="state-box">
+  <div class="state-title">useUploadMutation (TanStack)</div>
+  <div class="state-body">
+    1. Compress (browser-image-compression)<br>
+    2. Encrypt chunk in Web Worker<br>
+    3. POST /api/upload with progress cb<br>
+    4. Optimistic insert into query cache<br>
+    5. Rollback on error<br>
+    6. Invalidate ['files', folderId]
+  </div>
+</div>
+<div class="state-box">
+  <div class="state-title">Error Boundary Strategy</div>
+  <div class="state-body">
+    Route level: per-page error boundary<br>
+    Crypto errors: full-screen recovery UI<br>
+    Network errors: toast + retry button<br>
+    Quota exceeded: hard upgrade wall<br>
+    Sentry: all unhandled exceptions
+  </div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- SECURITY UI -->
+<div id="security" style="display:none">
+<p class="sec-title">Security Layer — Zero-Knowledge UI Architecture</p>
+
+<div class="sec-row">
+  <div class="sec-icon">🔑</div>
+  <div><div class="sec-title2">Key Derivation UI</div><div class="sec-desc">On login, derive master key from password using PBKDF2 (100,000 iterations, SHA-256). Show a progress indicator ("Unlocking your vault..."). Key never touches the server. Store in Zustand useCryptoStore with sessionStorage backup cleared on tab close.</div></div>
+</div>
+<div class="sec-row">
+  <div class="sec-icon">🔐</div>
+  <div><div class="sec-title2">Web Worker Encryption</div><div class="sec-desc">Move all libsodium.js operations to a dedicated Web Worker (crypto.worker.ts) so the main thread is never blocked. File chunks are transferred via SharedArrayBuffer (zero-copy). The UI shows a live "Encrypting... 3 of 12 chunks" progress indicator during upload.</div></div>
+</div>
+<div class="sec-row">
+  <div class="sec-icon">🛡</div>
+  <div><div class="sec-title2">Two-Factor Authentication UI</div><div class="sec-desc">TOTP (Google Authenticator/Authy compatible). Setup wizard: QR code → verify code → download backup codes. Recovery codes shown once with "I've saved these" confirmation gate. Enforcement: nudge at login, force-gate after 30 days if 2FA not enabled on Pro plan.</div></div>
+</div>
+<div class="sec-row">
+  <div class="sec-icon">📱</div>
+  <div><div class="sec-title2">Passkey / WebAuthn Support (P3)</div><div class="sec-desc">Register fingerprint/FaceID as a passkey via WebAuthn API. Show "Login without password" option on supported devices. Fallback to email OTP on devices without biometrics. Platform authenticator preferred over roaming authenticator.</div></div>
+</div>
+<div class="sec-row">
+  <div class="sec-icon">🌐</div>
+  <div><div class="sec-title2">Session & Device Manager</div><div class="sec-desc">List all active sessions at /settings/devices: browser, OS, IP, last active, location (approximate). One-click "Revoke this session" button. "Revoke all other sessions" emergency wipe. Show current session highlighted. Refresh token rotation on each API call.</div></div>
+</div>
+<div class="sec-row">
+  <div class="sec-icon">🔗</div>
+  <div><div class="sec-title2">Content Security Policy Headers</div><div class="sec-desc">Strict CSP via Vercel headers: default-src 'self', no eval(), no inline scripts, no cross-origin iframes. frame-ancestors 'none' to prevent clickjacking. HSTS with max-age=63072000. Subresource Integrity (SRI) on all CDN assets.</div></div>
+</div>
+<div class="sec-row" style="border:none">
+  <div class="sec-icon">📋</div>
+  <div><div class="sec-title2">Privacy-by-Default UI Patterns</div><div class="sec-desc">No telemetry without explicit opt-in. No third-party JS on authenticated pages (Google Analytics only on marketing pages). No cookie consent banner needed for the app (no tracking cookies). Privacy policy UI: one-page plain-language summary before the legal text.</div></div>
+</div>
+</div>
+
+<!-- PERFORMANCE -->
+<div id="perf" style="display:none">
+<p class="sec-title">Performance Strategy — Target: Core Web Vitals Green</p>
+
+<div class="perf-row"><div class="perf-icon" style="background:#0f766e22">⚡</div><div><div class="perf-title">Code Splitting & Lazy Loading</div><div class="perf-desc">Every route is lazy-loaded via React.lazy(). Heavy chunks (PDF viewer, video.js, libsodium, recharts) are split into separate bundles. Initial bundle target: &lt;150KB gzipped. PDF/video modules only load when a preview is triggered.</div></div></div>
+<div class="perf-row"><div class="perf-icon" style="background:#0891b222">🖼</div><div><div class="perf-title">Thumbnail Pipeline</div><div class="perf-desc">Generate 200×200 AVIF thumbnails on upload (server-side Sharp). Store encrypted alongside original. Pre-fetch next 20 thumbnails when user scrolls file grid. Lazy-load all thumbnails via IntersectionObserver. Placeholder: blurred hash (blurhash library).</div></div></div>
+<div class="perf-row"><div class="perf-icon" style="background:#7c3aed22">🗜</div><div><div class="perf-title">Upload Compression</div><div class="perf-desc">browser-image-compression runs before encryption: resize images &gt;4MB to 80% quality JPEG, strip EXIF metadata. Compress to target 500KB for photos. Show compression ratio in upload UI. Video files: warn if &gt;100MB, suggest desktop app instead.</div></div></div>
+<div class="perf-row"><div class="perf-icon" style="background:#d9770622">📡</div><div><div class="perf-title">Request Deduplication & Caching</div><div class="perf-desc">TanStack Query deduplicates concurrent identical requests. staleTime: 30s for file listings, 5min for user profile, 24h for plan data. Cloudflare edge caches public assets (CSS, JS, fonts) for 365 days with content-hash URLs. Service Worker caches offline shell.</div></div></div>
+<div class="perf-row"><div class="perf-icon" style="background:#16a34a22">♻</div><div><div class="perf-title">Virtualized File List</div><div class="perf-desc">react-virtual for folders with &gt;100 files. Render only visible rows + 10 overscan items. Prevents DOM bloat that kills browser performance at 1000+ files. Grid view: CSS grid with fixed 160px columns; list view: @tanstack/react-virtual rows.</div></div></div>
+<div class="perf-row"><div class="perf-icon" style="background:#dc262622">🎯</div><div><div class="perf-title">Core Web Vitals Targets</div><div class="perf-desc">LCP: &lt;1.5s (Cloudflare CDN + AVIF thumbnails) · CLS: 0 (fixed skeleton layouts) · INP: &lt;200ms (Web Worker offloads crypto) · TTFB: &lt;200ms (Vercel Edge Functions) · FID: &lt;50ms. Track weekly in PostHog + Google Search Console.</div></div></div>
+<div class="perf-row" style="border:none"><div class="perf-icon" style="background:#0f766e22">📱</div><div><div class="perf-title">Mobile-First Responsive Strategy</div><div class="perf-desc">Base styles: mobile (375px). md: breakpoint (768px) adds sidebar. lg: (1024px) adds preview panel. Touch targets: minimum 44px. No hover-only interactions. Bottom navigation bar on mobile (Drive, Upload, Shared, Settings). Swipe-left on FileCard → quick-delete action.</div></div></div>
+</div>
+
+<!-- DESIGN SYSTEM -->
+<div id="design" style="display:none">
+<p class="sec-title">Design System — CloudVault Token Library</p>
+<div class="grid2">
+<div>
+<div class="card" style="margin-bottom:10px">
+  <div class="card-title">Color Tokens</div>
+  <div class="ds-row"><div class="ds-swatch" style="background:#0f766e"></div><div class="ds-name">--cv-teal-600</div><div class="ds-hex">#0f766e · Primary CTA, encryption badges</div></div>
+  <div class="ds-row"><div class="ds-swatch" style="background:#5eead4"></div><div class="ds-name">--cv-teal-300</div><div class="ds-hex">#5eead4 · Text on dark, active states</div></div>
+  <div class="ds-row"><div class="ds-swatch" style="background:#0f172a"></div><div class="ds-name">--cv-dark-950</div><div class="ds-hex">#0f172a · App background</div></div>
+  <div class="ds-row"><div class="ds-swatch" style="background:#1e293b"></div><div class="ds-name">--cv-dark-800</div><div class="ds-hex">#1e293b · Card background</div></div>
+  <div class="ds-row"><div class="ds-swatch" style="background:#334155"></div><div class="ds-name">--cv-dark-700</div><div class="ds-hex">#334155 · Borders, dividers</div></div>
+  <div class="ds-row"><div class="ds-swatch" style="background:#94a3b8"></div><div class="ds-name">--cv-slate-400</div><div class="ds-hex">#94a3b8 · Muted text</div></div>
+  <div class="ds-row"><div class="ds-swatch" style="background:#f1f5f9"></div><div class="ds-name">--cv-slate-100</div><div class="ds-hex">#f1f5f9 · Primary text</div></div>
+  <div class="ds-row"><div class="ds-swatch" style="background:#dc2626"></div><div class="ds-name">--cv-red-600</div><div class="ds-hex">#dc2626 · Errors, delete</div></div>
+  <div class="ds-row"><div class="ds-swatch" style="background:#d97706"></div><div class="ds-name">--cv-amber-600</div><div class="ds-hex">#d97706 · Warnings (80% storage)</div></div>
+  <div class="ds-row"><div class="ds-swatch" style="background:#16a34a"></div><div class="ds-name">--cv-green-600</div><div class="ds-hex">#16a34a · Success, payment</div></div>
+</div>
+<div class="card" style="margin-bottom:10px">
+  <div class="card-title">Typography Scale</div>
+  <div class="code" style="font-size:11px">
+<span class="cm">/* Display — hero sections */</span><br>
+--cv-text-display: <span class="str">clamp(28px, 5vw, 48px)</span>;<br>
+font-family: <span class="str">'Plus Jakarta Sans'</span>;<br><br>
+<span class="cm">/* Heading */</span><br>
+--cv-text-h1: <span class="str">24px</span>; weight: <span class="kw">600</span>;<br>
+--cv-text-h2: <span class="str">18px</span>; weight: <span class="kw">600</span>;<br>
+--cv-text-h3: <span class="str">14px</span>; weight: <span class="kw">500</span>;<br><br>
+<span class="cm">/* Body */</span><br>
+--cv-text-base: <span class="str">14px</span>; lh: <span class="kw">1.6</span>;<br>
+--cv-text-sm: <span class="str">12px</span>;<br>
+--cv-text-xs: <span class="str">11px</span>;<br><br>
+<span class="cm">/* Mono — file sizes, dates */</span><br>
+font-family: <span class="str">'JetBrains Mono'</span>;<br>
+--cv-text-mono: <span class="str">12px</span>;</div>
+</div>
+</div>
+<div>
+<div class="card" style="margin-bottom:10px">
+  <div class="card-title">Spacing & Radius</div>
+  <div class="code">--cv-space-1: <span class="str">4px</span>   <span class="cm">/* icon gap */</span><br>
+--cv-space-2: <span class="str">8px</span>   <span class="cm">/* chip padding */</span><br>
+--cv-space-3: <span class="str">12px</span>  <span class="cm">/* card inner */</span><br>
+--cv-space-4: <span class="str">16px</span>  <span class="cm">/* section gap */</span><br>
+--cv-space-6: <span class="str">24px</span>  <span class="cm">/* page padding */</span><br>
+--cv-space-8: <span class="str">32px</span>  <span class="cm">/* section margin */</span><br><br>
+--cv-radius-sm: <span class="str">4px</span>  <span class="cm">/* badge */</span><br>
+--cv-radius-md: <span class="str">8px</span>  <span class="cm">/* button, input */</span><br>
+--cv-radius-lg: <span class="str">12px</span> <span class="cm">/* card */</span><br>
+--cv-radius-xl: <span class="str">16px</span> <span class="cm">/* modal */</span><br>
+--cv-radius-full: <span class="str">9999px</span> <span class="cm">/* pill */</span></div>
+</div>
+<div class="card" style="margin-bottom:10px">
+  <div class="card-title">Motion System</div>
+  <div class="code"><span class="cm">/* Framer Motion presets */</span><br>
+<span class="kw">const</span> fadeUp = {<br>
+  initial: { opacity: 0, y: 8 },<br>
+  animate: { opacity: 1, y: 0 },<br>
+  transition: { duration: <span class="str">0.2</span> }<br>
+};<br><br>
+<span class="cm">/* Spring for file cards */</span><br>
+transition: { type: <span class="str">'spring'</span>,<br>
+              stiffness: 400, damping: 30 }<br><br>
+<span class="cm">/* Respect prefers-reduced-motion */</span><br>
+useReducedMotion() → no animations</div>
+</div>
+<div class="card">
+  <div class="card-title">Icon System</div>
+  <div class="card-body">Lucide React for all UI icons (MIT licensed). File type icons: react-file-icon for thumbnails. Minimum touch size: 44×44px (WCAG 2.5.5). All icons at 16px, 20px, 24px only — never arbitrary sizes. Teal (#5eead4) on dark backgrounds, slate-400 for muted states.</div>
+</div>
+</div>
+</div>
+</div>
+
+<!-- GAP ANALYSIS -->
+<div id="gap" style="display:none">
+<p class="sec-title">Competitor Gap Analysis — Features to Own vs Skip</p>
+<div class="note">CloudVault scores: 🟢 Lead (build & protect) · 🟡 Match (reach parity) · 🔴 Skip (don't compete here yet)</div>
+
+<div class="card" style="margin-bottom:10px">
+  <div class="card-title">Privacy & Security Axis — CloudVault's Arena</div>
+  <div class="comp-row"><span class="comp-name">E2E Encryption</span><div class="comp-bar-wrap"><div class="comp-bar" style="width:98%;background:#0f766e"></div></div><span class="comp-score" style="color:#5eead4">98 🟢</span></div>
+  <div class="comp-row"><span class="comp-name">Zero-Knowledge</span><div class="comp-bar-wrap"><div class="comp-bar" style="width:90%;background:#0f766e"></div></div><span class="comp-score" style="color:#5eead4">90 🟢</span></div>
+  <div class="comp-row"><span class="comp-name">Audit Logs</span><div class="comp-bar-wrap"><div class="comp-bar" style="width:70%;background:#d97706"></div></div><span class="comp-score" style="color:#fbbf24">70 🟡</span></div>
+  <div class="comp-row"><span class="comp-name">Open Architecture</span><div class="comp-bar-wrap"><div class="comp-bar" style="width:85%;background:#0f766e"></div></div><span class="comp-score" style="color:#5eead4">85 🟢</span></div>
+  <div class="comp-row" style="border:none"><span class="comp-name">Compliance (HIPAA)</span><div class="comp-bar-wrap"><div class="comp-bar" style="width:30%;background:#475569"></div></div><span class="comp-score" style="color:#64748b">30 🔴</span></div>
+</div>
+
+<div class="card" style="margin-bottom:10px">
+  <div class="card-title">UX & Ecosystem Axis — Catch-Up Targets</div>
+  <div class="comp-row"><span class="comp-name">File Preview</span><div class="comp-bar-wrap"><div class="comp-bar" style="width:82%;background:#0f766e"></div></div><span class="comp-score" style="color:#5eead4">82 🟢</span></div>
+  <div class="comp-row"><span class="comp-name">Mobile (Android)</span><div class="comp-bar-wrap"><div class="comp-bar" style="width:88%;background:#0f766e"></div></div><span class="comp-score" style="color:#5eead4">88 🟢</span></div>
+  <div class="comp-row"><span class="comp-name">Desktop Sync Client</span><div class="comp-bar-wrap"><div class="comp-bar" style="width:15%;background:#475569"></div></div><span class="comp-score" style="color:#64748b">15 🔴</span></div>
+  <div class="comp-row"><span class="comp-name">AI Features</span><div class="comp-bar-wrap"><div class="comp-bar" style="width:5%;background:#475569"></div></div><span class="comp-score" style="color:#64748b">5 🔴</span></div>
+  <div class="comp-row" style="border:none"><span class="comp-name">Real-time Collab</span><div class="comp-bar-wrap"><div class="comp-bar" style="width:40%;background:#d97706"></div></div><span class="comp-score" style="color:#fbbf24">40 🟡</span></div>
+</div>
+
+<div class="card" style="margin-bottom:10px">
+  <div class="card-title">Business Model Axis</div>
+  <div class="comp-row"><span class="comp-name">Pricing Value</span><div class="comp-bar-wrap"><div class="comp-bar" style="width:98%;background:#0f766e"></div></div><span class="comp-score" style="color:#5eead4">98 🟢</span></div>
+  <div class="comp-row"><span class="comp-name">Free Tier Hook</span><div class="comp-bar-wrap"><div class="comp-bar" style="width:70%;background:#d97706"></div></div><span class="comp-score" style="color:#fbbf24">70 🟡</span></div>
+  <div class="comp-row"><span class="comp-name">Referral System</span><div class="comp-bar-wrap"><div class="comp-bar" style="width:60%;background:#d97706"></div></div><span class="comp-score" style="color:#fbbf24">60 🟡</span></div>
+  <div class="comp-row"><span class="comp-name">Enterprise Tier</span><div class="comp-bar-wrap"><div class="comp-bar" style="width:20%;background:#475569"></div></div><span class="comp-score" style="color:#64748b">20 🔴</span></div>
+  <div class="comp-row" style="border:none"><span class="comp-name">Annual Plans</span><div class="comp-bar-wrap"><div class="comp-bar" style="width:55%;background:#d97706"></div></div><span class="comp-score" style="color:#fbbf24">55 🟡</span></div>
+</div>
+
+<div class="warn">
+  3 features your competitors don't have that you should own immediately: (1) Visible encryption indicator on every single file — no competitor shows this in the file browser. (2) Storage cost-per-file display — users don't know which files eat their quota. (3) "Privacy report" for shared links — showing the recipient what they can and cannot access, with encryption confirmed.
+</div>
+</div>
+
+</div>
+</div>
+
+<script>
+function show(id) {
+  const sections = ['arch','routes','features','components','state','security','perf','design','gap'];
+  sections.forEach(s => {
+    document.getElementById(s).style.display = s === id ? 'block' : 'none';
+  });
+  document.querySelectorAll('.tab').forEach((t,i) => {
+    t.classList.toggle('on', sections[i] === id);
+  });
+}
+</script>
