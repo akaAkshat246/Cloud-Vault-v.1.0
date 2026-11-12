@@ -1,0 +1,7 @@
+<resources>
+    <style name="Theme.CloudVault" parent="android:Theme.Material.NoActionBar">
+        <item name="android:statusBarColor">@color/purple_dark</item>
+        <item name="android:windowBackground">@color/purple_dark</item>
+    </style>
+</resources>
+
