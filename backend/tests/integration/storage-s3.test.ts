@@ -134,4 +134,25 @@ describe('Real MinIO (S3) Integration - Upload, Range Download & Multipart', () 
     await storageService.deleteObject(testKey);
     await expect(storageService.getObjectMetadata(testKey)).rejects.toThrow();
   });
+
+  it('should verify that unauthenticated anonymous access to bucket is denied (403 Forbidden)', async () => {
+    const rawUrl = new URL(`${env.S3_ENDPOINT}/${env.S3_BUCKET_NAME}/`);
+    const statusCode = await new Promise<number>((resolve, reject) => {
+      const req = http.request(
+        {
+          hostname: rawUrl.hostname,
+          port: rawUrl.port,
+          path: rawUrl.pathname,
+          method: 'GET'
+        },
+        (res) => {
+          resolve(res.statusCode || 0);
+        }
+      );
+      req.on('error', reject);
+      req.end();
+    });
+
+    expect(statusCode).toBe(403);
+  });
 });

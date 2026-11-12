@@ -25,8 +25,8 @@ cat << 'EOF' > /tmp/cors.json
 }
 EOF
 
-# Set S3 CORS using mc
-/usr/bin/mc anonymous set download local/cloudvault-storage || true
+# Ensure strict private access (deny unauthenticated/anonymous access)
+/usr/bin/mc anonymous set none local/cloudvault-storage || true
 
 echo "Configuring MinIO lifecycle rule: abort incomplete multipart uploads after 2 days..."
 /usr/bin/mc ilm rule add --expire-days 0 --abort-incomplete-multipart-days 2 local/cloudvault-storage || true
