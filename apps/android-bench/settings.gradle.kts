@@ -15,3 +15,4 @@ dependencyResolutionManagement {
 
 rootProject.name = "cloudvault-android-bench"
 include(":app")
+

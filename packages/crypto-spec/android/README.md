@@ -15,3 +15,4 @@ JAVA_HOME="/path/to/jdk-17" ./gradlew test
 # Windows PowerShell:
 $env:JAVA_HOME="C:\Program Files\Java\jdk-17"; .\gradlew.bat test
 ```
+

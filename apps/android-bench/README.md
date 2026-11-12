@@ -50,3 +50,4 @@ adb install app/build/outputs/apk/debug/app-debug.apk
 1. Launch the **CloudVault Bench** app on your phone.
 2. Tap **1. Run Baseline (t=3, m=64MiB, p=1)**.
 3. Observe the measured duration in milliseconds printed on-screen and paste the number back to update `docs/benchmarks/M1.md` from **ESTIMATE** to **MEASURED**.
+

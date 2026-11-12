@@ -19,15 +19,15 @@ describe('Server Skeleton & Health Probes', () => {
     expect(res.body.checks).toHaveProperty('storage');
   });
 
-  it('GET /api/v1/folders returns 501 Not Implemented (M4 stub)', async () => {
+  it('GET /api/v1/folders returns 401 Unauthorized without auth token', async () => {
     const res = await request(app).get('/api/v1/folders');
-    expect(res.status).toBe(501);
+    expect(res.status).toBe(401);
     expect(res.body.error).toBeDefined();
-    expect(res.body.error.code).toBe('NOT_IMPLEMENTED');
+    expect(res.body.error.code).toBe('UNAUTHORIZED');
   });
 
-  it('GET /api/v1/files/upload/init returns 501 Not Implemented (M4 stub)', async () => {
-    const res = await request(app).post('/api/v1/files/upload/init');
+  it('GET /api/v1/shares/test returns 501 Not Implemented (M7 stub)', async () => {
+    const res = await request(app).get('/api/v1/shares/test');
     expect(res.status).toBe(501);
     expect(res.body.error).toBeDefined();
     expect(res.body.error.code).toBe('NOT_IMPLEMENTED');

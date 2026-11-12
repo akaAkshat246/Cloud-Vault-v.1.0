@@ -51,3 +51,4 @@ dependencies {
     // Argon2 pure JVM / Bouncy Castle for benchmark comparison
     implementation("org.bouncycastle:bcprov-jdk18on:1.78.1")
 }
+

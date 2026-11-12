@@ -4,6 +4,7 @@ import {
   UploadPartCommand,
   CompleteMultipartUploadCommand,
   AbortMultipartUploadCommand,
+  ListPartsCommand,
   GetObjectCommand,
   PutObjectCommand,
   HeadObjectCommand,
@@ -36,6 +37,7 @@ export interface IStorageService {
   abortMultipartUpload(key: string, uploadId: string): Promise<void>;
   getPresignedDownloadUrl(key: string, expiresIn?: number): Promise<string>;
   getObjectMetadata(key: string): Promise<ObjectMetadata>;
+  listParts(key: string, uploadId: string): Promise<Array<{ partNumber: number; etag: string; size: number }>>;
   deleteObject(key: string): Promise<void>;
   checkHealth(): Promise<boolean>;
   uploadObject(key: string, body: Buffer | Uint8Array, contentType?: string): Promise<void>;
@@ -140,6 +142,24 @@ export class S3StorageService implements IStorageService {
 
     await this.client.send(command);
     logger.info({ key, uploadId }, 'Multipart upload aborted');
+  }
+
+  async listParts(
+    key: string,
+    uploadId: string
+  ): Promise<Array<{ partNumber: number; etag: string; size: number }>> {
+    const command = new ListPartsCommand({
+      Bucket: this.bucket,
+      Key: key,
+      UploadId: uploadId
+    });
+
+    const response = await this.client.send(command);
+    return (response.Parts || []).map((p) => ({
+      partNumber: p.PartNumber || 0,
+      etag: (p.ETag || '').replace(/"/g, ''),
+      size: p.Size || 0
+    }));
   }
 
   async getPresignedDownloadUrl(

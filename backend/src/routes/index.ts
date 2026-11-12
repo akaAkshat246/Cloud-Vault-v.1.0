@@ -1,6 +1,7 @@
 import { Router } from 'express';
 import { healthRouter } from './health.routes.js';
 import { authRouter } from './auth.routes.js';
+import { fileRouter } from './file.routes.js';
 import { NotImplementedError } from '../utils/errors.js';
 
 export const rootRouter = Router();
@@ -14,14 +15,8 @@ export const apiV1Router = Router();
 // Milestone M3: Authentication, Sessions, and Recovery Kit routes
 apiV1Router.use('/auth', authRouter);
 
-// Future M4: File & Folder routes stub
-apiV1Router.use('/files', (_req, _res, next) => {
-  next(new NotImplementedError('File and upload endpoints are scheduled for Milestone M4.'));
-});
-
-apiV1Router.use('/folders', (_req, _res, next) => {
-  next(new NotImplementedError('Folder management endpoints are scheduled for Milestone M4.'));
-});
+// Milestone M4: Direct-to-S3 Chunked Upload, Download & Metadata Routes
+apiV1Router.use(fileRouter);
 
 // Future M7: Share routes stub
 apiV1Router.use('/shares', (_req, _res, next) => {
