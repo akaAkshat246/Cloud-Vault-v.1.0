@@ -21,6 +21,9 @@
   "devDependencies": {
     "typescript": "^5.7.2"
   },
+  "overrides": {
+    "tinypool": "^2.2.0"
+  },
   "dependencies": {
     "libsodium-sumo": "^0.8.4"
   }
