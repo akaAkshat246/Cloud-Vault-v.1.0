@@ -410,5 +410,14 @@ describe('Milestone M3: Authentication, Sessions & Zero-Knowledge Verification',
       expect(res.status).toBe(401);
       expect(res.body.error.code).toBe('UNAUTHORIZED');
     });
+
+    it('POST /api/v1/auth/resend-verification returns 200 with generic anti-enumeration response', async () => {
+      const res = await request(app)
+        .post('/api/v1/auth/resend-verification')
+        .send({ email: 'probe@example.com' });
+
+      expect(res.status).toBe(200);
+      expect(res.body.message).toContain('If an unverified account exists');
+    });
   });
 });

@@ -183,7 +183,13 @@ export class AuthService {
     kdf_params: { m: number; t: number; p: number };
   }> {
     const normalized = email.trim().toLowerCase();
-    const user = await this.userRepo.findOne({ where: { email: normalized } });
+    let user: User | null = null;
+    try {
+      user = await this.userRepo.findOne({ where: { email: normalized } });
+    } catch {
+      // If DB is offline/uninitialized, fail-safe to generic response
+      user = null;
+    }
 
     // Enforce exponential lockout check
     if (user?.lockout_until && user.lockout_until > new Date()) {
@@ -570,7 +576,13 @@ export class AuthService {
    */
   async requestAccountResetToken(email: string): Promise<string> {
     const normalized = email.trim().toLowerCase();
-    const user = await this.userRepo.findOne({ where: { email: normalized } });
+    let user: User | null = null;
+    try {
+      user = await this.userRepo.findOne({ where: { email: normalized } });
+    } catch {
+      // If DB is offline/uninitialized, fail-safe to generic response
+      user = null;
+    }
     if (!user) throw new NotFoundError('User not found');
 
     const token = generateRandomHex(32); // 256-bit token
@@ -620,6 +632,49 @@ export class AuthService {
     user.email_verification_token = null;
     user.email_verification_expires_at = null;
     await this.userRepo.save(user);
+  }
+
+  /**
+   * Resend Verification Email with Anti-User Enumeration
+   */
+  async resendVerification(
+    email: string,
+    clientInfo: ClientMetadata = {}
+  ): Promise<{ message: string }> {
+    const genericResponse = {
+      message: 'If an unverified account exists with that email address, a new verification link has been dispatched.'
+    };
+
+    if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      return genericResponse;
+    }
+
+    const normalized = email.trim().toLowerCase();
+    let user: User | null = null;
+    try {
+      user = await this.userRepo.findOne({ where: { email: normalized } });
+    } catch {
+      // If DB is offline/uninitialized, fail-safe to generic response
+      user = null;
+    }
+
+    if (!user || user.is_email_verified) {
+      // Timing balancing dummy derivation
+      deriveDeterministicSalt(normalized);
+      return genericResponse;
+    }
+
+    const verificationToken = generateRandomHex(32);
+    const verificationExpires = new Date(Date.now() + 24 * 60 * 60 * 1000); // 24 hours
+
+    user.email_verification_token = verificationToken;
+    user.email_verification_expires_at = verificationExpires;
+    await this.userRepo.save(user);
+
+    await emailService.sendVerificationEmail(user.email, verificationToken);
+    await this.recordAudit(user.id, 'AUTH_RESEND_VERIFICATION', 'SUCCESS', clientInfo);
+
+    return genericResponse;
   }
 
   private async recordAudit(

@@ -183,7 +183,18 @@ authRouter.post('/verify-email', async (req: Request, res: Response, next: NextF
   }
 });
 
-// 14. Get Authenticated User Profile (GET /me)
+// 14. Resend Verification Email (Anti-User Enumeration)
+authRouter.post('/resend-verification', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { email } = req.body;
+    const result = await authService.resendVerification(email, getClientMeta(req));
+    res.status(200).json(result);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// 15. Get Authenticated User Profile (GET /me)
 authRouter.get('/me', authenticate, async (req: Request, res: Response, next: NextFunction) => {
   try {
     const userRepo = AppDataSource.getRepository(User);

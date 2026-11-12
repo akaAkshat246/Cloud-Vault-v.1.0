@@ -396,4 +396,50 @@ describe('Real PostgreSQL + Auth + Zero-Knowledge E2E Integration Suite', () => 
     const purgedCount = await authService.purgeExpiredOrphans();
     expect(purgedCount).toBe(0); // None older than 30 days yet
   });
+
+  it('11. Email Verification & Resend Verification Workflow (Anti-Enumeration)', async () => {
+    // 1. Unknown email resend verification returns 200 with generic message
+    const unknownRes = await request(app)
+      .post('/api/v1/auth/resend-verification')
+      .send({ email: 'ghost.user.xyz@cloudvault.internal' });
+    expect(unknownRes.status).toBe(200);
+    expect(unknownRes.body.message).toContain('If an unverified account exists');
+
+    // 2. Existing user (registered earlier in suite, currently unverified)
+    const existingUserBefore = await userRepo.findOne({ where: { email } });
+    expect(existingUserBefore.is_email_verified).toBe(false);
+    const oldToken = existingUserBefore.email_verification_token;
+
+    // Resend verification
+    const resendRes = await request(app)
+      .post('/api/v1/auth/resend-verification')
+      .send({ email });
+    expect(resendRes.status).toBe(200);
+    expect(resendRes.body.message).toContain('If an unverified account exists');
+
+    // Verify token was refreshed in database
+    const existingUserAfter = await userRepo.findOne({ where: { email } });
+    const newToken = existingUserAfter.email_verification_token;
+    expect(newToken).toBeDefined();
+    expect(newToken).not.toBe(oldToken);
+
+    // 3. Verify email with new token
+    const verifyRes = await request(app)
+      .post('/api/v1/auth/verify-email')
+      .send({ token: newToken });
+    expect(verifyRes.status).toBe(200);
+    expect(verifyRes.body.message).toContain('Email verified successfully');
+
+    // Check DB state
+    const verifiedUser = await userRepo.findOne({ where: { email } });
+    expect(verifiedUser.is_email_verified).toBe(true);
+    expect(verifiedUser.email_verification_token).toBeNull();
+
+    // 4. Resending to an already verified user returns 200 generic message without error
+    const alreadyVerifiedRes = await request(app)
+      .post('/api/v1/auth/resend-verification')
+      .send({ email });
+    expect(alreadyVerifiedRes.status).toBe(200);
+    expect(alreadyVerifiedRes.body.message).toContain('If an unverified account exists');
+  });
 });
