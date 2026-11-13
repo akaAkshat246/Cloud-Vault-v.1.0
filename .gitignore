@@ -45,9 +45,11 @@ Thumbs.db
 local.properties
 **/build/
 **/.gradle/
+**/bin/
 apps/android/app/build/
 apps/android/build/
 packages/crypto-spec/android/build/
+packages/crypto-spec/android/bin/
 
 # Docker Volumes & Temp
 postgres_data/
