@@ -19,7 +19,8 @@
     "db:migrate": "npm --workspace=@cloudvault/backend run db:migrate",
     "db:seed": "npm --workspace=@cloudvault/backend run db:seed",
     "docker:up": "docker compose -f infra/docker/docker-compose.yml up -d",
-    "docker:down": "docker compose -f infra/docker/docker-compose.yml down"
+    "docker:down": "docker compose -f infra/docker/docker-compose.yml down",
+    "postinstall": "node scripts/patch-libsodium.js"
   },
   "devDependencies": {
     "typescript": "^5.7.2"
