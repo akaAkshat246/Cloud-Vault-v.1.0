@@ -23,6 +23,7 @@ export const LoginPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -33,6 +34,7 @@ export const LoginPage: React.FC = () => {
       return;
     }
 
+    setIsSubmitting(true);
     try {
       setStatusMessage('Deriving zero-knowledge keys with Argon2id...');
       await login(email, password);
@@ -45,8 +47,12 @@ export const LoginPage: React.FC = () => {
         err?.message ||
         'Authentication failed. Please verify your credentials.'
       );
+    } finally {
+      setIsSubmitting(false);
     }
   };
+
+  const isBusy = isLoading || isSubmitting;
 
   return (
     <div className="min-h-screen bg-[#07050E] flex items-center justify-center p-3 sm:p-6 lg:p-10 font-sans selection:bg-[#B026FF]/30 selection:text-[#E0B0FF] animate-fade-in">
@@ -289,10 +295,10 @@ export const LoginPage: React.FC = () => {
               {/* Log In Button matching Image 2 magenta gradient with scale transition */}
               <button
                 type="submit"
-                disabled={isLoading}
+                disabled={isBusy}
                 className="w-full py-3 rounded-xl bg-gradient-to-r from-[#9333EA] via-[#A855F7] to-[#C026D3] hover:from-[#A855F7] hover:to-[#D946EF] text-white font-bold text-sm shadow-[0_4px_25px_rgba(168,85,247,0.4)] transition-all duration-300 hover:shadow-[0_6px_30px_rgba(168,85,247,0.6)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] disabled:opacity-50"
               >
-                {isLoading ? (
+                {isBusy ? (
                   <span className="flex items-center justify-center gap-2">
                     <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
                       <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />

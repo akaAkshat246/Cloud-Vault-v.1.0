@@ -53,7 +53,18 @@ class CryptoBridge {
         };
 
         this.worker.onerror = (err) => {
-          console.error('[CryptoBridge] Worker uncaught error:', err);
+          console.error('[CryptoBridge] Worker uncaught error, switching to main-thread fallback:', err);
+          // Drain all pending requests to fallback
+          const requests = Array.from(this.pendingRequests.entries());
+          this.pendingRequests.clear();
+          try {
+            this.worker?.terminate();
+          } catch {}
+          this.worker = null;
+
+          for (const [, handler] of requests) {
+            handler.reject(err);
+          }
         };
       } catch (e) {
         console.warn('[CryptoBridge] Worker creation failed; falling back to main-thread crypto:', e);
@@ -67,12 +78,38 @@ class CryptoBridge {
 
     if (this.worker) {
       return new Promise<T>((resolve, reject) => {
-        this.pendingRequests.set(id, { resolve, reject });
-        this.worker!.postMessage({ id, action, payload }, transfer);
+        // 8-second safety timeout: if worker doesn't respond or hung on module load, execute on main thread
+        const timer = setTimeout(() => {
+          if (this.pendingRequests.has(id)) {
+            console.warn(`[CryptoBridge] Worker timeout for action ${action}; falling back to main thread`);
+            this.pendingRequests.delete(id);
+            this.fallbackExecute<T>(action, payload).then(resolve).catch(reject);
+          }
+        }, 8000);
+
+        this.pendingRequests.set(id, {
+          resolve: (res) => {
+            clearTimeout(timer);
+            resolve(res);
+          },
+          reject: (err) => {
+            clearTimeout(timer);
+            console.warn(`[CryptoBridge] Worker failed for action ${action}; retrying on main thread:`, err);
+            this.fallbackExecute<T>(action, payload).then(resolve).catch(reject);
+          },
+        });
+
+        try {
+          this.worker!.postMessage({ id, action, payload }, transfer);
+        } catch (postErr) {
+          clearTimeout(timer);
+          this.pendingRequests.delete(id);
+          this.fallbackExecute<T>(action, payload).then(resolve).catch(reject);
+        }
       });
     }
 
-    // Direct fallback (e.g. Node tests or workers blocked)
+    // Direct fallback (e.g. Node tests, workers blocked, or worker error)
     return this.fallbackExecute<T>(action, payload);
   }
 
