@@ -15,7 +15,7 @@ import { BrandSquircle } from '../../components/ui/BrandSquircle.js';
 
 export const RegisterPage: React.FC = () => {
   const navigate = useNavigate();
-  const { register, isLoading } = useAuth();
+  const { register } = useAuth();
 
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -25,6 +25,7 @@ export const RegisterPage: React.FC = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
   // Recovery Kit State
   const [mnemonic, setMnemonic] = useState('');
@@ -54,6 +55,7 @@ export const RegisterPage: React.FC = () => {
       return;
     }
 
+    setIsSubmitting(true);
     try {
       // Generate 24-word BIP-39 mnemonic
       const phrase = await cryptoBridge.generateMnemonic();
@@ -61,16 +63,21 @@ export const RegisterPage: React.FC = () => {
       setShowRecoveryModal(true);
     } catch (err: any) {
       setError('Failed to generate recovery mnemonic');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
   const handleRecoveryConfirmed = async () => {
     setShowRecoveryModal(false);
+    setIsSubmitting(true);
     try {
       await register(email, password, mnemonic);
       navigate('/vault');
     } catch (err: any) {
       setError(err?.response?.data?.error || err?.message || 'Registration failed');
+    } finally {
+      setIsSubmitting(false);
     }
   };
 
@@ -220,10 +227,10 @@ export const RegisterPage: React.FC = () => {
           {/* Lavender/Violet Gradient "Sign Up" Button with hover lift and press effect */}
           <button
             type="submit"
-            disabled={isLoading}
+            disabled={isSubmitting}
             className="w-full mt-2 py-3 rounded-xl bg-gradient-to-r from-[#B388FF] via-[#9575CD] to-[#7E57C2] hover:from-[#C5CAE9] hover:to-[#673AB7] text-white font-bold text-sm shadow-[0_6px_20px_rgba(149,117,205,0.4)] transition-all duration-300 hover:shadow-[0_8px_25px_rgba(149,117,205,0.55)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99] disabled:opacity-50"
           >
-            {isLoading ? (
+            {isSubmitting ? (
               <span className="flex items-center justify-center gap-2">
                 <svg className="animate-spin h-4 w-4 text-white" fill="none" viewBox="0 0 24 24">
                   <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" />

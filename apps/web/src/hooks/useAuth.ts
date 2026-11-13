@@ -46,8 +46,9 @@ export function useAuth() {
       authStore.setAuthenticated(authRes.user as any, authRes.accessToken, masterKeyHex, kekHex);
       return { success: true };
     } catch (error: any) {
-      authStore.setLoading(false);
       throw error;
+    } finally {
+      authStore.setLoading(false);
     }
   };
 

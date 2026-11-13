@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import {
   Lock,
@@ -12,11 +12,12 @@ import {
   Mail,
 } from 'lucide-react';
 import { useAuth } from '../../hooks/useAuth.js';
+import { authStore } from '../../store/auth.store.js';
 import { BrandSquircle } from '../../components/ui/BrandSquircle.js';
 
 export const LoginPage: React.FC = () => {
   const navigate = useNavigate();
-  const { login, isLoading } = useAuth();
+  const { login } = useAuth();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -24,6 +25,11 @@ export const LoginPage: React.FC = () => {
   const [statusMessage, setStatusMessage] = useState<string | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+
+  useEffect(() => {
+    // Explicitly guarantee auth store is ready and not loading on page visit
+    authStore.setLoading(false);
+  }, []);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -35,8 +41,8 @@ export const LoginPage: React.FC = () => {
     }
 
     setIsSubmitting(true);
+    setStatusMessage('Deriving zero-knowledge keys with Argon2id...');
     try {
-      setStatusMessage('Deriving zero-knowledge keys with Argon2id...');
       await login(email, password);
       setStatusMessage('Vault unlocked! Redirecting...');
       navigate('/vault');
@@ -52,7 +58,7 @@ export const LoginPage: React.FC = () => {
     }
   };
 
-  const isBusy = isLoading || isSubmitting;
+  const isBusy = isSubmitting;
 
   return (
     <div className="min-h-screen bg-[#07050E] flex items-center justify-center p-3 sm:p-6 lg:p-10 font-sans selection:bg-[#B026FF]/30 selection:text-[#E0B0FF] animate-fade-in">
