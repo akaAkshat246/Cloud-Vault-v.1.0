@@ -1,237 +1,126 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ShieldCheck, Lock, Key, Check } from 'lucide-react';
-import { Button } from '../../components/ui/Button.js';
-import { Badge } from '../../components/ui/Badge.js';
+import { ArrowRight, ShieldCheck, Lock, Cloud } from 'lucide-react';
+import { BrandSquircle } from '../../components/ui/BrandSquircle.js';
 
 export const LandingPage: React.FC = () => {
   return (
-    <div className="min-h-screen bg-[#0a0f1a] text-slate-100 flex flex-col selection:bg-teal-500/30 selection:text-teal-200">
-      {/* Top Navbar */}
-      <header className="border-b border-slate-800/80 bg-[#0a0f1a]/80 backdrop-blur-md sticky top-0 z-40">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-teal-500 to-teal-800 flex items-center justify-center shadow-lg shadow-teal-900/30 border border-teal-400/30">
-              <ShieldCheck size={20} className="text-white" />
-            </div>
-            <span className="font-bold text-lg tracking-tight bg-gradient-to-r from-white via-slate-200 to-teal-300 bg-clip-text text-transparent">
-              CloudVault
-            </span>
-            <Badge variant="teal" className="hidden sm:inline-flex">v1.0 Zero-Knowledge</Badge>
-          </div>
+    <div className="min-h-screen bg-[#EDE7F6] flex flex-col justify-between p-4 sm:p-8 lg:p-12 relative overflow-hidden font-sans selection:bg-[#B388FF]/30 selection:text-[#5E35B1] animate-fade-in">
+      {/* ======================================================== */}
+      {/* Background Celestial Aesthetics mirroring Image 4        */}
+      {/* ======================================================== */}
 
-          <div className="flex items-center gap-3">
-            <Link to="/login">
-              <Button variant="ghost" size="sm">Sign In</Button>
-            </Link>
-            <Link to="/register">
-              <Button variant="primary" size="sm">Open My Vault</Button>
-            </Link>
+      {/* Floating Cloud Formations (Bottom Left & Right) with gentle floating animations */}
+      <div className="absolute -bottom-16 -left-16 w-80 h-80 rounded-full bg-white/40 blur-2xl pointer-events-none animate-float-slow" />
+      <div className="absolute -bottom-20 -right-20 w-96 h-96 rounded-full bg-white/50 blur-3xl pointer-events-none animate-float" />
+      <div className="absolute top-1/4 -left-20 w-72 h-72 rounded-full bg-purple-100/60 blur-2xl pointer-events-none animate-pulse-glow" />
+
+      {/* Ambient Celestial Nebula Swirl */}
+      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_center,_rgba(255,255,255,0.85)_0%,_rgba(237,231,246,0.4)_65%,_rgba(209,196,233,0.5)_100%)] pointer-events-none" />
+
+      {/* Top Floating Mini Header */}
+      <header className="relative z-20 flex items-center justify-between max-w-6xl mx-auto w-full animate-fade-in-up">
+        <div className="flex items-center gap-3 group cursor-pointer">
+          <div className="transform group-hover:scale-105 transition-transform duration-300">
+            <BrandSquircle size={42} />
           </div>
+          <span className="font-extrabold text-lg text-[#2E1A47] tracking-tight group-hover:text-[#673AB7] transition-colors">
+            CloudVault
+          </span>
+        </div>
+
+        <div className="flex items-center gap-3">
+          <Link
+            to="/login"
+            className="px-4 py-2 rounded-xl text-xs font-semibold text-[#5E35B1] hover:bg-white/80 hover:shadow-xs transition-all duration-200"
+          >
+            Sign In
+          </Link>
+          <Link
+            to="/register"
+            className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#B388FF] to-[#7E57C2] text-white text-xs font-bold shadow-md shadow-purple-400/30 hover:shadow-lg hover:shadow-purple-400/40 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all duration-200"
+          >
+            Get Started
+          </Link>
         </div>
       </header>
 
-      {/* Hero Section */}
-      <main className="flex-1">
-        <section className="relative pt-20 pb-16 px-4 sm:px-6 lg:px-8 overflow-hidden">
-          {/* Subtle Cyber Glow Gradients */}
-          <div className="absolute top-1/4 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[350px] bg-teal-500/10 blur-[140px] pointer-events-none rounded-full" />
-          <div className="absolute top-1/3 left-1/3 -translate-x-1/2 -translate-y-1/2 w-[400px] h-[250px] bg-cyan-500/10 blur-[120px] pointer-events-none rounded-full" />
-
-          <div className="max-w-4xl mx-auto text-center relative z-10">
-            <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-teal-950/60 border border-teal-500/30 text-teal-300 text-xs font-medium mb-6 backdrop-blur-sm">
-              <Lock size={13} className="text-teal-400" />
-              <span>True Zero-Knowledge Architecture — We Can't Read Your Files</span>
-            </div>
-
-            <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tight text-white mb-6 leading-tight">
-              Encrypted in your browser. <br />
-              <span className="bg-gradient-to-r from-teal-400 via-teal-300 to-cyan-400 bg-clip-text text-transparent">
-                Private in the cloud.
-              </span>
-            </h1>
-
-            <p className="text-base sm:text-lg text-slate-400 max-w-2xl mx-auto mb-10 leading-relaxed">
-              Every chunk is encrypted client-side using <strong>AES-256-GCM</strong> with keys derived via <strong>Argon2id</strong>. Plaintext filenames, folder trees, and encryption keys never touch our servers.
-            </p>
-
-            <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
-              <Link to="/register" className="w-full sm:w-auto">
-                <Button variant="primary" size="lg" className="w-full sm:w-auto text-sm">
-                  Create Zero-Knowledge Account
-                </Button>
-              </Link>
-              <Link to="/login" className="w-full sm:w-auto">
-                <Button variant="secondary" size="lg" className="w-full sm:w-auto text-sm">
-                  Unlock Existing Vault
-                </Button>
-              </Link>
-            </div>
+      {/* Main Hero & Center Saturn Illustration */}
+      <main className="relative z-10 flex flex-col items-center justify-center my-auto py-10 text-center animate-fade-in-up">
+        {/* Logo Squircle with Name underneath mirroring Image 4 */}
+        <div className="flex flex-col items-center mb-8">
+          <div className="transform hover:scale-110 transition-transform duration-300 mb-3 inline-block cursor-pointer">
+            <BrandSquircle size={72} className="shadow-[0_12px_28px_rgba(149,117,205,0.4)]" />
           </div>
-        </section>
+          <span className="font-extrabold text-xl sm:text-2xl text-[#2E1A47] tracking-tight">
+            CloudVault
+          </span>
+        </div>
 
-        {/* Cryptographic Architecture Card */}
-        <section className="py-12 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
-          <div className="glass-panel rounded-2xl p-6 sm:p-10 border border-slate-700/60 shadow-2xl relative">
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between pb-6 mb-8 border-b border-slate-800 gap-4">
-              <div>
-                <h2 className="text-xl font-bold text-white flex items-center gap-2">
-                  <Key size={20} className="text-teal-400" />
-                  <span>The CloudVault Zero-Knowledge Perimeter</span>
-                </h2>
-                <p className="text-xs text-slate-400 mt-1">
-                  How our cryptographic separation mathematically isolates your credentials.
-                </p>
-              </div>
-              <div className="flex items-center gap-2">
-                <Badge variant="teal">RFC 9106 Argon2id</Badge>
-                <Badge variant="blue">NIST SP 800-38D AES-GCM</Badge>
-              </div>
-            </div>
+        {/* Centerpiece 3D Lavender Saturn with Glowing Orbital Ring & Floating Astronaut */}
+        <div className="relative w-80 sm:w-96 h-56 flex items-center justify-center my-2 select-none">
+          {/* Glowing Planetary Orbit Ring with continuous gentle orbit shimmer */}
+          <div className="absolute w-72 sm:w-80 h-24 border-2 border-white rounded-[100%] shadow-[0_0_25px_rgba(255,255,255,0.9)] transform -rotate-[16deg] pointer-events-none animate-pulse-glow" />
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-              <div className="bg-[#0a0f1a]/80 p-5 rounded-xl border border-slate-800">
-                <div className="text-teal-400 font-mono text-xs font-semibold uppercase tracking-wider mb-2">1. Client-Side KDF</div>
-                <h3 className="text-sm font-semibold text-slate-100 mb-2">Dual-Key Derivation</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Your master password produces an <code>AuthKey</code> (sent over TLS for authentication) and a <code>KEK</code> (retained strictly in RAM). The server never receives your KEK.
-                </p>
-              </div>
-
-              <div className="bg-[#0a0f1a]/80 p-5 rounded-xl border border-slate-800">
-                <div className="text-cyan-400 font-mono text-xs font-semibold uppercase tracking-wider mb-2">2. S3 Chunking</div>
-                <h3 className="text-sm font-semibold text-slate-100 mb-2">5 MiB Direct-to-S3 Uploads</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Files are sliced into 5 MiB pieces and encrypted with a unique per-file FEK. Chunks stream straight to AWS S3 / MinIO via presigned URLs.
-                </p>
-              </div>
-
-              <div className="bg-[#0a0f1a]/80 p-5 rounded-xl border border-slate-800">
-                <div className="text-purple-400 font-mono text-xs font-semibold uppercase tracking-wider mb-2">3. Metadata Privacy</div>
-                <h3 className="text-sm font-semibold text-slate-100 mb-2">Zero Plaintext Metadata</h3>
-                <p className="text-xs text-slate-400 leading-relaxed">
-                  Filenames and directory trees are encrypted before reaching PostgreSQL. Database admins and subpoena requests see only opaque base64 blobs.
-                </p>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Feature Comparison Section */}
-        <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-5xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">Compare With Mainstream Storage</h2>
-            <p className="text-xs sm:text-sm text-slate-400">Why true zero-knowledge privacy makes a mathematical difference.</p>
+          {/* Lavender Striped Saturn Planet Body with Floating Animation */}
+          <div className="relative w-36 h-36 rounded-full bg-gradient-to-b from-[#E1BEE7] via-[#CE93D8] to-[#9575CD] shadow-[inset_-8px_-8px_16px_rgba(46,26,71,0.35),0_15px_35px_rgba(149,117,205,0.35)] flex items-center justify-center animate-float">
+            {/* Soft cloud bank surrounding planet base */}
+            <div className="absolute -bottom-3 w-40 h-10 bg-white/60 rounded-[100%] blur-sm animate-pulse-glow" />
           </div>
 
-          <div className="overflow-x-auto">
-            <table className="w-full text-left text-xs border border-slate-800 rounded-xl overflow-hidden bg-slate-900/40">
-              <thead className="bg-[#0e1726] border-b border-slate-800 text-slate-300">
-                <tr>
-                  <th className="py-3.5 px-4 font-semibold">Security Feature</th>
-                  <th className="py-3.5 px-4 font-semibold text-teal-400">CloudVault</th>
-                  <th className="py-3.5 px-4 font-semibold text-slate-400">Google Drive</th>
-                  <th className="py-3.5 px-4 font-semibold text-slate-400">Dropbox</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-800/80 text-slate-300">
-                <tr>
-                  <td className="py-3 px-4 font-medium">Default E2E Encryption</td>
-                  <td className="py-3 px-4 text-teal-400 font-semibold flex items-center gap-1.5"><Check size={14} /> Always On</td>
-                  <td className="py-3 px-4 text-slate-500">No (Server has keys)</td>
-                  <td className="py-3 px-4 text-slate-500">No (Server has keys)</td>
-                </tr>
-                <tr>
-                  <td className="py-3 px-4 font-medium">Zero-Knowledge Filenames</td>
-                  <td className="py-3 px-4 text-teal-400 font-semibold flex items-center gap-1.5"><Check size={14} /> Encrypted</td>
-                  <td className="py-3 px-4 text-slate-500">Plaintext Indexed</td>
-                  <td className="py-3 px-4 text-slate-500">Plaintext Indexed</td>
-                </tr>
-                <tr>
-                  <td className="py-3 px-4 font-medium">24-Word BIP-39 Recovery Kit</td>
-                  <td className="py-3 px-4 text-teal-400 font-semibold flex items-center gap-1.5"><Check size={14} /> Supported</td>
-                  <td className="py-3 px-4 text-slate-500">No (Email Reset)</td>
-                  <td className="py-3 px-4 text-slate-500">No (Email Reset)</td>
-                </tr>
-                <tr>
-                  <td className="py-3 px-4 font-medium">Native Memory-Hard KDF</td>
-                  <td className="py-3 px-4 text-teal-400 font-semibold flex items-center gap-1.5"><Check size={14} /> Argon2id (64 MiB)</td>
-                  <td className="py-3 px-4 text-slate-500">Proprietary / PBKDF2</td>
-                  <td className="py-3 px-4 text-slate-500">Bcrypt / PBKDF2</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </section>
-
-        {/* Pricing Plans Section */}
-        <section className="py-16 px-4 sm:px-6 lg:px-8 max-w-6xl mx-auto">
-          <div className="text-center mb-12">
-            <h2 className="text-2xl sm:text-3xl font-bold text-white mb-3">Transparent Commercial Tiers</h2>
-            <p className="text-xs sm:text-sm text-slate-400">Zero data harvesting. Pay for honest cloud infrastructure.</p>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {/* Free Tier */}
-            <div className="glass-panel p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
-              <div>
-                <div className="text-slate-400 text-xs font-semibold uppercase mb-2">Free Community</div>
-                <div className="text-3xl font-bold text-white mb-1">5 GB</div>
-                <div className="text-xs text-slate-500 mb-6">Always Free • Up to 2 Devices</div>
-                <ul className="space-y-3 text-xs text-slate-300 mb-8">
-                  <li className="flex items-center gap-2"><Check size={14} className="text-teal-400" /> Full E2EE & Metadata Encryption</li>
-                  <li className="flex items-center gap-2"><Check size={14} className="text-teal-400" /> 24-Word Emergency Recovery Kit</li>
-                  <li className="flex items-center gap-2"><Check size={14} className="text-teal-400" /> Progressive Web App (PWA)</li>
-                </ul>
-              </div>
-              <Link to="/register">
-                <Button variant="secondary" className="w-full text-xs">Start with 5 GB</Button>
-              </Link>
-            </div>
-
-            {/* Personal Tier */}
-            <div className="glass-panel-glow p-6 rounded-2xl border border-teal-500/50 flex flex-col justify-between relative">
-              <div className="absolute -top-3 right-6">
-                <Badge variant="teal">Most Popular</Badge>
-              </div>
-              <div>
-                <div className="text-teal-400 text-xs font-semibold uppercase mb-2">Personal Tier</div>
-                <div className="text-3xl font-bold text-white mb-1">100 GB</div>
-                <div className="text-xs text-slate-400 mb-6">₹149 / month ($1.99)</div>
-                <ul className="space-y-3 text-xs text-slate-200 mb-8">
-                  <li className="flex items-center gap-2"><Check size={14} className="text-teal-400" /> Unlimited Devices</li>
-                  <li className="flex items-center gap-2"><Check size={14} className="text-teal-400" /> High-speed Direct-to-S3 Bandwidth</li>
-                  <li className="flex items-center gap-2"><Check size={14} className="text-teal-400" /> Priority Support & Android Sync</li>
-                </ul>
-              </div>
-              <Link to="/register">
-                <Button variant="primary" className="w-full text-xs">Upgrade to 100 GB</Button>
-              </Link>
-            </div>
-
-            {/* Pro Tier */}
-            <div className="glass-panel p-6 rounded-2xl border border-slate-800 flex flex-col justify-between">
-              <div>
-                <div className="text-purple-400 text-xs font-semibold uppercase mb-2">Pro Tier</div>
-                <div className="text-3xl font-bold text-white mb-1">1 TB</div>
-                <div className="text-xs text-slate-500 mb-6">₹349 / month ($4.49)</div>
-                <ul className="space-y-3 text-xs text-slate-300 mb-8">
-                  <li className="flex items-center gap-2"><Check size={14} className="text-teal-400" /> 1,000 GB High-Assurance Storage</li>
-                  <li className="flex items-center gap-2"><Check size={14} className="text-teal-400" /> URL Fragment Password Sharing</li>
-                  <li className="flex items-center gap-2"><Check size={14} className="text-teal-400" /> Audit Log & Security Export</li>
-                </ul>
-              </div>
-              <Link to="/register">
-                <Button variant="secondary" className="w-full text-xs">Get 1 TB</Button>
-              </Link>
+          {/* Floating Spacewalker Astronaut on the orbital ring with slow floating motion */}
+          <div className="absolute top-8 right-12 sm:right-14 transform rotate-12 hover:scale-125 transition-transform duration-300 animate-float-slow cursor-pointer">
+            <div className="w-11 h-11 rounded-2xl bg-white/95 border border-purple-200 shadow-lg flex items-center justify-center text-[#7E57C2]">
+              <span className="text-2xl">🧑‍🚀</span>
             </div>
           </div>
-        </section>
+        </div>
+
+        {/* Tagline & Subheading */}
+        <h2 className="text-3xl sm:text-4xl font-extrabold text-[#2E1A47] tracking-tight mt-6 max-w-xl leading-tight">
+          Your personal zero-knowledge cosmos in the cloud.
+        </h2>
+        <p className="mt-3 text-xs sm:text-sm text-[#7E699B] max-w-md mx-auto leading-relaxed">
+          All files are encrypted client-side using XChaCha20-Poly1305 before leaving your device. We can never see your data.
+        </p>
+
+        {/* CTA Buttons with interactive lift */}
+        <div className="mt-8 flex flex-col sm:flex-row items-center gap-3.5">
+          <Link
+            to="/register"
+            className="w-full sm:w-auto px-7 py-3.5 rounded-2xl bg-gradient-to-r from-[#B388FF] via-[#9575CD] to-[#7E57C2] hover:from-[#C5CAE9] hover:to-[#673AB7] text-white font-bold text-sm shadow-[0_8px_25px_rgba(149,117,205,0.45)] hover:shadow-[0_12px_30px_rgba(149,117,205,0.6)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2"
+          >
+            <span>Create Your Vault</span>
+            <ArrowRight size={16} />
+          </Link>
+          <Link
+            to="/login"
+            className="w-full sm:w-auto px-7 py-3.5 rounded-2xl bg-white/85 hover:bg-white text-[#2E1A47] hover:text-[#5E35B1] font-bold text-sm border border-[#D1C4E9] hover:border-[#B39DDB] shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all duration-200"
+          >
+            Unlock Existing Vault
+          </Link>
+        </div>
+
+        {/* 3 Pill Badges with hover interaction */}
+        <div className="mt-12 flex flex-wrap items-center justify-center gap-3">
+          <div className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/80 hover:bg-white border border-[#D1C4E9] hover:border-[#B39DDB] text-[11px] font-semibold text-[#5E35B1] shadow-xs hover:shadow-sm hover:-translate-y-0.5 transition-all duration-200 cursor-default">
+            <ShieldCheck size={14} className="text-[#7E57C2]" />
+            <span>XChaCha20-Poly1305</span>
+          </div>
+          <div className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/80 hover:bg-white border border-[#D1C4E9] hover:border-[#B39DDB] text-[11px] font-semibold text-[#5E35B1] shadow-xs hover:shadow-sm hover:-translate-y-0.5 transition-all duration-200 cursor-default">
+            <Lock size={14} className="text-[#7E57C2]" />
+            <span>Argon2id (t=3, m=64MB)</span>
+          </div>
+          <div className="flex items-center gap-1.5 px-3.5 py-1.5 rounded-full bg-white/80 hover:bg-white border border-[#D1C4E9] hover:border-[#B39DDB] text-[11px] font-semibold text-[#5E35B1] shadow-xs hover:shadow-sm hover:-translate-y-0.5 transition-all duration-200 cursor-default">
+            <Cloud size={14} className="text-[#7E57C2]" />
+            <span>Direct S3 Multipart</span>
+          </div>
+        </div>
       </main>
 
       {/* Footer */}
-      <footer className="border-t border-slate-800/80 bg-[#070b14] py-8 text-center text-xs text-slate-500">
-        <p>© 2026 CloudVault Platform. Built with Zero-Knowledge Cryptography.</p>
+      <footer className="relative z-10 text-center text-[11px] text-[#A594BD] py-2">
+        CloudVault • Zero-Knowledge Storage Architecture • Powered by libsodium & WebCrypto
       </footer>
     </div>
   );

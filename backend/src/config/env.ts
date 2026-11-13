@@ -20,8 +20,8 @@ const envSchema = z.object({
   DB_USER: z.string().default('cloudvault'),
   DB_PASSWORD: z.string().default('cloudvault_dev_password'),
   DB_NAME: z.string().default('cloudvault_db'),
-  DB_SSL: z.coerce.boolean().default(false),
-  DB_LOGGING: z.coerce.boolean().default(false),
+  DB_SSL: z.preprocess((val) => val === 'true' || val === true, z.boolean()).default(false),
+  DB_LOGGING: z.preprocess((val) => val === 'true' || val === true, z.boolean()).default(false),
 
   // S3 / MinIO
   S3_ENDPOINT: z.string().default('http://localhost:9000'),

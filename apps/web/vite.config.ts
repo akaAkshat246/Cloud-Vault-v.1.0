@@ -14,6 +14,9 @@ export default defineConfig({
       },
     ],
   },
+  optimizeDeps: {
+    exclude: ['libsodium-wrappers-sumo', 'libsodium-sumo'],
+  },
   server: {
     port: 3000,
     proxy: {

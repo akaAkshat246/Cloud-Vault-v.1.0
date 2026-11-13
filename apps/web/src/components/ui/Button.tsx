@@ -3,27 +3,28 @@ import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
-  variant?: 'primary' | 'secondary' | 'outline' | 'danger' | 'ghost';
+  variant?: 'primary' | 'secondary' | 'outline' | 'danger' | 'ghost' | 'fab';
   size?: 'sm' | 'md' | 'lg';
   isLoading?: boolean;
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant = 'primary', size = 'md', isLoading = false, children, disabled, ...props }, ref) => {
-    const baseStyles = 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#0a0f1a] disabled:opacity-50 disabled:cursor-not-allowed select-none';
+    const baseStyles = 'inline-flex items-center justify-center font-medium rounded-xl transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-[#0D0B18] disabled:opacity-50 disabled:cursor-not-allowed select-none active:scale-[0.98]';
 
     const variants = {
-      primary: 'bg-teal-600 hover:bg-teal-500 text-white shadow-lg shadow-teal-900/30 border border-teal-500/30 focus:ring-teal-500',
-      secondary: 'bg-slate-800 hover:bg-slate-700 text-slate-100 border border-slate-700 focus:ring-slate-500',
-      outline: 'bg-transparent hover:bg-slate-800/60 text-teal-400 border border-teal-500/40 hover:border-teal-400 focus:ring-teal-500',
+      primary: 'bg-gradient-to-r from-[#A784FF] to-[#8F6BFF] hover:from-[#B4A8E8] hover:to-[#A080F0] text-white font-semibold shadow-lg shadow-purple-950/40 border border-purple-400/30 focus:ring-[#8F6BFF]',
+      secondary: 'bg-[#221C38] hover:bg-[#2D234D] text-[#A3A1BD] hover:text-white border border-[#352C55] focus:ring-[#8F6BFF]',
+      outline: 'bg-transparent hover:bg-[#161226] text-[#B090F0] border border-[#352C55] hover:border-[#8F6BFF] focus:ring-[#8F6BFF]',
       danger: 'bg-red-600/90 hover:bg-red-500 text-white shadow-lg shadow-red-950/40 border border-red-500/30 focus:ring-red-500',
-      ghost: 'bg-transparent hover:bg-slate-800/50 text-slate-300 hover:text-white focus:ring-slate-600',
+      ghost: 'bg-transparent hover:bg-[#161226] text-[#A3A1BD] hover:text-white focus:ring-slate-600',
+      fab: 'bg-gradient-to-b from-[#B090F0] to-[#8F6BFF] text-white rounded-full shadow-glow-fab hover:scale-105 active:scale-95 focus:ring-[#8F6BFF]',
     };
 
     const sizes = {
-      sm: 'text-xs px-2.5 py-1.5 gap-1.5',
-      md: 'text-sm px-4 py-2 gap-2',
-      lg: 'text-base px-6 py-2.5 gap-2.5',
+      sm: 'text-xs px-3 py-1.5 gap-1.5',
+      md: 'text-sm px-4 py-2.5 gap-2',
+      lg: 'text-base px-6 py-3 gap-2.5',
     };
 
     return (
@@ -46,4 +47,3 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
 );
 
 Button.displayName = 'Button';
-

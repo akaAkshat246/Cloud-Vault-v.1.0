@@ -3,24 +3,27 @@ import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 export interface BadgeProps extends React.HTMLAttributes<HTMLSpanElement> {
-  variant?: 'teal' | 'blue' | 'purple' | 'amber' | 'red' | 'slate';
+  variant?: 'purple' | 'cosmic' | 'lavender' | 'amber' | 'red' | 'green' | 'teal' | 'blue' | 'slate';
 }
 
-export const Badge: React.FC<BadgeProps> = ({ className, variant = 'teal', children, ...props }) => {
+export const Badge: React.FC<BadgeProps> = ({ className, variant = 'purple', children, ...props }) => {
   const variants = {
-    teal: 'bg-teal-500/10 text-teal-400 border-teal-500/20',
-    blue: 'bg-cyan-500/10 text-cyan-400 border-cyan-500/20',
-    purple: 'bg-purple-500/10 text-purple-400 border-purple-500/20',
+    purple: 'bg-[#9070E0]/20 text-[#B090F0] border-[#9070E0]/40',
+    cosmic: 'bg-[#221C38] text-[#A3A1BD] border-[#352C55]',
+    lavender: 'bg-[#C0B0F0]/15 text-[#C0B0F0] border-[#C0B0F0]/30',
     amber: 'bg-amber-500/10 text-amber-400 border-amber-500/20',
     red: 'bg-red-500/10 text-red-400 border-red-500/20',
-    slate: 'bg-slate-700/30 text-slate-400 border-slate-700/50',
+    green: 'bg-emerald-500/10 text-emerald-400 border-emerald-500/20',
+    teal: 'bg-[#9070E0]/20 text-[#B090F0] border-[#9070E0]/40',
+    blue: 'bg-[#8F6BFF]/20 text-[#A890FF] border-[#8F6BFF]/30',
+    slate: 'bg-[#161226] text-[#A3A1BD] border-[#352C55]',
   };
 
   return (
     <span
       className={twMerge(
         clsx(
-          'inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-medium border select-none',
+          'inline-flex items-center px-2.5 py-0.5 rounded-full text-[11px] font-semibold border select-none',
           variants[variant],
           className
         )
@@ -31,4 +34,3 @@ export const Badge: React.FC<BadgeProps> = ({ className, variant = 'teal', child
     </span>
   );
 };
-

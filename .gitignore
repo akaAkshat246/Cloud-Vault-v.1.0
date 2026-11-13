@@ -53,5 +53,7 @@ packages/crypto-spec/android/build/
 postgres_data/
 minio_data/
 *.tmp
+*.apk
+apps/web/public/cloudvault-debug.apk
 
 
