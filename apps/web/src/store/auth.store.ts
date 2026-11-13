@@ -25,7 +25,7 @@ class AuthStore {
     masterKeyHex: null,
     kekHex: null,
     isAuthenticated: false,
-    isLoading: true,
+    isLoading: false,
   };
 
   private subscribers = new Set<AuthSubscriber>();
