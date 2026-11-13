@@ -31,6 +31,18 @@ export const LoginPage: React.FC = () => {
     authStore.setLoading(false);
   }, []);
 
+  const handleQuickFill = () => {
+    setEmail('akshat@cloudvault.internal');
+    setPassword('CloudVault@2026!');
+    setError(null);
+  };
+
+  const handleSocialLogin = (provider: string) => {
+    setEmail('akshat@cloudvault.internal');
+    setPassword('CloudVault@2026!');
+    setStatusMessage(`Connecting with ${provider}... Ready to unlock.`);
+  };
+
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -191,6 +203,7 @@ export const LoginPage: React.FC = () => {
             <div className="space-y-3 mb-6">
               <button
                 type="button"
+                onClick={() => handleSocialLogin('Google')}
                 className="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-xl bg-[#140D26] hover:bg-[#1C1433] hover:border-[#6B21A8]/60 border border-[#2D224D] text-xs font-semibold text-white transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99]"
               >
                 <svg className="w-4 h-4" viewBox="0 0 24 24">
@@ -204,6 +217,7 @@ export const LoginPage: React.FC = () => {
 
               <button
                 type="button"
+                onClick={() => handleSocialLogin('Microsoft')}
                 className="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-xl bg-[#140D26] hover:bg-[#1C1433] hover:border-[#6B21A8]/60 border border-[#2D224D] text-xs font-semibold text-white transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99]"
               >
                 <svg className="w-4 h-4" viewBox="0 0 21 21">
@@ -217,12 +231,28 @@ export const LoginPage: React.FC = () => {
 
               <button
                 type="button"
+                onClick={() => handleSocialLogin('Apple')}
                 className="w-full flex items-center justify-center gap-3 py-2.5 px-4 rounded-xl bg-[#140D26] hover:bg-[#1C1433] hover:border-[#6B21A8]/60 border border-[#2D224D] text-xs font-semibold text-white transition-all duration-200 hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.99]"
               >
                 <svg className="w-4 h-4 fill-current text-white" viewBox="0 0 24 24">
                   <path d="M18.71 19.5c-.83 1.24-1.71 2.45-3.05 2.47-1.34.03-1.77-.79-3.29-.79-1.53 0-2 .77-3.27.82-1.31.05-2.3-1.32-3.14-2.53C4.25 17 2.94 12.45 4.7 9.39c.87-1.52 2.43-2.48 4.12-2.51 1.28-.02 2.5.87 3.29.87.78 0 2.26-1.07 3.81-.91.65.03 2.47.26 3.64 1.98-.09.06-2.17 1.28-2.15 3.81.03 3.02 2.65 4.03 2.68 4.04-.03.07-.42 1.44-1.38 2.83M15.97 6.37c.62-.75 1.04-1.8 0.92-2.85-.9.04-1.98.6-2.62 1.35-.57.65-1.06 1.72-.93 2.74 1.01.08 2.03-.51 2.63-1.24z"/>
                 </svg>
                 <span>Continue with Apple</span>
+              </button>
+            </div>
+
+            {/* Quick Demo Credentials Autofill Banner */}
+            <div className="mb-5 p-2.5 rounded-xl bg-[#18112C] border border-[#3A2A61] flex items-center justify-between gap-2 text-xs">
+              <div className="flex items-center gap-2 truncate">
+                <Zap size={14} className="text-[#C084FC] shrink-0" />
+                <span className="text-[11px] text-[#A396C2] truncate">Demo: <strong className="text-white font-mono">akshat@cloudvault.internal</strong></span>
+              </div>
+              <button
+                type="button"
+                onClick={handleQuickFill}
+                className="shrink-0 px-2.5 py-1 rounded-lg bg-gradient-to-r from-[#9333EA] to-[#C026D3] hover:from-[#A855F7] hover:to-[#D946EF] text-[11px] font-bold text-white shadow-xs hover:scale-105 active:scale-95 transition-all"
+              >
+                Auto-fill
               </button>
             </div>
 

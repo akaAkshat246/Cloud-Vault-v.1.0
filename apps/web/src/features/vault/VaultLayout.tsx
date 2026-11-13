@@ -50,6 +50,7 @@ export const VaultLayout: React.FC<VaultLayoutProps> = ({ children }) => {
     setSearchTerm,
     setViewMode,
     refreshVault,
+    navigateToFolder,
   } = useVault();
   const { uploadFile } = useUpload();
 
@@ -221,15 +222,20 @@ export const VaultLayout: React.FC<VaultLayoutProps> = ({ children }) => {
           {/* Breadcrumb Trail */}
           <div className="flex items-center gap-2 text-xs text-[#A3A1BD] overflow-x-auto whitespace-nowrap py-1">
             <button
-              onClick={() => refreshVault()}
-              className="hover:text-white font-medium transition-colors"
+              onClick={() => navigateToFolder(null)}
+              className="hover:text-white font-medium transition-colors hover:underline"
             >
               Vault Root
             </button>
             {breadcrumbs.map((b) => (
-              <React.Fragment key={b.id}>
+              <React.Fragment key={b.id || 'root'}>
                 <ChevronRight size={14} className="text-[#8D8DA5] shrink-0" />
-                <span className="text-white font-semibold truncate max-w-[120px]">{b.name}</span>
+                <button
+                  onClick={() => b.id ? navigateToFolder({ id: b.id, name: b.name } as any) : navigateToFolder(null)}
+                  className="text-white hover:text-[#C084FC] font-semibold truncate max-w-[120px] transition-colors"
+                >
+                  {b.name}
+                </button>
               </React.Fragment>
             ))}
           </div>

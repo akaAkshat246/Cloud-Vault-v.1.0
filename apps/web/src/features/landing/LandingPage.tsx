@@ -1,9 +1,13 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowRight, ShieldCheck, Lock, Cloud } from 'lucide-react';
+import { ArrowRight, ShieldCheck, Lock, Cloud, Sparkles, LayoutDashboard } from 'lucide-react';
 import { BrandSquircle } from '../../components/ui/BrandSquircle.js';
+import { useAuth } from '../../hooks/useAuth.js';
 
 export const LandingPage: React.FC = () => {
+  const { isAuthenticated, masterKeyHex, logout } = useAuth();
+  const isUnlocked = isAuthenticated && !!masterKeyHex;
+
   return (
     <div className="min-h-screen bg-[#EDE7F6] flex flex-col justify-between p-4 sm:p-8 lg:p-12 relative overflow-hidden font-sans selection:bg-[#B388FF]/30 selection:text-[#5E35B1] animate-fade-in">
       {/* ======================================================== */}
@@ -20,28 +24,48 @@ export const LandingPage: React.FC = () => {
 
       {/* Top Floating Mini Header */}
       <header className="relative z-20 flex items-center justify-between max-w-6xl mx-auto w-full animate-fade-in-up">
-        <div className="flex items-center gap-3 group cursor-pointer">
+        <Link to="/" className="flex items-center gap-3 group cursor-pointer">
           <div className="transform group-hover:scale-105 transition-transform duration-300">
             <BrandSquircle size={42} />
           </div>
           <span className="font-extrabold text-lg text-[#2E1A47] tracking-tight group-hover:text-[#673AB7] transition-colors">
             CloudVault
           </span>
-        </div>
+        </Link>
 
         <div className="flex items-center gap-3">
-          <Link
-            to="/login"
-            className="px-4 py-2 rounded-xl text-xs font-semibold text-[#5E35B1] hover:bg-white/80 hover:shadow-xs transition-all duration-200"
-          >
-            Sign In
-          </Link>
-          <Link
-            to="/register"
-            className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#B388FF] to-[#7E57C2] text-white text-xs font-bold shadow-md shadow-purple-400/30 hover:shadow-lg hover:shadow-purple-400/40 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all duration-200"
-          >
-            Get Started
-          </Link>
+          {isUnlocked ? (
+            <>
+              <Link
+                to="/vault"
+                className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#B388FF] to-[#7E57C2] text-white text-xs font-bold shadow-md shadow-purple-400/30 hover:shadow-lg hover:shadow-purple-400/40 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all duration-200 flex items-center gap-1.5"
+              >
+                <LayoutDashboard size={14} />
+                <span>Open Dashboard</span>
+              </Link>
+              <button
+                onClick={() => logout()}
+                className="px-3.5 py-2 rounded-xl text-xs font-semibold text-[#5E35B1] hover:bg-white/80 hover:shadow-xs transition-all duration-200"
+              >
+                Lock Vault
+              </button>
+            </>
+          ) : (
+            <>
+              <Link
+                to="/login"
+                className="px-4 py-2 rounded-xl text-xs font-semibold text-[#5E35B1] hover:bg-white/80 hover:shadow-xs transition-all duration-200"
+              >
+                Sign In
+              </Link>
+              <Link
+                to="/register"
+                className="px-4 py-2 rounded-xl bg-gradient-to-r from-[#B388FF] to-[#7E57C2] text-white text-xs font-bold shadow-md shadow-purple-400/30 hover:shadow-lg hover:shadow-purple-400/40 hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all duration-200"
+              >
+                Get Started
+              </Link>
+            </>
+          )}
         </div>
       </header>
 
@@ -49,32 +73,35 @@ export const LandingPage: React.FC = () => {
       <main className="relative z-10 flex flex-col items-center justify-center my-auto py-10 text-center animate-fade-in-up">
         {/* Logo Squircle with Name underneath mirroring Image 4 */}
         <div className="flex flex-col items-center mb-8">
-          <div className="transform hover:scale-110 transition-transform duration-300 mb-3 inline-block cursor-pointer">
+          <Link to={isUnlocked ? '/vault' : '/login'} className="transform hover:scale-110 transition-transform duration-300 mb-3 inline-block cursor-pointer">
             <BrandSquircle size={72} className="shadow-[0_12px_28px_rgba(149,117,205,0.4)]" />
-          </div>
+          </Link>
           <span className="font-extrabold text-xl sm:text-2xl text-[#2E1A47] tracking-tight">
             CloudVault
           </span>
         </div>
 
         {/* Centerpiece 3D Lavender Saturn with Glowing Orbital Ring & Floating Astronaut */}
-        <div className="relative w-80 sm:w-96 h-56 flex items-center justify-center my-2 select-none">
+        <Link
+          to={isUnlocked ? '/vault' : '/login'}
+          className="relative w-80 sm:w-96 h-56 flex items-center justify-center my-2 select-none group cursor-pointer"
+        >
           {/* Glowing Planetary Orbit Ring with continuous gentle orbit shimmer */}
-          <div className="absolute w-72 sm:w-80 h-24 border-2 border-white rounded-[100%] shadow-[0_0_25px_rgba(255,255,255,0.9)] transform -rotate-[16deg] pointer-events-none animate-pulse-glow" />
+          <div className="absolute w-72 sm:w-80 h-24 border-2 border-white rounded-[100%] shadow-[0_0_25px_rgba(255,255,255,0.9)] transform -rotate-[16deg] pointer-events-none group-hover:scale-105 transition-transform duration-500 animate-pulse-glow" />
 
           {/* Lavender Striped Saturn Planet Body with Floating Animation */}
-          <div className="relative w-36 h-36 rounded-full bg-gradient-to-b from-[#E1BEE7] via-[#CE93D8] to-[#9575CD] shadow-[inset_-8px_-8px_16px_rgba(46,26,71,0.35),0_15px_35px_rgba(149,117,205,0.35)] flex items-center justify-center animate-float">
+          <div className="relative w-36 h-36 rounded-full bg-gradient-to-b from-[#E1BEE7] via-[#CE93D8] to-[#9575CD] shadow-[inset_-8px_-8px_16px_rgba(46,26,71,0.35),0_15px_35px_rgba(149,117,205,0.35)] flex items-center justify-center group-hover:scale-105 transition-transform duration-500 animate-float">
             {/* Soft cloud bank surrounding planet base */}
             <div className="absolute -bottom-3 w-40 h-10 bg-white/60 rounded-[100%] blur-sm animate-pulse-glow" />
           </div>
 
           {/* Floating Spacewalker Astronaut on the orbital ring with slow floating motion */}
-          <div className="absolute top-8 right-12 sm:right-14 transform rotate-12 hover:scale-125 transition-transform duration-300 animate-float-slow cursor-pointer">
+          <div className="absolute top-8 right-12 sm:right-14 transform rotate-12 group-hover:scale-125 transition-transform duration-300 animate-float-slow">
             <div className="w-11 h-11 rounded-2xl bg-white/95 border border-purple-200 shadow-lg flex items-center justify-center text-[#7E57C2]">
               <span className="text-2xl">🧑‍🚀</span>
             </div>
           </div>
-        </div>
+        </Link>
 
         {/* Tagline & Subheading */}
         <h2 className="text-3xl sm:text-4xl font-extrabold text-[#2E1A47] tracking-tight mt-6 max-w-xl leading-tight">
@@ -86,19 +113,32 @@ export const LandingPage: React.FC = () => {
 
         {/* CTA Buttons with interactive lift */}
         <div className="mt-8 flex flex-col sm:flex-row items-center gap-3.5">
-          <Link
-            to="/register"
-            className="w-full sm:w-auto px-7 py-3.5 rounded-2xl bg-gradient-to-r from-[#B388FF] via-[#9575CD] to-[#7E57C2] hover:from-[#C5CAE9] hover:to-[#673AB7] text-white font-bold text-sm shadow-[0_8px_25px_rgba(149,117,205,0.45)] hover:shadow-[0_12px_30px_rgba(149,117,205,0.6)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2"
-          >
-            <span>Create Your Vault</span>
-            <ArrowRight size={16} />
-          </Link>
-          <Link
-            to="/login"
-            className="w-full sm:w-auto px-7 py-3.5 rounded-2xl bg-white/85 hover:bg-white text-[#2E1A47] hover:text-[#5E35B1] font-bold text-sm border border-[#D1C4E9] hover:border-[#B39DDB] shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all duration-200"
-          >
-            Unlock Existing Vault
-          </Link>
+          {isUnlocked ? (
+            <Link
+              to="/vault"
+              className="w-full sm:w-auto px-8 py-3.5 rounded-2xl bg-gradient-to-r from-[#B388FF] via-[#9575CD] to-[#7E57C2] hover:from-[#C5CAE9] hover:to-[#673AB7] text-white font-bold text-sm shadow-[0_8px_25px_rgba(149,117,205,0.45)] hover:shadow-[0_12px_30px_rgba(149,117,205,0.6)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2"
+            >
+              <Sparkles size={16} />
+              <span>Go to Your Vault Dashboard</span>
+              <ArrowRight size={16} />
+            </Link>
+          ) : (
+            <>
+              <Link
+                to="/register"
+                className="w-full sm:w-auto px-7 py-3.5 rounded-2xl bg-gradient-to-r from-[#B388FF] via-[#9575CD] to-[#7E57C2] hover:from-[#C5CAE9] hover:to-[#673AB7] text-white font-bold text-sm shadow-[0_8px_25px_rgba(149,117,205,0.45)] hover:shadow-[0_12px_30px_rgba(149,117,205,0.6)] hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all duration-300 flex items-center justify-center gap-2"
+              >
+                <span>Create Your Vault</span>
+                <ArrowRight size={16} />
+              </Link>
+              <Link
+                to="/login"
+                className="w-full sm:w-auto px-7 py-3.5 rounded-2xl bg-white/85 hover:bg-white text-[#2E1A47] hover:text-[#5E35B1] font-bold text-sm border border-[#D1C4E9] hover:border-[#B39DDB] shadow-sm hover:shadow-md hover:-translate-y-0.5 active:translate-y-0 active:scale-[0.98] transition-all duration-200"
+              >
+                Unlock Existing Vault
+              </Link>
+            </>
+          )}
         </div>
 
         {/* 3 Pill Badges with hover interaction */}

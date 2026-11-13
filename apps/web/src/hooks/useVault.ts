@@ -12,15 +12,25 @@ import { DecryptedFile, DecryptedFolder, BreadcrumbItem } from '../types/vault.t
 
 export function useVault() {
   const [vaultState, setVaultState] = useState<VaultState>(vaultStore.getState());
-  const { masterKeyHex, isAuthenticated } = authStore.getState();
+  const [authState, setAuthState] = useState(authStore.getState());
 
   useEffect(() => {
-    return vaultStore.subscribe(setVaultState);
+    const unsubVault = vaultStore.subscribe(setVaultState);
+    const unsubAuth = authStore.subscribe(setAuthState);
+    return () => {
+      unsubVault();
+      unsubAuth();
+    };
   }, []);
 
+  const { masterKeyHex } = authState;
+
   // Decrypt and load folder contents
-  const refreshVault = useCallback(async (folderId: string | null = vaultState.currentFolderId) => {
-    if (!isAuthenticated || !masterKeyHex) return;
+  const refreshVault = useCallback(async (folderId: string | null = vaultStore.getState().currentFolderId) => {
+    const liveAuth = authStore.getState();
+    const liveKey = liveAuth.masterKeyHex;
+    if (!liveAuth.isAuthenticated || !liveKey) return;
+    const mKey: string = liveKey;
 
     vaultStore.setLoading(true);
     try {
@@ -34,7 +44,7 @@ export function useVault() {
       const decryptedFolders: DecryptedFolder[] = await Promise.all(
         rawFolders.map(async (f) => {
           try {
-            const name = await cryptoBridge.decryptMetadata(masterKeyHex, f.encrypted_name, f.name_nonce);
+            const name = await cryptoBridge.decryptMetadata(mKey, f.encrypted_name, f.name_nonce);
             return {
               id: f.id,
               name,
@@ -60,7 +70,7 @@ export function useVault() {
       const decryptedFiles: DecryptedFile[] = await Promise.all(
         rawFiles.map(async (file) => {
           try {
-            const name = await cryptoBridge.decryptMetadata(masterKeyHex, file.encrypted_name, file.name_nonce);
+            const name = await cryptoBridge.decryptMetadata(mKey, file.encrypted_name, file.name_nonce);
             return {
               id: file.id,
               name,
@@ -97,8 +107,10 @@ export function useVault() {
       vaultStore.setVaultContent(decryptedFolders, decryptedFiles);
     } catch (err: any) {
       vaultStore.setError(err?.message || 'Failed to refresh vault');
+    } finally {
+      vaultStore.setLoading(false);
     }
-  }, [isAuthenticated, masterKeyHex, vaultState.currentFolderId]);
+  }, []);
 
   // Navigate to folder
   const navigateToFolder = (folder: DecryptedFolder | null) => {
@@ -124,8 +136,9 @@ export function useVault() {
 
   // Create New Folder
   const createFolder = async (folderName: string) => {
-    if (!masterKeyHex) throw new Error('MasterKey required');
-    const { ciphertext, nonce } = await cryptoBridge.encryptMetadata(masterKeyHex, folderName);
+    const key = masterKeyHex || authStore.getState().masterKeyHex;
+    if (!key) throw new Error('MasterKey required');
+    const { ciphertext, nonce } = await cryptoBridge.encryptMetadata(key, folderName);
     await foldersApi.createFolder({
       encrypted_name: ciphertext,
       name_nonce: nonce,
@@ -136,8 +149,9 @@ export function useVault() {
 
   // Rename File
   const renameFile = async (fileId: string, newName: string) => {
-    if (!masterKeyHex) throw new Error('MasterKey required');
-    const { ciphertext, nonce } = await cryptoBridge.encryptMetadata(masterKeyHex, newName);
+    const key = masterKeyHex || authStore.getState().masterKeyHex;
+    if (!key) throw new Error('MasterKey required');
+    const { ciphertext, nonce } = await cryptoBridge.encryptMetadata(key, newName);
     await filesApi.updateFile(fileId, {
       encrypted_name: ciphertext,
       name_nonce: nonce,
