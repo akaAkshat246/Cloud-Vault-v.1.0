@@ -10,7 +10,7 @@ export default defineConfig({
       { find: '@', replacement: path.resolve(__dirname, './src') },
       {
         find: /^\.\/libsodium-sumo\.mjs$/,
-        replacement: path.resolve(__dirname, '../../node_modules/libsodium-sumo/dist/modules-sumo-esm/libsodium-sumo.mjs'),
+        replacement: path.resolve(__dirname, '../../node_modules/libsodium-wrappers-sumo/dist/modules-sumo-esm/libsodium-sumo.mjs'),
       },
     ],
   },

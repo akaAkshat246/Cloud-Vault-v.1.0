@@ -274,3 +274,4 @@ Distributed under the MIT License. See `LICENSE` for more information.
 <div align="center">
   <sub>Engineered with precision for absolute zero-knowledge privacy.</sub>
 </div>
+

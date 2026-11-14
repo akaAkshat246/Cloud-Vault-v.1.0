@@ -1,31 +1,53 @@
 /**
- * Patch libsodium-wrappers-sumo for ESM compatibility with libsodium-sumo
+ * Patch libsodium-wrappers-sumo and libsodium-sumo for ESM compatibility
  * Fixes: "Cannot read properties of undefined (reading 'then')"
  */
 
 const fs = require('fs');
 const path = require('path');
 
-const targetDir = path.resolve(__dirname, '../node_modules/libsodium-wrappers-sumo/dist/modules-sumo-esm');
-const sourceFile = path.resolve(__dirname, '../node_modules/libsodium-sumo/dist/modules-sumo-esm/libsodium-sumo.mjs');
-
-if (fs.existsSync(targetDir) && fs.existsSync(sourceFile)) {
-  const rawTarget = path.join(targetDir, 'libsodium-sumo-raw.mjs');
-  const wrapperTarget = path.join(targetDir, 'libsodium-sumo.mjs');
-
-  fs.copyFileSync(sourceFile, rawTarget);
-
-  const adapter = `import A from './libsodium-sumo-raw.mjs';
+const adapterContent = `import A from './libsodium-sumo-raw.mjs';
 
 const instance = {};
-instance.ready = A(instance).then((mod) => {
-  Object.assign(instance, mod);
+const readyPromise = Promise.resolve(A(instance)).then((mod) => {
+  if (mod && mod !== instance) {
+    Object.assign(instance, mod);
+  }
   return instance;
 });
+instance.ready = readyPromise;
 
 export default instance;
 `;
 
-  fs.writeFileSync(wrapperTarget, adapter, 'utf8');
+// 1. Patch libsodium-wrappers-sumo/dist/modules-sumo-esm
+const wrappersTargetDir = path.resolve(__dirname, '../node_modules/libsodium-wrappers-sumo/dist/modules-sumo-esm');
+const sumoSourceFile = path.resolve(__dirname, '../node_modules/libsodium-sumo/dist/modules-sumo-esm/libsodium-sumo.mjs');
+
+if (fs.existsSync(wrappersTargetDir)) {
+  const rawTarget = path.join(wrappersTargetDir, 'libsodium-sumo-raw.mjs');
+  const wrapperTarget = path.join(wrappersTargetDir, 'libsodium-sumo.mjs');
+
+  if (!fs.existsSync(rawTarget) && fs.existsSync(sumoSourceFile)) {
+    fs.copyFileSync(sumoSourceFile, rawTarget);
+  }
+
+  fs.writeFileSync(wrapperTarget, adapterContent, 'utf8');
   console.log('[patch-libsodium] Successfully patched libsodium-wrappers-sumo ESM adapter.');
 }
+
+// 2. Patch libsodium-sumo/dist/modules-sumo-esm
+const sumoTargetDir = path.resolve(__dirname, '../node_modules/libsodium-sumo/dist/modules-sumo-esm');
+if (fs.existsSync(sumoTargetDir)) {
+  const rawSumoTarget = path.join(sumoTargetDir, 'libsodium-sumo-raw.mjs');
+  const sumoTarget = path.join(sumoTargetDir, 'libsodium-sumo.mjs');
+
+  if (!fs.existsSync(rawSumoTarget)) {
+    fs.copyFileSync(sumoTarget, rawSumoTarget);
+  }
+
+  fs.writeFileSync(sumoTarget, adapterContent, 'utf8');
+  console.log('[patch-libsodium] Successfully patched libsodium-sumo ESM adapter.');
+}
+
+

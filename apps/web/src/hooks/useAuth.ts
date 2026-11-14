@@ -72,7 +72,7 @@ export function useAuth() {
       const wrappedWithRecovery = await cryptoBridge.wrapMasterKeyWithRecovery(masterKeyHex, mnemonic);
 
       // Step E: Register with backend (sending only AuthKey and wrapped blobs)
-      const authRes = await authApi.register({
+      await authApi.register({
         email,
         authKey: authKeyHex,
         salt: saltHex,
@@ -84,11 +84,15 @@ export function useAuth() {
         recovery_master_key_nonce: wrappedWithRecovery.iv,
       });
 
-      authStore.setAuthenticated(authRes.user as any, authRes.accessToken, masterKeyHex, kekHex);
+      // Step F: Authenticate session with backend to acquire accessToken & cookie
+      const loginRes = await authApi.login(email, authKeyHex);
+
+      authStore.setAuthenticated(loginRes.user as any, loginRes.accessToken, masterKeyHex, kekHex);
       return { success: true };
     } catch (error: any) {
-      authStore.setLoading(false);
       throw error;
+    } finally {
+      authStore.setLoading(false);
     }
   };
 
