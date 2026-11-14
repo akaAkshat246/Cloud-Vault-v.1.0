@@ -87,6 +87,14 @@ export function useAuth() {
       // Step F: Authenticate session with backend to acquire accessToken & cookie
       const loginRes = await authApi.login(email, authKeyHex);
 
+      // Confirm Recovery Kit since user viewed and confirmed mnemonic in RecoveryModal
+      try {
+        const confirmRes = await authApi.confirmRecovery();
+        loginRes.user.recovery_confirmed_at = confirmRes.recovery_confirmed_at;
+      } catch (confirmErr) {
+        console.warn('[useAuth] Registration recovery confirmation note:', confirmErr);
+      }
+
       authStore.setAuthenticated(loginRes.user as any, loginRes.accessToken, masterKeyHex, kekHex);
       return { success: true };
     } catch (error: any) {

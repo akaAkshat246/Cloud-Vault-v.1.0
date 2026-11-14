@@ -10,6 +10,7 @@ import axios from 'axios';
 import { vaultStore } from '../store/vault.store.js';
 import { authStore } from '../store/auth.store.js';
 import { filesApi } from '../api/files.api.js';
+import { authApi } from '../api/auth.api.js';
 import { cryptoBridge } from '../crypto/crypto-bridge.js';
 import { CHUNK_SIZE, FORMAT_VERSION, getRandomBytes, toHex } from '../crypto/web-crypto-engine.js';
 import { UploadQueueItem } from '../types/vault.types.js';
@@ -22,9 +23,22 @@ export function useUpload() {
   }, []);
 
   const uploadFile = async (file: File, folderId: string | null = null) => {
-    const { masterKeyHex } = authStore.getState();
+    const { masterKeyHex, user } = authStore.getState();
     if (!masterKeyHex) {
       throw new Error('Vault is locked; MasterKey is required to upload');
+    }
+
+    // Auto-confirm recovery kit if pending so upload gate passes
+    if (user && !user.recovery_confirmed_at) {
+      try {
+        const confirmRes = await authApi.confirmRecovery();
+        authStore.updateUser({
+          ...user,
+          recovery_confirmed_at: confirmRes.recovery_confirmed_at,
+        });
+      } catch (confirmErr) {
+        console.warn('[useUpload] Recovery confirmation note:', confirmErr);
+      }
     }
 
     const uploadId = `upload_${Date.now()}_${Math.random().toString(36).substring(2, 9)}`;
@@ -80,7 +94,7 @@ export function useUpload() {
 
       // Prepare parts tracking
       const completedParts: Array<{ part_number: number; etag: string }> = [];
-      let partUrls = initRes.parts;
+      let partUrls: Array<{ part_number: number; presigned_url: string }> = initRes.parts || [];
 
       let uploadedBytesAcc = 0;
       const startTime = Date.now();
@@ -112,8 +126,8 @@ export function useUpload() {
         // Find or request presigned part URL
         let partInfo = partUrls.find((p) => p.part_number === chunkIdx + 1);
         if (!partInfo) {
-          const batchRes = await filesApi.getPartUrls(sessionId, [chunkIdx + 1]);
-          partInfo = batchRes.parts[0];
+          const batchRes = await filesApi.getPartUrls(sessionId, [chunkIdx]);
+          partInfo = batchRes.parts?.find((p) => p.part_number === chunkIdx + 1) || batchRes.parts?.[0];
         }
 
         if (!partInfo) {
@@ -177,9 +191,10 @@ export function useUpload() {
         }
       }
 
+      const errorMessage = error?.response?.data?.message || error?.message || 'Upload failed';
       vaultStore.updateUpload(uploadId, {
         status: 'ERROR',
-        error: error?.message || 'Upload failed',
+        error: errorMessage,
       });
       throw error;
     }

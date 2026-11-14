@@ -37,12 +37,12 @@ export function useDownload() {
       // Step 1: Fetch Download Info & Presigned S3 URL
       const info = await filesApi.getDownloadInfo(file.id);
 
-      // Step 2: Unwrap FEK using MasterKey in Web Worker
+      // Step 2: Unwrap FEK using MasterKey in Web Worker (tag is 16B = 32 hex chars)
       const fekPayload = {
         v: 1,
         iv: info.fek_nonce,
-        tag: info.encrypted_fek.slice(info.encrypted_fek.length - 24),
-        ct: info.encrypted_fek.slice(0, info.encrypted_fek.length - 24),
+        tag: info.encrypted_fek.slice(info.encrypted_fek.length - 32),
+        ct: info.encrypted_fek.slice(0, info.encrypted_fek.length - 32),
       };
 
       const fekHex = await cryptoBridge.unwrapMasterKey(masterKeyHex, fekPayload, 'cloudvault-fek-v1');

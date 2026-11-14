@@ -67,6 +67,7 @@ export class UploadService {
     chunk_size: number;
     total_chunks: number;
     expires_at: Date;
+    parts: Array<{ chunk_index: number; part_number: number; presigned_url: string }>;
   }> {
     const user = await this.userRepo.findOne({ where: { id: userId } });
     if (!user) throw new NotFoundError('User not found');
@@ -171,13 +172,17 @@ export class UploadService {
 
     logger.info({ userId, fileId, s3Key, totalChunks, expectedBytes }, 'Upload initiated and quota reserved');
 
+    const initialIndices = Array.from({ length: Math.min(totalChunks, 100) }, (_, i) => i);
+    const initialParts = await this.getPresignedPartUrls(userId, session.id, initialIndices);
+
     return {
       session_id: session.id,
       file_id: fileId,
       s3_key: s3Key,
       chunk_size: chunkSize,
       total_chunks: totalChunks,
-      expires_at: session.expires_at
+      expires_at: session.expires_at,
+      parts: initialParts
     };
   }
 
