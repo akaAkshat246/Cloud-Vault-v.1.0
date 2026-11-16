@@ -54,6 +54,7 @@ export const VaultLayout: React.FC<VaultLayoutProps> = ({ children }) => {
   const { uploadFile } = useUpload();
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isNewFolderOpen, setIsNewFolderOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -103,26 +104,40 @@ export const VaultLayout: React.FC<VaultLayoutProps> = ({ children }) => {
         className="hidden"
       />
 
-      {/* Mobile Top Header */}
-      <div className="md:hidden flex items-center justify-between p-3.5 bg-slate-900 border-b border-slate-800 sticky top-0 z-40">
-        <div className="flex items-center gap-2.5">
-          <BrandSquircle size={32} />
-          <span className="font-bold text-sm text-slate-100">CloudVault</span>
+      {/* Mobile Top Header with Functional Left Hamburger */}
+      <div className="md:hidden flex items-center justify-between p-3 bg-slate-900 border-b border-slate-800 sticky top-0 z-40">
+        <div className="flex items-center gap-3">
+          <button
+            onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
+            aria-label={isMobileMenuOpen ? 'Close navigation menu' : 'Open navigation menu'}
+            title="Menu"
+            className="p-1.5 rounded-md text-slate-300 hover:text-white bg-slate-800 border border-slate-700 transition-colors"
+          >
+            {isMobileMenuOpen ? <IconX size={18} /> : <IconMenu size={18} />}
+          </button>
+          <div className="flex items-center gap-2">
+            <BrandSquircle size={28} />
+            <span className="font-bold text-sm text-slate-100">CloudVault</span>
+          </div>
         </div>
-        <button
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
-          className="p-1.5 rounded text-slate-400 hover:text-white bg-slate-800 border border-slate-700"
-        >
-          {isMobileMenuOpen ? <IconX size={18} /> : <IconMenu size={18} />}
-        </button>
       </div>
+
+      {/* Mobile Drawer Backdrop */}
+      {isMobileMenuOpen && (
+        <div
+          onClick={() => setIsMobileMenuOpen(false)}
+          className="fixed inset-0 bg-slate-950/70 z-40 md:hidden"
+          aria-hidden="true"
+        />
+      )}
 
       {/* Sidebar Navigation */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 border-r border-slate-800 flex flex-col transition-transform duration-200 md:static md:translate-x-0 ${
-          isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 border-r border-slate-800 flex flex-col transition-all duration-200 md:static ${
+          isMobileMenuOpen
+            ? 'translate-x-0'
+            : '-translate-x-full md:translate-x-0'
+        } ${!isSidebarOpen ? 'md:hidden' : 'md:flex'}`}
       >
         {/* Brand Header */}
         <div className="p-4 border-b border-slate-800 flex items-center gap-3">
@@ -243,16 +258,31 @@ export const VaultLayout: React.FC<VaultLayoutProps> = ({ children }) => {
       <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
         {/* Top Action Header */}
         <header className="p-3 sm:px-6 border-b border-slate-800 bg-slate-900/90 sticky top-0 z-30 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
-          {/* Breadcrumbs Navigation */}
-          <div className="flex items-center gap-1.5 text-xs text-slate-400 overflow-x-auto py-1">
+          {/* Left Controls & Breadcrumbs Navigation */}
+          <div className="flex items-center gap-2.5 overflow-x-auto py-0.5">
+            {/* Functional Hamburger Menu Toggle */}
             <button
-              onClick={() => navigateToFolder(null)}
-              className={`hover:text-slate-100 font-medium transition-colors ${
-                currentFolderId === null ? 'text-white font-semibold' : ''
-              }`}
+              onClick={() => {
+                setIsSidebarOpen(!isSidebarOpen);
+                setIsMobileMenuOpen(!isMobileMenuOpen);
+              }}
+              aria-label={isSidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
+              title={isSidebarOpen ? 'Collapse menu' : 'Expand menu'}
+              className="p-1.5 rounded-md text-slate-400 hover:text-white hover:bg-slate-800 border border-slate-800 transition-colors shrink-0 flex items-center justify-center"
             >
-              Root Vault
+              <IconMenu size={16} />
             </button>
+
+            {/* Breadcrumbs Navigation */}
+            <div className="flex items-center gap-1.5 text-xs text-slate-400 overflow-x-auto py-1">
+              <button
+                onClick={() => navigateToFolder(null)}
+                className={`hover:text-slate-100 font-medium transition-colors ${
+                  currentFolderId === null ? 'text-white font-semibold' : ''
+                }`}
+              >
+                Root Vault
+              </button>
             {breadcrumbs.map((crumb) => (
               <React.Fragment key={crumb.id || 'root'}>
                 <span className="text-slate-600">/</span>
@@ -275,6 +305,7 @@ export const VaultLayout: React.FC<VaultLayoutProps> = ({ children }) => {
                 </button>
               </React.Fragment>
             ))}
+            </div>
           </div>
 
           {/* Search & Actions Bar */}
