@@ -4,6 +4,7 @@ export interface StorageDonutRingProps {
   percentage: number;
   usedText: string;
   totalText: string;
+  subText?: string;
   size?: number; // px size
   strokeWidth?: number;
   className?: string;
@@ -13,6 +14,7 @@ export const StorageDonutRing: React.FC<StorageDonutRingProps> = ({
   percentage,
   usedText,
   totalText,
+  subText = 'allocated',
   size = 120,
   strokeWidth = 10,
   className = '',
@@ -20,7 +22,9 @@ export const StorageDonutRing: React.FC<StorageDonutRingProps> = ({
   const radius = (size - strokeWidth) / 2;
   const circumference = 2 * Math.PI * radius;
   const clampedPct = Math.min(100, Math.max(0, percentage));
-  const strokeDashoffset = circumference - (clampedPct / 100) * circumference;
+  // Guarantee a visible indicator arc (minimum 3%) whenever any storage is used
+  const visualPct = clampedPct > 0 ? Math.max(clampedPct, 3) : 0;
+  const strokeDashoffset = circumference - (visualPct / 100) * circumference;
 
   return (
     <div
@@ -50,13 +54,14 @@ export const StorageDonutRing: React.FC<StorageDonutRingProps> = ({
           strokeDashoffset={strokeDashoffset}
           strokeLinecap="round"
           fill="transparent"
+          className="transition-all duration-500 ease-out"
         />
       </svg>
 
-      {/* Centered Percentage Display */}
-      <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
-        <span className="text-sm font-bold text-slate-100">{usedText}</span>
-        <span className="text-[10px] text-slate-400">allocated</span>
+      {/* Centered Percentage / Usage Display */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center text-center px-1">
+        <span className="text-xs font-bold text-slate-100 truncate max-w-full">{usedText}</span>
+        <span className="text-[10px] text-slate-400">{subText}</span>
       </div>
     </div>
   );

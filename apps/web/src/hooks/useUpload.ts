@@ -175,6 +175,13 @@ export function useUpload() {
       // Step 5: Phase 3 Complete Multipart Upload & Quota Finalization
       await filesApi.completeUpload(sessionId, { parts: completedParts });
 
+      try {
+        const freshUser = await authApi.getMe();
+        authStore.updateUser(freshUser);
+      } catch (e) {
+        // non-blocking user quota refresh
+      }
+
       vaultStore.updateUpload(uploadId, {
         progress: 100,
         status: 'COMPLETED',

@@ -9,8 +9,6 @@ import {
   IconShield,
 } from '../../components/ui/Icons.js';
 import { useAuth } from '../../hooks/useAuth.js';
-import { cryptoBridge } from '../../crypto/crypto-bridge.js';
-import { RecoveryModal } from './RecoveryModal.js';
 import { BrandSquircle } from '../../components/ui/BrandSquircle.js';
 
 export const RegisterPage: React.FC = () => {
@@ -26,10 +24,6 @@ export const RegisterPage: React.FC = () => {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
-
-  // Recovery Kit State
-  const [mnemonic, setMnemonic] = useState('');
-  const [showRecoveryModal, setShowRecoveryModal] = useState(false);
 
   const handleStartRegistration = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -62,21 +56,7 @@ export const RegisterPage: React.FC = () => {
 
     setIsSubmitting(true);
     try {
-      const phrase = await cryptoBridge.generateMnemonic();
-      setMnemonic(phrase);
-      setShowRecoveryModal(true);
-    } catch (err: any) {
-      setError('Failed to generate recovery mnemonic in client memory.');
-    } finally {
-      setIsSubmitting(false);
-    }
-  };
-
-  const handleRecoveryConfirmed = async () => {
-    setShowRecoveryModal(false);
-    setIsSubmitting(true);
-    try {
-      await register(email, password, mnemonic);
+      await register(email, password);
       navigate('/vault');
     } catch (err: any) {
       setError(err?.response?.data?.error?.message || err?.message || 'Registration failed.');
@@ -210,7 +190,7 @@ export const RegisterPage: React.FC = () => {
             className="w-full py-2.5 text-xs font-semibold text-white bg-sky-600 hover:bg-sky-500 disabled:opacity-50 rounded-md transition-colors flex items-center justify-center gap-2"
           >
             <IconShield size={15} />
-            <span>{isSubmitting ? 'Generating Keys...' : 'Generate 24-Word Recovery Kit'}</span>
+            <span>{isSubmitting ? 'Creating Encrypted Vault...' : 'Create Encrypted Vault'}</span>
           </button>
         </form>
 
@@ -221,15 +201,6 @@ export const RegisterPage: React.FC = () => {
           </Link>
         </div>
       </div>
-
-      {showRecoveryModal && (
-        <RecoveryModal
-          mnemonic={mnemonic}
-          isOpen={showRecoveryModal}
-          onConfirm={handleRecoveryConfirmed}
-          onClose={() => setShowRecoveryModal(false)}
-        />
-      )}
     </div>
   );
 };

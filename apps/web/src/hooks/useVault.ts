@@ -7,6 +7,7 @@ import { vaultStore, VaultState } from '../store/vault.store.js';
 import { authStore } from '../store/auth.store.js';
 import { filesApi } from '../api/files.api.js';
 import { foldersApi } from '../api/folders.api.js';
+import { authApi } from '../api/auth.api.js';
 import { cryptoBridge } from '../crypto/crypto-bridge.js';
 import { DecryptedFile, DecryptedFolder, BreadcrumbItem } from '../types/vault.types.js';
 
@@ -105,6 +106,14 @@ export function useVault() {
       );
 
       vaultStore.setVaultContent(decryptedFolders, decryptedFiles);
+
+      // Refresh live storage quota from backend
+      try {
+        const freshUser = await authApi.getMe();
+        authStore.updateUser(freshUser);
+      } catch (userErr) {
+        // non-blocking
+      }
     } catch (err: any) {
       vaultStore.setError(err?.message || 'Failed to refresh vault');
     } finally {

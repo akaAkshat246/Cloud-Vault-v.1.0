@@ -53,9 +53,11 @@ export function useAuth() {
   };
 
   // 2. Zero-Knowledge Registration Flow with 24-Word Emergency Kit
-  const register = async (email: string, password: string, mnemonic: string) => {
+  const register = async (email: string, password: string, mnemonic?: string) => {
     authStore.setLoading(true);
     try {
+      const recoveryPhrase = mnemonic || (await cryptoBridge.generateMnemonic());
+
       // Step A: Generate random 16-byte KDF salt & 32-byte MasterKey
       const saltBytes = getRandomBytes(16);
       const saltHex = toHex(saltBytes);
@@ -69,7 +71,7 @@ export function useAuth() {
       const wrappedWithKek = await cryptoBridge.wrapMasterKey(kekHex, masterKeyHex, 'cloudvault-master-key-wrap-v1');
 
       // Step D: Wrap MasterKey with 24-Word Recovery Phrase for emergency recovery
-      const wrappedWithRecovery = await cryptoBridge.wrapMasterKeyWithRecovery(masterKeyHex, mnemonic);
+      const wrappedWithRecovery = await cryptoBridge.wrapMasterKeyWithRecovery(masterKeyHex, recoveryPhrase);
 
       // Step E: Register with backend (sending only AuthKey and wrapped blobs)
       await authApi.register({

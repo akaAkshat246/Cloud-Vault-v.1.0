@@ -41,6 +41,7 @@ export const VaultLayout: React.FC<VaultLayoutProps> = ({ children }) => {
   const location = useLocation();
   const { user, logout } = useAuth();
   const {
+    files,
     breadcrumbs,
     currentFolderId,
     searchTerm,
@@ -56,9 +57,20 @@ export const VaultLayout: React.FC<VaultLayoutProps> = ({ children }) => {
   const [isNewFolderOpen, setIsNewFolderOpen] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const usedBytes = user?.storage_used_bytes || 0;
-  const quotaBytes = user?.storage_quota_bytes || 5368709120; // 5 GB
-  const usagePct = Math.min(100, Math.round((Number(usedBytes) / Number(quotaBytes)) * 100));
+  const userStoredBytes = Number(user?.storage_used_bytes) || 0;
+  const filesTotalBytes = files.reduce((acc, f) => acc + (Number(f.sizeBytes) || 0), 0);
+  const usedBytes = Math.max(userStoredBytes, filesTotalBytes);
+  const quotaBytes = Number(user?.storage_quota_bytes) || 5368709120; // 5 GB
+
+  const rawPct = quotaBytes > 0 ? (usedBytes / quotaBytes) * 100 : 0;
+  const usagePct = Math.min(100, rawPct);
+  const formattedPct = usagePct === 0
+    ? '0%'
+    : usagePct < 0.1
+      ? '<0.1%'
+      : usagePct < 10
+        ? `${usagePct.toFixed(1)}%`
+        : `${Math.round(usagePct)}%`;
 
   const handleLogout = async () => {
     await logout();
@@ -165,28 +177,37 @@ export const VaultLayout: React.FC<VaultLayoutProps> = ({ children }) => {
           </Link>
         </nav>
 
-        {/* Storage Allocation Widget */}
-        <div className="p-3.5 m-3 rounded-lg bg-slate-950 border border-slate-800">
-          <div className="flex items-center justify-between mb-2">
+        {/* Storage Allocation Widget with Progress Bar */}
+        <div className="p-3.5 m-3 rounded-lg bg-slate-950 border border-slate-800 space-y-2.5">
+          <div className="flex items-center justify-between">
             <span className="text-[11px] font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
               <IconHardDrive size={13} className="text-sky-400" />
-              <span>Quota</span>
+              <span>Storage Bar</span>
             </span>
-            <span className="text-xs font-mono font-semibold text-sky-400">{usagePct}%</span>
+            <span className="text-xs font-mono font-semibold text-sky-400">{formattedPct}</span>
+          </div>
+
+          {/* Storage Progress Bar */}
+          <div className="w-full bg-slate-900 border border-slate-800 rounded-full h-2 overflow-hidden p-0.5">
+            <div
+              className="bg-sky-500 h-full rounded-full transition-all duration-500"
+              style={{ width: `${Math.max(usedBytes > 0 ? 3 : 0, usagePct)}%` }}
+            />
           </div>
 
           <div className="flex justify-center py-1">
             <StorageDonutRing
               percentage={usagePct}
-              usedText={formatBytes(usedBytes)}
+              usedText={usedBytes > 0 ? formatBytes(usedBytes) : '0%'}
               totalText={formatBytes(quotaBytes)}
+              subText="allocated"
               size={96}
               strokeWidth={8}
             />
           </div>
 
-          <div className="mt-1.5 text-center">
-            <p className="text-[10px] text-slate-400">Total: {formatBytes(quotaBytes)} Quota</p>
+          <div className="text-center text-[10px] text-slate-400 font-mono">
+            {formatBytes(usedBytes)} of {formatBytes(quotaBytes)}
           </div>
         </div>
 

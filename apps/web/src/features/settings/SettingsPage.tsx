@@ -130,9 +130,17 @@ export const SettingsPage: React.FC = () => {
     }
   };
 
-  const usedBytes = user?.storage_used_bytes || 0;
-  const quotaBytes = user?.storage_quota_bytes || 5368709120;
-  const usagePct = Math.min(100, Math.round((Number(usedBytes) / Number(quotaBytes)) * 100));
+  const usedBytes = Number(user?.storage_used_bytes) || 0;
+  const quotaBytes = Number(user?.storage_quota_bytes) || 5368709120;
+  const rawPct = quotaBytes > 0 ? (usedBytes / quotaBytes) * 100 : 0;
+  const usagePct = Math.min(100, rawPct);
+  const formattedPct = usagePct === 0
+    ? '0%'
+    : usagePct < 0.1
+      ? '<0.1%'
+      : usagePct < 10
+        ? `${usagePct.toFixed(1)}%`
+        : `${Math.round(usagePct)}%`;
 
   return (
     <div className="max-w-4xl mx-auto space-y-8 pb-12">
@@ -162,8 +170,9 @@ export const SettingsPage: React.FC = () => {
           <div className="flex items-center gap-4">
             <StorageDonutRing
               percentage={usagePct}
-              usedText={`${usagePct}%`}
+              usedText={usedBytes > 0 ? formatBytes(usedBytes) : '0%'}
               totalText={formatBytes(quotaBytes)}
+              subText="allocated"
               size={100}
               strokeWidth={10}
             />
@@ -172,7 +181,7 @@ export const SettingsPage: React.FC = () => {
 
         <div className="pt-6 grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs">
           <div className="p-4 rounded-md bg-slate-950/60 border border-slate-800">
-            <span className="text-slate-400 block mb-1">Used Storage</span>
+            <span className="text-slate-400 block mb-1">Used Storage ({formattedPct})</span>
             <span className="font-bold text-slate-100 text-sm">{formatBytes(usedBytes)}</span>
           </div>
           <div className="p-4 rounded-md bg-slate-950/60 border border-slate-800">

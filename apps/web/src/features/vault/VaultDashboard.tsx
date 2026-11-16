@@ -30,9 +30,21 @@ export const VaultDashboard: React.FC = () => {
     refreshVault();
   }, [refreshVault]);
 
-  const usedBytes = user?.storage_used_bytes || 0;
-  const quotaBytes = user?.storage_quota_bytes || 5368709120; // 5 GB
-  const usagePct = Math.min(100, Math.round((Number(usedBytes) / Number(quotaBytes)) * 100));
+  const userStoredBytes = Number(user?.storage_used_bytes) || 0;
+  const filesTotalBytes = files.reduce((acc, f) => acc + (Number(f.sizeBytes) || 0), 0);
+  const usedBytes = Math.max(userStoredBytes, filesTotalBytes);
+  const quotaBytes = Number(user?.storage_quota_bytes) || 5368709120; // 5 GB
+
+  // Real percentage with precision
+  const rawPct = quotaBytes > 0 ? (usedBytes / quotaBytes) * 100 : 0;
+  const usagePct = Math.min(100, rawPct);
+  const formattedPct = usagePct === 0
+    ? '0%'
+    : usagePct < 0.1
+      ? '<0.1%'
+      : usagePct < 10
+        ? `${usagePct.toFixed(1)}%`
+        : `${Math.round(usagePct)}%`;
 
   const handleFileSelect = async (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files.length > 0) {
@@ -86,22 +98,38 @@ export const VaultDashboard: React.FC = () => {
 
       {/* Top Metrics Cards Row (2 Structured Cards, NOT 3 in a row) */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* Storage Allocation Card */}
-        <div className="p-5 bg-slate-900 border border-slate-800 rounded-lg flex items-center justify-between gap-4">
-          <div className="flex flex-col justify-between h-full space-y-3">
+        {/* Storage Allocation Card with Dynamic Bar */}
+        <div className="p-5 bg-slate-900 border border-slate-800 rounded-lg flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6">
+          <div className="flex-1 space-y-3 w-full">
             <div>
               <span className="text-xs font-semibold text-sky-400 uppercase tracking-wider block mb-1">
                 Storage Allocation
               </span>
-              <h3 className="text-lg font-bold text-slate-100">
-                {formatBytes(usedBytes)} <span className="text-xs font-normal text-slate-400">used</span>
+              <h3 className="text-lg font-bold text-slate-100 flex items-baseline gap-2">
+                <span>{formatBytes(usedBytes)}</span>
+                <span className="text-xs font-normal text-slate-400">used ({formattedPct})</span>
               </h3>
-              <p className="text-xs text-slate-400 mt-1">
+              <p className="text-xs text-slate-400 mt-0.5">
                 Out of {formatBytes(quotaBytes)} quota. Raw ciphertext stored on private S3.
               </p>
             </div>
 
-            <div className="flex items-center gap-2">
+            {/* Storage Progress Bar */}
+            <div className="w-full max-w-sm space-y-1.5 pt-0.5">
+              <div className="w-full bg-slate-950 border border-slate-800 rounded-full h-2.5 overflow-hidden p-0.5">
+                <div
+                  className="bg-sky-500 h-full rounded-full transition-all duration-500"
+                  style={{ width: `${Math.max(usedBytes > 0 ? 3 : 0, usagePct)}%` }}
+                />
+              </div>
+              <div className="flex justify-between text-[11px] text-slate-400 font-mono">
+                <span>{formatBytes(usedBytes)} used</span>
+                <span className="text-sky-400 font-semibold">{formattedPct}</span>
+                <span>{formatBytes(quotaBytes)} quota</span>
+              </div>
+            </div>
+
+            <div className="flex items-center gap-2 pt-0.5">
               <span className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded bg-emerald-950/60 border border-emerald-800/60 text-xs font-medium text-emerald-400">
                 <IconShieldCheck size={13} />
                 <span>Zero Plaintext Stored</span>
@@ -109,12 +137,13 @@ export const VaultDashboard: React.FC = () => {
             </div>
           </div>
 
-          <div className="shrink-0 pr-2">
+          <div className="shrink-0 self-center sm:self-auto pr-2">
             <StorageDonutRing
               percentage={usagePct}
-              usedText={`${usagePct}%`}
-              totalText="100%"
-              size={100}
+              usedText={usedBytes > 0 ? formatBytes(usedBytes) : '0%'}
+              totalText={formatBytes(quotaBytes)}
+              subText="allocated"
+              size={104}
               strokeWidth={9}
             />
           </div>
