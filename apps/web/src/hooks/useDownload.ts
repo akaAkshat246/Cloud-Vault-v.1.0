@@ -37,13 +37,20 @@ export function useDownload() {
 
     const fekHex = await cryptoBridge.unwrapMasterKey(masterKeyHex, fekPayload, 'cloudvault-fek-v1');
 
-    // Step 3: Fetch Encrypted Wire Payload directly from S3 Presigned URL
-    const s3Res = await axios.get(info.download_url, {
-      responseType: 'arraybuffer',
-    });
+    // Step 3: Fetch Encrypted Wire Payload directly from S3 or via secure fallback stream
+    let rawCiphertextBuffer: Uint8Array;
+    try {
+      const s3Res = await axios.get(info.download_url, {
+        responseType: 'arraybuffer',
+      });
+      rawCiphertextBuffer = new Uint8Array(s3Res.data);
+    } catch (s3Err) {
+      console.warn('[useDownload] Direct S3 download blocked/failed; falling back to vault content stream:', s3Err);
+      const fallbackData = await filesApi.downloadContentStream(file.id);
+      rawCiphertextBuffer = new Uint8Array(fallbackData);
+    }
 
-    const rawCiphertextBuffer = new Uint8Array(s3Res.data);
-    const totalChunks = info.total_chunks;
+    const totalChunks = (info as any).total_chunks || (info as any).chunk_count || file.totalChunks || 1;
     const formatVersion = info.format_version || 1;
     const wireChunkSize = CHUNK_SIZE + 28;
 

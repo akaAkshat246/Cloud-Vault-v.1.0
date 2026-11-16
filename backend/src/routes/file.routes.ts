@@ -2,7 +2,8 @@ import { Router, Request, Response, NextFunction } from 'express';
 import { authenticate } from '../middleware/authenticate.js';
 import { uploadService } from '../services/upload.service.js';
 import { fileService } from '../services/file.service.js';
-import { BadRequestError } from '../utils/errors.js';
+import { storageService } from '../services/storage.service.js';
+import { BadRequestError, NotFoundError } from '../utils/errors.js';
 
 export const fileRouter = Router();
 
@@ -119,6 +120,24 @@ fileRouter.get('/files/:id/download-info', async (req: Request, res: Response, n
     const fileId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
     const info = await fileService.getDownloadInfo(req.user!.id, fileId);
     res.status(200).json(info);
+  } catch (error) {
+    next(error);
+  }
+});
+
+// Stream Raw Ciphertext Binary for Client-Side Zero-Knowledge Decryption & Download Fallback
+fileRouter.get('/files/:id/content', async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const fileId = Array.isArray(req.params.id) ? req.params.id[0] : req.params.id;
+    const file = await fileService.getFile(req.user!.id, fileId);
+    if (!file) throw new NotFoundError('File not found');
+
+    res.setHeader('Content-Type', 'application/octet-stream');
+    res.setHeader('Content-Length', file.size_bytes);
+    res.setHeader('Cache-Control', 'no-store');
+
+    const stream = await storageService.getObjectStream(file.s3_key);
+    stream.pipe(res);
   } catch (error) {
     next(error);
   }

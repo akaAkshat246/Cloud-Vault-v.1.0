@@ -61,6 +61,14 @@ export const filesApi = {
     return res.data;
   },
 
+  // 7b. Secure Ciphertext Stream Fallback
+  downloadContentStream: async (fileId: string): Promise<ArrayBuffer> => {
+    const res = await apiClient.get<ArrayBuffer>(`/v1/files/${fileId}/content`, {
+      responseType: 'arraybuffer',
+    });
+    return res.data;
+  },
+
   // 8. Soft Delete (Move to Trash)
   trashFile: async (fileId: string): Promise<void> => {
     await apiClient.delete(`/v1/files/${fileId}`);

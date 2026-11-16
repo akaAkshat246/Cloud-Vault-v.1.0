@@ -9,7 +9,9 @@ export interface FileDownloadInfo {
   file_id: string;
   format_version: number;
   ciphertext_size_bytes: string;
+  size_bytes?: string;
   chunk_count: number;
+  total_chunks?: number;
   encrypted_fek: string;
   fek_nonce: string;
   encrypted_name: string;
@@ -73,7 +75,9 @@ export class FileService {
       file_id: file.id,
       format_version: file.format_version,
       ciphertext_size_bytes: file.size_bytes,
+      size_bytes: file.size_bytes,
       chunk_count: file.chunk_count,
+      total_chunks: file.chunk_count,
       encrypted_fek: file.encrypted_fek,
       fek_nonce: file.fek_nonce,
       encrypted_name: file.encrypted_name,
