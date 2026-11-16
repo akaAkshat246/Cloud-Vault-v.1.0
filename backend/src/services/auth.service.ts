@@ -22,6 +22,7 @@ import {
 } from '../utils/errors.js';
 import { logger } from '../utils/logger.js';
 import { emailService } from './email.service.js';
+import { storageService } from './storage.service.js';
 
 export interface RegisterDTO {
   email: string;
@@ -675,6 +676,48 @@ export class AuthService {
     await this.recordAudit(user.id, 'AUTH_RESEND_VERIFICATION', 'SUCCESS', clientInfo);
 
     return genericResponse;
+  }
+
+  /**
+   * GDPR Article 17: Right to Erasure / Permanent Account Deletion
+   * Irrevocably purges user account, sessions, file metadata, and encrypted binaries from S3/MinIO.
+   */
+  async deleteAccount(
+    userId: string,
+    confirmationText: string,
+    clientInfo: ClientMetadata = {}
+  ): Promise<void> {
+    if (confirmationText !== 'DELETE MY ENCRYPTED VAULT') {
+      throw new BadRequestError('Confirmation string mismatch. You must explicitly type "DELETE MY ENCRYPTED VAULT"');
+    }
+
+    const user = await this.userRepo.findOne({ where: { id: userId } });
+    if (!user) throw new NotFoundError('User not found');
+
+    // Retrieve all user files and delete physical encrypted payloads from S3
+    const files = await this.fileRepo.find({ where: { user: { id: userId } } });
+    for (const f of files) {
+      if (f.s3_key) {
+        try {
+          await storageService.deleteObject(f.s3_key);
+        } catch (err) {
+          logger.warn(`Failed to delete S3 object ${f.s3_key} during account erasure: ${err}`);
+        }
+      }
+    }
+
+    // Delete associated database records
+    await this.fileRepo.delete({ user: { id: userId } });
+    await this.folderRepo.delete({ user: { id: userId } });
+    await this.tokenRepo.delete({ user: { id: userId } });
+    await this.userRepo.delete(userId);
+
+    await this.recordAudit(null, 'AUTH_GDPR_ACCOUNT_DELETION', 'SUCCESS', clientInfo, {
+      erased_user_id: userId,
+      files_purged: files.length
+    });
+
+    logger.info(`User account ${userId} permanently erased under GDPR Article 17.`);
   }
 
   private async recordAudit(

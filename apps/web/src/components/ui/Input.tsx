@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
-import { Eye, EyeOff } from 'lucide-react';
+import { IconEye, IconEyeOff } from './Icons.js';
 
 export interface InputProps extends React.InputHTMLAttributes<HTMLInputElement> {
   label?: string;
@@ -20,7 +20,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     return (
       <div className="w-full">
         {label && (
-          <label htmlFor={inputId} className="block text-xs font-semibold text-[#A3A1BD] mb-1.5 uppercase tracking-wider">
+          <label htmlFor={inputId} className="block text-xs font-semibold text-slate-300 mb-1.5 uppercase tracking-wider">
             {label}
           </label>
         )}
@@ -31,10 +31,10 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
             type={actualType}
             className={twMerge(
               clsx(
-                'w-full bg-[#161226] border border-[#352C55] rounded-xl px-4 py-2.5 text-sm text-white placeholder-[#8D8DA5]',
-                'focus:outline-none focus:ring-2 focus:ring-[#8F6BFF]/40 focus:border-[#8F6BFF] transition-all',
-                isPassword && 'pr-11',
-                error && 'border-red-500 focus:ring-red-500/50 focus:border-red-500',
+                'w-full bg-slate-900 border border-slate-700 rounded-md px-3.5 py-2 text-sm text-slate-100 placeholder-slate-500',
+                'focus:outline-none focus:ring-1 focus:ring-sky-500 focus:border-sky-500 transition-colors',
+                isPassword && 'pr-10',
+                error && 'border-red-500 focus:ring-red-500 focus:border-red-500',
                 className
               )
             )}
@@ -43,18 +43,18 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           {isPassword && (
             <button
               type="button"
-              tabIndex={-1}
+              aria-label={showPassword ? 'Hide password' : 'Show password'}
               onClick={() => setShowPassword(!showPassword)}
-              className="absolute right-3.5 top-1/2 -translate-y-1/2 text-[#8D8DA5] hover:text-[#B090F0] transition-colors"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-200 transition-colors p-1"
             >
-              {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              {showPassword ? <IconEyeOff size={16} /> : <IconEye size={16} />}
             </button>
           )}
         </div>
         {error ? (
           <p className="mt-1.5 text-xs text-red-400">{error}</p>
         ) : helperText ? (
-          <p className="mt-1.5 text-xs text-[#8D8DA5]">{helperText}</p>
+          <p className="mt-1.5 text-xs text-slate-400">{helperText}</p>
         ) : null}
       </div>
     );

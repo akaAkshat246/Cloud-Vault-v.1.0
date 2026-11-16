@@ -166,12 +166,19 @@ export function useAuth() {
     }
   };
 
+  // 6. Delete Account & Permanent Erasure (GDPR Article 17)
+  const deleteAccount = async (confirmationText: string) => {
+    await authApi.deleteAccount(confirmationText);
+    authStore.clearAuth();
+  };
+
   return {
     ...state,
     login,
     register,
     logout,
     changePassword,
+    deleteAccount,
     checkSession,
   };
 }

@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { UploadCloud } from 'lucide-react';
+import { IconUploadCloud } from '../../components/ui/Icons.js';
 import { useUpload } from '../../hooks/useUpload.js';
 import { useVault } from '../../hooks/useVault.js';
 
@@ -65,12 +65,12 @@ export const UploadZone: React.FC<UploadZoneProps> = ({ children }) => {
     >
       {/* Visual Drag Overlay */}
       {isDragging && (
-        <div className="absolute inset-0 z-50 rounded-2xl bg-teal-950/80 backdrop-blur-md border-2 border-dashed border-teal-400 flex flex-col items-center justify-center p-6 text-center animate-in fade-in duration-150">
-          <div className="w-16 h-16 rounded-2xl bg-teal-500/20 border border-teal-400/40 flex items-center justify-center text-teal-300 mb-3 shadow-lg">
-            <UploadCloud size={32} />
+        <div className="absolute inset-0 z-50 rounded-lg bg-slate-950/90 border-2 border-dashed border-sky-400 flex flex-col items-center justify-center p-6 text-center">
+          <div className="w-14 h-14 rounded-lg bg-slate-900 border border-sky-500/40 flex items-center justify-center text-sky-400 mb-3">
+            <IconUploadCloud size={28} />
           </div>
-          <h3 className="text-lg font-bold text-white mb-1">Drop files to encrypt and upload</h3>
-          <p className="text-xs text-teal-300">Files will be encrypted with AES-256-GCM before leaving your device</p>
+          <h3 className="text-sm font-semibold text-white mb-1">Drop files to encrypt and upload</h3>
+          <p className="text-xs text-slate-400">Files are chunked and encrypted with unique FEKs before transmission</p>
         </div>
       )}
 

@@ -1,5 +1,5 @@
 import React from 'react';
-import { FolderLock } from 'lucide-react';
+import { IconFolderLock } from '../ui/Icons.js';
 import { Button } from '../ui/Button.js';
 
 export interface EmptyStateProps {
@@ -18,12 +18,12 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   onAction,
 }) => {
   return (
-    <div className="flex flex-col items-center justify-center p-12 text-center border-2 border-dashed border-slate-800 rounded-2xl bg-slate-900/20">
-      <div className="w-16 h-16 rounded-2xl bg-teal-950/40 border border-teal-500/20 flex items-center justify-center text-teal-400 mb-4 shadow-inner">
-        {icon || <FolderLock size={32} />}
+    <div className="flex flex-col items-center justify-center p-12 text-center border border-dashed border-slate-800 rounded-lg bg-slate-900/40">
+      <div className="w-12 h-12 rounded-lg bg-slate-800 border border-slate-700 flex items-center justify-center text-sky-400 mb-3">
+        {icon || <IconFolderLock size={24} />}
       </div>
-      <h3 className="text-base font-semibold text-slate-200 mb-1">{title}</h3>
-      <p className="text-xs text-slate-400 max-w-sm mb-6">{description}</p>
+      <h3 className="text-sm font-semibold text-slate-200 mb-1">{title}</h3>
+      <p className="text-xs text-slate-400 max-w-sm mb-5">{description}</p>
       {actionLabel && onAction && (
         <Button variant="primary" size="sm" onClick={onAction}>
           {actionLabel}
@@ -32,4 +32,3 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
     </div>
   );
 };
-

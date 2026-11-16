@@ -13,8 +13,8 @@ export const StorageDonutRing: React.FC<StorageDonutRingProps> = ({
   percentage,
   usedText,
   totalText,
-  size = 140,
-  strokeWidth = 14,
+  size = 120,
+  strokeWidth = 10,
   className = '',
 }) => {
   const radius = (size - strokeWidth) / 2;
@@ -25,22 +25,16 @@ export const StorageDonutRing: React.FC<StorageDonutRingProps> = ({
   return (
     <div
       style={{ width: size, height: size }}
+      title={`Storage: ${usedText} used of ${totalText}`}
       className={`relative flex items-center justify-center shrink-0 ${className}`}
     >
       <svg width={size} height={size} className="transform -rotate-90">
-        <defs>
-          <linearGradient id="ringGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-            <stop offset="0%" stopColor="#A784FF" />
-            <stop offset="100%" stopColor="#8F6BFF" />
-          </linearGradient>
-        </defs>
-
         {/* Background Track */}
         <circle
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke="#2D234D"
+          stroke="#1E293B"
           strokeWidth={strokeWidth}
           fill="transparent"
         />
@@ -50,21 +44,20 @@ export const StorageDonutRing: React.FC<StorageDonutRingProps> = ({
           cx={size / 2}
           cy={size / 2}
           r={radius}
-          stroke="url(#ringGradient)"
+          stroke="#0284C7"
           strokeWidth={strokeWidth}
           strokeDasharray={circumference}
           strokeDashoffset={strokeDashoffset}
           strokeLinecap="round"
           fill="transparent"
-          className="transition-all duration-700 ease-out"
         />
       </svg>
 
-      <div className="absolute inset-0 flex flex-col items-center justify-center text-center select-none pointer-events-none">
-        <span className="text-xl font-bold text-white tracking-tight">{usedText}</span>
-        <span className="text-xs text-[#A3A1BD]">of {totalText}</span>
+      {/* Centered Percentage Display */}
+      <div className="absolute inset-0 flex flex-col items-center justify-center text-center">
+        <span className="text-sm font-bold text-slate-100">{usedText}</span>
+        <span className="text-[10px] text-slate-400">allocated</span>
       </div>
     </div>
   );
 };
-

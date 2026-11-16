@@ -8,6 +8,9 @@ import { VerifyEmailPage } from '../features/verification/VerifyEmailPage.js';
 import { VaultLayout } from '../features/vault/VaultLayout.js';
 import { VaultDashboard } from '../features/vault/VaultDashboard.js';
 import { SettingsPage } from '../features/settings/SettingsPage.js';
+import { TermsOfServicePage } from '../features/compliance/TermsOfServicePage.js';
+import { PrivacyPolicyPage } from '../features/compliance/PrivacyPolicyPage.js';
+import { RefundPolicyPage } from '../features/compliance/RefundPolicyPage.js';
 
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, masterKeyHex } = useAuth();
@@ -28,6 +31,9 @@ export const AppRoutes: React.FC = () => {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/verify-email" element={<VerifyEmailPage />} />
+      <Route path="/terms" element={<TermsOfServicePage />} />
+      <Route path="/privacy" element={<PrivacyPolicyPage />} />
+      <Route path="/refund" element={<RefundPolicyPage />} />
 
       {/* Protected Vault Routes */}
       <Route

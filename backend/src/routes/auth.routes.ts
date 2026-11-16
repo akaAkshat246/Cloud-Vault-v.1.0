@@ -226,3 +226,15 @@ authRouter.get('/me', authenticate, async (req: Request, res: Response, next: Ne
     next(error);
   }
 });
+
+// 16. Permanent Account Deletion (GDPR Article 17 Right to Erasure)
+authRouter.delete('/account', authenticate, async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const { confirmationText } = req.body;
+    await authService.deleteAccount(req.user!.id, confirmationText, getClientMeta(req));
+    res.clearCookie('refresh_token');
+    res.status(200).json({ message: 'Account and all encrypted data permanently deleted.' });
+  } catch (error) {
+    next(error);
+  }
+});

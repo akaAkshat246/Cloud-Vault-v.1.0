@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { FolderPlus } from 'lucide-react';
+import { IconFolderPlus } from '../../components/ui/Icons.js';
 import { Modal } from '../../components/ui/Modal.js';
 import { Input } from '../../components/ui/Input.js';
 import { Button } from '../../components/ui/Button.js';
@@ -55,7 +55,7 @@ export const CreateFolderModal: React.FC<CreateFolderModalProps> = ({ isOpen, on
             Cancel
           </Button>
           <Button type="submit" variant="primary" size="sm" isLoading={isLoading}>
-            <FolderPlus size={15} />
+            <IconFolderPlus size={15} />
             <span>Create Folder</span>
           </Button>
         </div>

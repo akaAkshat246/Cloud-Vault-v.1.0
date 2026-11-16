@@ -1,5 +1,10 @@
 import React, { useState } from 'react';
-import { Copy, Check, AlertTriangle, ShieldCheck } from 'lucide-react';
+import {
+  IconCopy,
+  IconCheck,
+  IconAlertTriangle,
+  IconShieldCheck,
+} from '../../components/ui/Icons.js';
 import { Modal } from '../../components/ui/Modal.js';
 import { Button } from '../../components/ui/Button.js';
 
@@ -29,63 +34,63 @@ export const RecoveryModal: React.FC<RecoveryModalProps> = ({
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} title="Save Your 24-Word Recovery Phrase">
-      <div className="space-y-6">
-        <div className="p-4 rounded-2xl bg-amber-500/10 border border-amber-500/30 flex items-start gap-3 text-xs text-amber-200">
-          <AlertTriangle size={18} className="shrink-0 text-amber-400 mt-0.5" />
+      <div className="space-y-5 text-slate-200">
+        <div className="p-3.5 rounded bg-amber-950/40 border border-amber-800/50 flex items-start gap-2.5 text-xs text-amber-200">
+          <IconAlertTriangle size={16} className="shrink-0 text-amber-400 mt-0.5" />
           <p className="leading-relaxed">
-            <strong>CRITICAL:</strong> This 24-word recovery phrase is the master key to your encrypted data. CloudVault employees cannot recover your account or reset your password. Store it safely offline.
+            <strong>CRITICAL:</strong> This 24-word recovery phrase is the only master key to your encrypted data. CloudVault cannot recover your account or reset your password. Store it safely offline.
           </p>
         </div>
 
-        {/* 24-Word Grid matching WhatsApp Reference Spec */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2.5 p-4 rounded-2xl bg-[#161226] border border-[#352C55]">
+        {/* 24-Word Grid */}
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2 p-3.5 rounded-lg bg-slate-950 border border-slate-800">
           {words.map((word, idx) => (
             <div
               key={idx}
-              className="flex items-center gap-2 p-2 rounded-xl bg-[#0D0B18] border border-[#352C55]/80 text-xs font-mono"
+              className="flex items-center gap-1.5 p-1.5 rounded bg-slate-900 border border-slate-800 text-xs font-mono"
             >
-              <span className="text-[10px] text-[#A3A1BD] w-5 text-right font-sans font-semibold">
+              <span className="text-[10px] text-slate-500 w-5 text-right font-sans font-semibold">
                 {idx + 1}.
               </span>
-              <span className="text-white font-medium truncate">{word}</span>
+              <span className="text-slate-100 font-medium truncate">{word}</span>
             </div>
           ))}
         </div>
 
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 pt-1">
           <Button
             type="button"
             variant="outline"
             size="sm"
             onClick={handleCopy}
-            className="w-full sm:w-auto text-[#B090F0] border-[#352C55] hover:border-[#8F6BFF]"
+            className="w-full sm:w-auto"
           >
-            {copied ? <Check size={16} className="text-emerald-400" /> : <Copy size={16} />}
-            <span>{copied ? 'Copied to Clipboard!' : 'Copy Phrase'}</span>
+            {copied ? <IconCheck size={14} className="text-emerald-400" /> : <IconCopy size={14} />}
+            <span>{copied ? 'Copied to Clipboard' : 'Copy Phrase'}</span>
           </Button>
 
-          <label className="flex items-center gap-2.5 text-xs text-[#A3A1BD] cursor-pointer select-none">
+          <label className="flex items-center gap-2 text-xs text-slate-300 cursor-pointer select-none">
             <input
               type="checkbox"
               checked={confirmedSafely}
               onChange={(e) => setConfirmedSafely(e.target.checked)}
-              className="rounded bg-[#161226] border-[#352C55] text-[#8F6BFF] focus:ring-[#8F6BFF]"
+              className="rounded bg-slate-900 border-slate-700 text-sky-600 focus:ring-sky-500"
             />
-            <span className="font-medium text-white">I have written down these 24 words safely</span>
+            <span className="font-medium text-slate-200">I have recorded these 24 words safely</span>
           </label>
         </div>
 
-        <div className="pt-4 border-t border-[#352C55] flex justify-end gap-3">
+        <div className="pt-3 border-t border-slate-800 flex justify-end gap-2">
           <Button
             type="button"
             variant="primary"
-            size="lg"
+            size="md"
             disabled={!confirmedSafely}
             onClick={onConfirm}
             className="w-full sm:w-auto"
           >
-            <ShieldCheck size={18} />
-            <span>Create My Vault</span>
+            <IconShieldCheck size={16} />
+            <span>Create Encrypted Vault</span>
           </Button>
         </div>
       </div>

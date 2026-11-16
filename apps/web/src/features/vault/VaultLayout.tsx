@@ -1,20 +1,18 @@
 import React, { useState, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import {
-  FolderLock,
-  Settings,
-  LogOut,
-  Menu,
-  X,
-  Upload,
-  FolderPlus,
-  LayoutGrid,
-  List,
-  Search,
-  HardDrive,
-  ChevronRight,
-  ShieldCheck,
-} from 'lucide-react';
+  IconFolderLock,
+  IconSettings,
+  IconLogOut,
+  IconMenu,
+  IconX,
+  IconUpload,
+  IconFolderPlus,
+  IconGrid,
+  IconList,
+  IconSearch,
+  IconHardDrive,
+} from '../../components/ui/Icons.js';
 import { useAuth } from '../../hooks/useAuth.js';
 import { useVault } from '../../hooks/useVault.js';
 import { useUpload } from '../../hooks/useUpload.js';
@@ -59,7 +57,7 @@ export const VaultLayout: React.FC<VaultLayoutProps> = ({ children }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const usedBytes = user?.storage_used_bytes || 0;
-  const quotaBytes = user?.storage_quota_bytes || 5368709120; // 5 GB default
+  const quotaBytes = user?.storage_quota_bytes || 5368709120; // 5 GB
   const usagePct = Math.min(100, Math.round((Number(usedBytes) / Number(quotaBytes)) * 100));
 
   const handleLogout = async () => {
@@ -83,7 +81,7 @@ export const VaultLayout: React.FC<VaultLayoutProps> = ({ children }) => {
   };
 
   return (
-    <div className="min-h-screen bg-[#0D0B18] text-white flex flex-col md:flex-row selection:bg-[#8F6BFF]/30 selection:text-[#C0B0F0]">
+    <div className="min-h-screen bg-slate-950 text-slate-100 flex flex-col md:flex-row font-sans selection:bg-sky-500/30 selection:text-sky-200">
       {/* Hidden File Input */}
       <input
         type="file"
@@ -93,206 +91,228 @@ export const VaultLayout: React.FC<VaultLayoutProps> = ({ children }) => {
         className="hidden"
       />
 
-      {/* Mobile Top Header Bar */}
-      <div className="md:hidden flex items-center justify-between p-4 bg-[#161226] border-b border-[#352C55] sticky top-0 z-40">
+      {/* Mobile Top Header */}
+      <div className="md:hidden flex items-center justify-between p-3.5 bg-slate-900 border-b border-slate-800 sticky top-0 z-40">
         <div className="flex items-center gap-2.5">
-          <BrandSquircle size={34} />
-          <span className="font-bold text-lg text-white">CloudVault</span>
+          <BrandSquircle size={32} />
+          <span className="font-bold text-sm text-slate-100">CloudVault</span>
         </div>
         <button
           onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-          className="p-2 rounded-xl text-[#A3A1BD] hover:text-white bg-[#221C38] border border-[#352C55]"
+          aria-label={isMobileMenuOpen ? 'Close menu' : 'Open menu'}
+          className="p-1.5 rounded text-slate-400 hover:text-white bg-slate-800 border border-slate-700"
         >
-          {isMobileMenuOpen ? <X size={20} /> : <Menu size={20} />}
+          {isMobileMenuOpen ? <IconX size={18} /> : <IconMenu size={18} />}
         </button>
       </div>
 
       {/* Sidebar Navigation */}
       <aside
-        className={`fixed inset-y-0 left-0 z-50 w-72 bg-[#161226] border-r border-[#352C55] flex flex-col transition-transform duration-300 md:static md:translate-x-0 ${
+        className={`fixed inset-y-0 left-0 z-50 w-64 bg-slate-900 border-r border-slate-800 flex flex-col transition-transform duration-200 md:static md:translate-x-0 ${
           isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'
         }`}
       >
         {/* Brand Header */}
-        <div className="p-6 border-b border-[#352C55] flex items-center gap-3.5">
-          <BrandSquircle size={44} />
+        <div className="p-4 border-b border-slate-800 flex items-center gap-3">
+          <BrandSquircle size={36} />
           <div>
-            <h1 className="font-bold text-lg text-white tracking-tight">CloudVault</h1>
-            <p className="text-[11px] text-[#A3A1BD] uppercase tracking-wider font-semibold">
+            <h1 className="font-bold text-sm text-slate-100 tracking-tight">CloudVault</h1>
+            <p className="text-[10px] text-slate-400 uppercase tracking-wider font-semibold font-mono">
               Zero-Knowledge
             </p>
           </div>
         </div>
 
         {/* Primary Action Button */}
-        <div className="p-4">
+        <div className="p-3.5">
           <Button
             variant="primary"
             size="md"
-            className="w-full shadow-glow-purple"
+            className="w-full"
             onClick={() => fileInputRef.current?.click()}
           >
-            <Upload size={18} />
-            <span>Upload Encrypted File</span>
+            <IconUpload size={16} />
+            <span>Upload File</span>
           </Button>
         </div>
 
         {/* Navigation Links */}
-        <nav className="flex-1 px-4 py-2 space-y-1.5 overflow-y-auto">
+        <nav className="flex-1 px-3 py-2 space-y-1 overflow-y-auto text-xs">
           <Link
             to="/vault"
             onClick={() => setIsMobileMenuOpen(false)}
-            className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
+            className={`flex items-center gap-2.5 px-3 py-2 rounded-md font-medium transition-colors ${
               location.pathname === '/vault'
-                ? 'bg-[#221C38] text-white border border-[#352C55] shadow-sm'
-                : 'text-[#A3A1BD] hover:text-white hover:bg-[#221C38]/60'
+                ? 'bg-slate-800 text-sky-400 border border-slate-700'
+                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
             }`}
           >
-            <FolderLock size={18} className={location.pathname === '/vault' ? 'text-[#8F6BFF]' : ''} />
-            <span>My Files</span>
+            <IconFolderLock size={16} />
+            <span>Encrypted Vault</span>
           </Link>
 
           <Link
             to="/settings"
             onClick={() => setIsMobileMenuOpen(false)}
-            className={`flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-semibold transition-colors ${
+            className={`flex items-center gap-2.5 px-3 py-2 rounded-md font-medium transition-colors ${
               location.pathname === '/settings'
-                ? 'bg-[#221C38] text-white border border-[#352C55] shadow-sm'
-                : 'text-[#A3A1BD] hover:text-white hover:bg-[#221C38]/60'
+                ? 'bg-slate-800 text-sky-400 border border-slate-700'
+                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/50'
             }`}
           >
-            <Settings size={18} className={location.pathname === '/settings' ? 'text-[#8F6BFF]' : ''} />
+            <IconSettings size={16} />
             <span>Settings & Sessions</span>
           </Link>
         </nav>
 
-        {/* Storage Widget - Donut Ring matching WhatsApp 8.12.28 & 8.12.29 */}
-        <div className="p-4 m-4 rounded-2xl bg-[#0D0B18] border border-[#352C55]">
-          <div className="flex items-center justify-between mb-3">
-            <span className="text-xs font-bold text-white uppercase tracking-wider flex items-center gap-1.5">
-              <HardDrive size={13} className="text-[#8F6BFF]" />
-              <span>Storage</span>
+        {/* Storage Allocation Widget */}
+        <div className="p-3.5 m-3 rounded-lg bg-slate-950 border border-slate-800">
+          <div className="flex items-center justify-between mb-2">
+            <span className="text-[11px] font-semibold text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+              <IconHardDrive size={13} className="text-sky-400" />
+              <span>Quota</span>
             </span>
-            <span className="text-xs font-semibold text-[#B090F0]">{usagePct}%</span>
+            <span className="text-xs font-mono font-semibold text-sky-400">{usagePct}%</span>
           </div>
 
-          <div className="flex justify-center py-2">
+          <div className="flex justify-center py-1">
             <StorageDonutRing
               percentage={usagePct}
               usedText={formatBytes(usedBytes)}
               totalText={formatBytes(quotaBytes)}
-              size={110}
-              strokeWidth={10}
+              size={96}
+              strokeWidth={8}
             />
           </div>
 
-          <div className="mt-2 text-center">
-            <p className="text-[10px] text-[#8D8DA5]">Free Tier • 5 GB Quota</p>
+          <div className="mt-1.5 text-center">
+            <p className="text-[10px] text-slate-400">Total: {formatBytes(quotaBytes)} Quota</p>
           </div>
         </div>
 
         {/* User Account & Logout */}
-        <div className="p-4 border-t border-[#352C55] flex items-center justify-between">
-          <div className="flex items-center gap-2.5 min-w-0">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-[#7C3AED] to-[#B090F0] flex items-center justify-center text-xs font-bold text-white shrink-0">
+        <div className="p-3 border-t border-slate-800 flex items-center justify-between text-xs">
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="w-7 h-7 rounded bg-slate-800 border border-slate-700 flex items-center justify-center text-xs font-bold text-sky-400 shrink-0">
               {user?.email?.charAt(0).toUpperCase() || 'U'}
             </div>
             <div className="truncate">
-              <p className="text-xs font-medium text-white truncate">{user?.email || 'Logged in'}</p>
-              <p className="text-[10px] text-[#A3A1BD] flex items-center gap-1">
-                <ShieldCheck size={11} className="text-emerald-400" />
-                <span>Zero-Knowledge</span>
-              </p>
+              <div className="font-semibold text-slate-200 truncate text-xs" title={user?.email}>
+                {user?.email?.split('@')[0]}
+              </div>
+              <div className="text-[10px] text-emerald-400 flex items-center gap-1">
+                <span className="w-1.5 h-1.5 rounded-full bg-emerald-400" />
+                <span>Vault Unlocked</span>
+              </div>
             </div>
           </div>
+
           <button
             onClick={handleLogout}
-            title="Sign Out"
-            className="p-2 rounded-lg text-[#8D8DA5] hover:text-red-400 hover:bg-[#221C38] transition-colors"
+            title="Lock Vault & Sign Out"
+            aria-label="Sign out"
+            className="p-1.5 rounded text-slate-400 hover:text-red-400 hover:bg-slate-800 transition-colors"
           >
-            <LogOut size={16} />
+            <IconLogOut size={15} />
           </button>
         </div>
       </aside>
 
-      {/* Main Vault Workspace */}
-      <main className="flex-1 flex flex-col min-w-0 overflow-y-auto">
-        {/* Top Header & Search Bar */}
-        <header className="p-4 sm:px-8 border-b border-[#352C55] bg-[#161226]/50 backdrop-blur-md sticky top-0 z-30 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-4">
-          {/* Breadcrumb Trail */}
-          <div className="flex items-center gap-2 text-xs text-[#A3A1BD] overflow-x-auto whitespace-nowrap py-1">
+      {/* Main Content Area */}
+      <div className="flex-1 flex flex-col min-w-0 overflow-y-auto">
+        {/* Top Action Header */}
+        <header className="p-3 sm:px-6 border-b border-slate-800 bg-slate-900/90 sticky top-0 z-30 flex flex-col sm:flex-row items-stretch sm:items-center justify-between gap-3">
+          {/* Breadcrumbs Navigation */}
+          <div className="flex items-center gap-1.5 text-xs text-slate-400 overflow-x-auto py-1">
             <button
               onClick={() => navigateToFolder(null)}
-              className="hover:text-white font-medium transition-colors hover:underline"
+              className={`hover:text-slate-100 font-medium transition-colors ${
+                currentFolderId === null ? 'text-white font-semibold' : ''
+              }`}
             >
-              Vault Root
+              Root Vault
             </button>
-            {breadcrumbs.map((b) => (
-              <React.Fragment key={b.id || 'root'}>
-                <ChevronRight size={14} className="text-[#8D8DA5] shrink-0" />
+            {breadcrumbs.map((crumb) => (
+              <React.Fragment key={crumb.id || 'root'}>
+                <span className="text-slate-600">/</span>
                 <button
-                  onClick={() => b.id ? navigateToFolder({ id: b.id, name: b.name } as any) : navigateToFolder(null)}
-                  className="text-white hover:text-[#C084FC] font-semibold truncate max-w-[120px] transition-colors"
+                  onClick={() =>
+                    crumb.id
+                      ? navigateToFolder({
+                          id: crumb.id,
+                          name: crumb.name,
+                          parentId: null,
+                          isTrashed: false,
+                          createdAt: '',
+                          updatedAt: '',
+                        })
+                      : navigateToFolder(null)
+                  }
+                  className="hover:text-slate-100 truncate max-w-[120px] transition-colors"
                 >
-                  {b.name}
+                  {crumb.name}
                 </button>
               </React.Fragment>
             ))}
           </div>
 
-          {/* Action Row: Search & Buttons */}
-          <div className="flex items-center gap-3">
-            <div className="relative flex-1 sm:w-64">
-              <Search size={15} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-[#8D8DA5]" />
+          {/* Search & Actions Bar */}
+          <div className="flex items-center gap-2">
+            <div className="relative flex-1 sm:w-56">
+              <div className="absolute inset-y-0 left-0 pl-2.5 flex items-center pointer-events-none text-slate-500">
+                <IconSearch size={14} />
+              </div>
               <input
                 type="text"
-                placeholder="Search encrypted files..."
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="w-full bg-[#161226] border border-[#352C55] rounded-xl pl-9 pr-3.5 py-1.5 text-xs text-white placeholder-[#8D8DA5] focus:outline-none focus:ring-2 focus:ring-[#8F6BFF]/40 focus:border-[#8F6BFF]"
+                placeholder="Search encrypted files..."
+                className="w-full bg-slate-950 border border-slate-700 rounded-md pl-8 pr-3 py-1.5 text-xs text-slate-100 placeholder-slate-500 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500"
               />
             </div>
 
             <Button
-              variant="secondary"
+              variant="outline"
               size="sm"
               onClick={() => setIsNewFolderOpen(true)}
-              className="shrink-0"
+              title="Create Encrypted Folder"
             >
-              <FolderPlus size={16} />
+              <IconFolderPlus size={14} />
               <span className="hidden sm:inline">New Folder</span>
             </Button>
 
             {/* View Mode Toggle */}
-            <div className="flex items-center rounded-xl bg-[#161226] border border-[#352C55] p-0.5 shrink-0">
+            <div className="flex items-center rounded-md bg-slate-950 border border-slate-800 p-0.5 shrink-0">
               <button
                 onClick={() => setViewMode('grid')}
-                className={`p-1.5 rounded-lg transition-colors ${
-                  viewMode === 'grid' ? 'bg-[#221C38] text-white' : 'text-[#8D8DA5] hover:text-white'
+                aria-label="Grid view"
+                className={`p-1.5 rounded transition-colors ${
+                  viewMode === 'grid'
+                    ? 'bg-slate-800 text-sky-400'
+                    : 'text-slate-400 hover:text-slate-200'
                 }`}
-                title="Grid View"
               >
-                <LayoutGrid size={15} />
+                <IconGrid size={14} />
               </button>
               <button
                 onClick={() => setViewMode('list')}
-                className={`p-1.5 rounded-lg transition-colors ${
-                  viewMode === 'list' ? 'bg-[#221C38] text-white' : 'text-[#8D8DA5] hover:text-white'
+                aria-label="List view"
+                className={`p-1.5 rounded transition-colors ${
+                  viewMode === 'list'
+                    ? 'bg-slate-800 text-sky-400'
+                    : 'text-slate-400 hover:text-slate-200'
                 }`}
-                title="List View"
               >
-                <List size={15} />
+                <IconList size={14} />
               </button>
             </div>
           </div>
         </header>
 
-        {/* Dynamic Children / View */}
-        <div className="flex-1 p-4 sm:p-8 flex flex-col">
-          <UploadZone>
-            {children}
-          </UploadZone>
-        </div>
+        {/* Drag & Drop Upload Zone Body */}
+        <UploadZone>
+          <main className="flex-1 p-4 sm:p-6">{children}</main>
+        </UploadZone>
 
         {/* Global Upload Manager Queue Tray */}
         <UploadManager />
@@ -302,7 +322,7 @@ export const VaultLayout: React.FC<VaultLayoutProps> = ({ children }) => {
           isOpen={isNewFolderOpen}
           onClose={() => setIsNewFolderOpen(false)}
         />
-      </main>
+      </div>
     </div>
   );
 };

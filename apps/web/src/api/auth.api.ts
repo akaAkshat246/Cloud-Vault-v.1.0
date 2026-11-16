@@ -97,5 +97,12 @@ export const authApi = {
   logoutAll: async (): Promise<void> => {
     await apiClient.post('/v1/auth/logout-all');
   },
+
+  // GDPR Article 17: Permanent Account Deletion
+  deleteAccount: async (confirmationText: string): Promise<void> => {
+    await apiClient.delete('/v1/auth/account', {
+      data: { confirmationText }
+    });
+  },
 };
 

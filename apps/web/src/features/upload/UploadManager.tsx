@@ -1,5 +1,12 @@
 import React, { useState } from 'react';
-import { UploadCloud, ChevronDown, ChevronUp, X, CheckCircle2, AlertCircle } from 'lucide-react';
+import {
+  IconUploadCloud,
+  IconChevronDown,
+  IconChevronUp,
+  IconX,
+  IconCheckCircle,
+  IconAlertCircle,
+} from '../../components/ui/Icons.js';
 import { useUpload } from '../../hooks/useUpload.js';
 import { ProgressBar } from '../../components/ui/ProgressBar.js';
 
@@ -20,26 +27,27 @@ export const UploadManager: React.FC = () => {
   const activeCount = uploads.filter((u) => u.status === 'UPLOADING' || u.status === 'PENDING').length;
 
   return (
-    <div className="fixed bottom-4 right-4 z-50 w-80 sm:w-96 glass-panel-glow rounded-xl border border-teal-500/40 shadow-2xl overflow-hidden text-xs">
+    <div className="fixed bottom-4 right-4 z-50 w-80 sm:w-96 bg-slate-900 rounded-lg border border-slate-700 overflow-hidden text-xs text-slate-200">
       {/* Header */}
-      <div className="p-3 bg-slate-900/90 border-b border-slate-800 flex items-center justify-between">
+      <div className="p-3 bg-slate-800 border-b border-slate-700 flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <UploadCloud size={16} className="text-teal-400" />
-          <span className="font-semibold text-slate-200">
+          <IconUploadCloud size={16} className="text-sky-400" />
+          <span className="font-semibold text-slate-100">
             {activeCount > 0 ? `Uploading ${activeCount} file${activeCount > 1 ? 's' : ''}` : 'Uploads Completed'}
           </span>
         </div>
         <button
           onClick={() => setIsExpanded(!isExpanded)}
+          aria-label={isExpanded ? 'Collapse uploads tray' : 'Expand uploads tray'}
           className="text-slate-400 hover:text-slate-200 transition-colors p-1"
         >
-          {isExpanded ? <ChevronDown size={16} /> : <ChevronUp size={16} />}
+          {isExpanded ? <IconChevronDown size={16} /> : <IconChevronUp size={16} />}
         </button>
       </div>
 
       {/* Upload Items List */}
       {isExpanded && (
-        <div className="max-h-60 overflow-y-auto divide-y divide-slate-800/80 p-2 space-y-2 bg-[#0c1322]">
+        <div className="max-h-60 overflow-y-auto divide-y divide-slate-800 p-2 space-y-2 bg-slate-900">
           {uploads.map((item) => (
             <div key={item.id} className="pt-2 first:pt-0">
               <div className="flex items-center justify-between mb-1">
@@ -48,13 +56,13 @@ export const UploadManager: React.FC = () => {
                 </span>
                 <div className="flex items-center gap-2">
                   {item.status === 'COMPLETED' ? (
-                    <span className="text-teal-400 flex items-center gap-1 text-[11px]">
-                      <CheckCircle2 size={13} />
+                    <span className="text-emerald-400 flex items-center gap-1 text-[11px]">
+                      <IconCheckCircle size={13} />
                       <span>Done</span>
                     </span>
                   ) : item.status === 'ERROR' ? (
                     <span className="text-red-400 flex items-center gap-1 text-[11px]" title={item.error}>
-                      <AlertCircle size={13} />
+                      <IconAlertCircle size={13} />
                       <span>Failed</span>
                     </span>
                   ) : (
@@ -64,9 +72,10 @@ export const UploadManager: React.FC = () => {
                   )}
                   <button
                     onClick={() => (item.status === 'UPLOADING' ? cancelUpload(item.id) : clearUpload(item.id))}
+                    aria-label="Remove item"
                     className="text-slate-500 hover:text-slate-300"
                   >
-                    <X size={13} />
+                    <IconX size={13} />
                   </button>
                 </div>
               </div>
@@ -81,4 +90,3 @@ export const UploadManager: React.FC = () => {
     </div>
   );
 };
-
